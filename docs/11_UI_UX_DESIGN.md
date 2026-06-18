@@ -1,0 +1,187 @@
+# UI and UX Design
+
+## Purpose
+
+City builders are UI-heavy games.
+
+The UI must help the player understand:
+
+- what is happening;
+- why it is happening;
+- what they can do next.
+
+## Design Principles
+
+### 1. Always Show the City State
+
+Core stats should always be visible:
+
+- money;
+- monthly income/expenses;
+- population;
+- happiness;
+- demand;
+- current objective.
+
+### 2. Make Problems Actionable
+
+Bad warning:
+
+> Building unhappy.
+
+Good warning:
+
+> No water. Build a water tower or increase water capacity.
+
+### 3. Reduce Cognitive Load
+
+Early game should reveal systems gradually.
+
+Do not show every advanced stat at the start.
+
+### 4. Use Overlays
+
+Overlays let the player diagnose spatial problems.
+
+MVP/later overlays:
+
+- zoning;
+- power;
+- water;
+- happiness;
+- pollution;
+- service coverage;
+- traffic;
+- land value.
+
+## Main UI Areas
+
+### Top Bar
+
+Shows:
+
+- money;
+- population;
+- happiness;
+- monthly income;
+- date/time;
+- speed controls.
+
+### Bottom Toolbar
+
+Build categories:
+
+- roads;
+- zones;
+- utilities;
+- services;
+- parks;
+- demolish.
+
+### Side Panel
+
+Shows selected tile/building details.
+
+For a building:
+
+- name;
+- status;
+- residents/jobs;
+- happiness impact;
+- upkeep;
+- warnings;
+- actions.
+
+For a tile:
+
+- coordinates;
+- zone;
+- pollution;
+- land value;
+- road access.
+
+### Objective Panel
+
+Shows current scenario objectives.
+
+Example:
+
+```txt
+Objective: Reach 100 population
+Progress: 64 / 100
+Reward: Commercial zoning
+```
+
+### Demand Bars
+
+Show RCI demand:
+
+- residential;
+- commercial;
+- industrial.
+
+Demand bars should include tooltips explaining why demand is high/low.
+
+### Warning Feed
+
+A compact alert area for city problems.
+
+Examples:
+
+- 5 buildings have no power.
+- Industrial demand is high.
+- City is losing money.
+- Happiness is falling.
+
+## Build Mode UX
+
+When placing something:
+
+- show ghost preview;
+- show cost;
+- show valid/invalid state;
+- show footprint;
+- allow cancel;
+- allow rotate for buildings;
+- drag placement for roads/zones;
+- do not spend money until placement is committed.
+
+## Camera UX
+
+Controls should feel like city-builder controls.
+
+Desktop:
+
+- mouse wheel: zoom;
+- middle/right drag: pan/rotate depending on chosen style;
+- left click: select/place;
+- escape: cancel build mode;
+- space: pause;
+- number keys: speed.
+
+## Tutorial UX
+
+Tutorial should be objective-based, not intrusive.
+
+Bad:
+
+- long modal explanations;
+- blocking the player constantly.
+
+Good:
+
+- small objective cards;
+- contextual hints;
+- highlight relevant toolbar button;
+- explain warnings when first encountered.
+
+## Accessibility
+
+Consider:
+
+- readable font sizes;
+- colorblind-safe warning icons;
+- icons plus text;
+- keyboard shortcuts;
+- reduced motion setting;
+- scalable UI.

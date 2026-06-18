@@ -1,0 +1,404 @@
+# Simulation Systems
+
+## Purpose
+
+This document defines how the city simulation should work.
+
+The simulation should be:
+
+- understandable;
+- deterministic where possible;
+- testable without rendering;
+- data-driven;
+- easy to rebalance.
+
+## Simulation Tick
+
+The game should separate render frames from simulation ticks.
+
+Example:
+
+- rendering: every animation frame;
+- simulation: every in-game day/month or fixed interval;
+- economy: monthly;
+- building growth: periodic;
+- warnings: updated after relevant changes.
+
+## Core State
+
+Suggested high-level state:
+
+```ts
+type CityState = {
+  map: MapState;
+  buildings: Record<BuildingId, BuildingInstance>;
+  roads: RoadNetworkState;
+  zones: ZoneState;
+  economy: EconomyState;
+  population: PopulationState;
+  demand: DemandState;
+  services: ServiceState;
+  happiness: HappinessState;
+  progression: ProgressionState;
+  warnings: WarningState;
+  time: GameTimeState;
+};
+```
+
+## Grid System
+
+Each tile should know:
+
+- coordinates;
+- terrain type;
+- road id if present;
+- zone type if present;
+- building id if occupied;
+- service modifiers;
+- pollution level;
+- land value later.
+
+MVP terrain is flat and buildable.
+
+## Road Connectivity
+
+Roads determine access.
+
+MVP rules:
+
+- road tiles connect orthogonally;
+- buildings require adjacent road tile;
+- disconnected buildings show warning;
+- road network may be treated as one connected graph initially.
+
+Later:
+
+- road capacity;
+- congestion;
+- intersections;
+- pathfinding.
+
+## Zoning System
+
+Zones are player-painted tile designations.
+
+Zone types:
+
+- residential;
+- commercial;
+- industrial.
+
+A zone can grow a building if:
+
+- tile is empty;
+- zone has road access;
+- city has demand for that zone type;
+- required services are available or not strictly required yet;
+- placement size fits.
+
+## Building Growth
+
+MVP building growth can be simple:
+
+1. Find valid zoned tiles.
+2. Check demand.
+3. Spawn a building.
+4. Deduct or reserve nothing unless zoning has cost.
+5. Update population/jobs/capacity.
+
+Building upgrades later depend on:
+
+- land value;
+- happiness;
+- services;
+- education;
+- density unlocks.
+
+## Population System
+
+Population is based on occupied residential capacity.
+
+Fields:
+
+- total population;
+- residential capacity;
+- employed workers;
+- unemployed workers;
+- growth rate.
+
+Population changes based on:
+
+- available housing;
+- residential demand;
+- happiness;
+- jobs;
+- services;
+- taxes.
+
+## Jobs System
+
+Jobs come from:
+
+- commercial buildings;
+- industrial buildings;
+- service buildings.
+
+Unemployment affects happiness.
+
+Worker shortages affect business productivity.
+
+## Demand System
+
+MVP demand can be computed from city conditions.
+
+### Residential Demand
+
+Increases when:
+
+- jobs are available;
+- happiness is good;
+- taxes are reasonable;
+- services are acceptable.
+
+Decreases when:
+
+- unemployment is high;
+- happiness is low;
+- housing capacity is high;
+- taxes are high.
+
+### Commercial Demand
+
+Increases when:
+
+- population grows;
+- citizens lack shops;
+- commercial jobs are needed.
+
+Decreases when:
+
+- shops lack workers;
+- too much commercial capacity exists.
+
+### Industrial Demand
+
+Increases when:
+
+- jobs are needed;
+- commercial goods demand exists later;
+- economy needs tax base.
+
+Decreases when:
+
+- pollution is high;
+- worker shortage exists;
+- industrial capacity is excessive.
+
+## Economy System
+
+Economy state:
+
+```ts
+type EconomyState = {
+  money: number;
+  monthlyIncome: number;
+  monthlyExpenses: number;
+  taxRates: {
+    residential: number;
+    commercial: number;
+    industrial: number;
+  };
+  isBankrupt: boolean;
+  monthsBelowZero: number;
+};
+```
+
+Income sources:
+
+- residential tax;
+- commercial tax;
+- industrial tax;
+- milestone rewards.
+
+Expenses:
+
+- road upkeep;
+- service upkeep;
+- building upkeep;
+- debt later.
+
+## Happiness System
+
+Happiness is a city-level value in MVP.
+
+Later it can become neighborhood-level.
+
+MVP components:
+
+- base happiness;
+- tax modifier;
+- unemployment modifier;
+- service modifier;
+- pollution modifier;
+- power/water modifier;
+- park modifier.
+
+Suggested output:
+
+```txt
+Happiness: 72%
+Positive: parks +5, services +8
+Negative: taxes -3, pollution -4, unemployment -6
+```
+
+## Services System
+
+Services can be implemented as capacity-based or radius-based.
+
+MVP recommendation:
+
+- power/water: capacity-based first;
+- park/clinic/school: radius-based.
+
+Service state:
+
+- capacity;
+- demand;
+- coverage;
+- upkeep;
+- affected buildings.
+
+## Pollution System
+
+Industrial buildings produce pollution.
+
+Pollution affects:
+
+- nearby residential happiness;
+- land value later;
+- health later.
+
+MVP can use a simple radius falloff.
+
+## Warnings System
+
+Warnings are generated from city state.
+
+Warning examples:
+
+- no road access;
+- no power;
+- no water;
+- no workers;
+- low happiness;
+- high pollution;
+- abandoned building;
+- city losing money.
+
+Warnings should include:
+
+- severity;
+- message;
+- target building/tile;
+- suggested fix.
+
+## Progression System
+
+Progression is based on population milestones.
+
+State:
+
+- current milestone;
+- unlocked features;
+- completed objectives;
+- scenario state.
+
+## Game Loop Timing
+
+### Separation of Concerns
+
+The game has three independent loops:
+
+```
+requestAnimationFrame  →  render current state
+setInterval / rAF tick →  advance simulation
+input events           →  dispatch commands
+```
+
+Rendering runs at display refresh rate (typically 60 fps). Simulation runs on a fixed tick. Input is event-driven.
+
+### Tick Rate and Time Model
+
+| Property | Value | Rationale |
+|----------|:-----:|-----------|
+| Simulation tick interval | 250 ms real-time | 4 ticks per real second |
+| In-game months per tick | 1 month per tick **at speed 1** | One tick = one month |
+| Ticks per month | 1 (at speed 1) | Simple: each tick advances one month |
+| Economy tick | Every simulation tick | Monthly income/expenses computed each tick |
+| Building growth check | Every simulation tick | Spawn buildings if conditions are met |
+| Demand recomputation | Every simulation tick | Recalculate RCI demand |
+| Happiness recomputation | Every simulation tick | Recalculate city happiness |
+| Service coverage check | Every simulation tick | Buildings re-evaluate service state |
+| Warning refresh | Every simulation tick | Rebuild active warning list |
+| Milestone check | Every simulation tick | Check population against thresholds |
+
+### Speed Controls
+
+| Speed | Ticks per Second | Real Seconds per Tick | Game Months per Real Second |
+|:-----:|:----------------:|:---------------------:|:---------------------------:|
+| 0 (Paused) | 0 | — | 0 |
+| 1 (Normal) | 4 | 0.25 | 4 |
+| 2 (Fast) | 12 | 0.083 | 12 |
+| 3 (Very Fast) | 24 | 0.042 | 24 |
+
+At speed 1: 1 real second = 4 in-game months.
+A full game "year" takes 3 real seconds at speed 1 (12 months / 4 ticks per second).
+
+### Pause Behavior
+
+When paused (`speed = 0`):
+- No simulation ticks fire.
+- Rendering continues (camera movement, hover, selection).
+- Build mode works normally.
+- Commands that mutate state are still processed.
+- The player can place roads, zones, and buildings while paused.
+
+### Tick Pipeline
+
+Within a single simulation tick, the following runs **in order**:
+
+1. **Economy** — compute income, expenses, update money, check bankruptcy.
+2. **Demand** — recompute RCI demand from current city conditions.
+3. **Building Growth** — attempt to spawn new buildings on valid zoned tiles.
+4. **Population** — update totals from residential capacity and demand.
+5. **Services** — recompute capacity usage and coverage radii.
+6. **Happiness** — recompute city happiness from all modifiers.
+7. **Warnings** — rebuild active warnings list from current state.
+8. **Progression** — check milestones, apply unlocks and rewards.
+9. **Events** — emit `GameEvent` objects for any changed state (rendering/UI consume these).
+
+### Building Growth Details
+
+- Growth checks every zoned tile that is empty and road-accessible.
+- Maximum buildings spawned per tick: **3 per zone type** (cap prevents instant city).
+- After a building is spawned, the tile has a cooldown of **3 ticks** before it can be replaced/demolished.
+- Zone-grown buildings appear with status `"constructing"` and transition to `"active"` after **1 tick**.
+- A building is abandoned if its status would cause a warning for more than **12 consecutive ticks**.
+
+### First Tick Special Case
+
+On game start or load:
+- The zero-th tick initializes all derived values.
+- No economy tick runs (player cannot lose money on frame 1).
+- Building growth is suppressed for the first tick.
+- Demand starts at 50/30/30 per the base formulas.
+
+## Determinism
+
+Simulation functions should avoid randomness unless seeded.
+
+If randomness is used:
+
+- use a seeded RNG;
+- store the seed in save data;
+- make tests predictable.
