@@ -1,6 +1,6 @@
 set -e
 npx lint-staged
 node scripts/pre-commit-checks.mjs
-npx madge --circular src/
+npx depcruise src
 npx knip
 npx remark docs/ --use remark-validate-links --frail
