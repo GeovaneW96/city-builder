@@ -22,19 +22,7 @@ Reach 1,000 population without going bankrupt.
 
 ### Objectives
 
-1. Place a road.
-2. Zone residential.
-3. Reach 50 population.
-4. Unlock and zone commercial.
-5. Reach 100 population.
-6. Unlock and zone industrial.
-7. Reach 250 population.
-8. Build a park.
-9. Reach 500 population.
-10. Build a clinic.
-11. Reach 750 population.
-12. Build a school.
-13. Reach 1,000 population.
+Objectives follow the progression milestones in `06_PROGRESSION_AND_UNLOCKS.md`. Each milestone grants a new unlock and bonus; the scenario advances the player through the full milestone chain from 0 to 1,000 population.
 
 ### Win Condition
 

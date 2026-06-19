@@ -12,18 +12,7 @@ A city builder should create the feeling of:
 
 ### 1. Milestones
 
-Milestones provide clear progress.
-
-Examples:
-
-| Population | Milestone    | Reward            |
-| ---------: | ------------ | ----------------- |
-|         50 | Hamlet       | Commercial zoning |
-|        100 | Village      | Industrial zoning |
-|        250 | Small Town   | Park              |
-|        500 | Growing Town | Clinic            |
-|        750 | Local Center | School            |
-|      1,000 | First City   | Scenario complete |
+Milestones provide clear progress. See `06_PROGRESSION_AND_UNLOCKS.md` for the full milestone table.
 
 Milestones should be celebrated with:
 
@@ -52,19 +41,7 @@ Bad unlock:
 
 ### 3. Objectives
 
-Objectives guide the player.
-
-Early objectives:
-
-1. Place a road.
-2. Zone residential.
-3. Wait for houses.
-4. Add power.
-5. Reach 100 population.
-6. Add commercial.
-7. Reach positive income.
-8. Build a park.
-9. Reach 1,000 population.
+Objectives guide the player. The first scenario objective sequence is defined in `22_SCENARIOS.md`.
 
 Objectives should be:
 
@@ -202,21 +179,4 @@ Optimize taxes and growth.
 
 ## Monetization Compatibility
 
-The game should not be designed around predatory retention.
-
-Avoid:
-
-- energy systems;
-- forced waiting;
-- pay-to-win;
-- aggressive ads.
-
-Monetization options considered:
-
-- premium version;
-- cosmetic packs;
-- scenario packs;
-- supporter edition;
-- paid expansion systems.
-
-Monetization is not in initial scope.
+See `19_MONETIZATION_AND_ANALYTICS.md` for monetization plans and principles.

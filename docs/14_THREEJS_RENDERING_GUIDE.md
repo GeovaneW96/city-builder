@@ -101,16 +101,6 @@ Examples:
 
 Only one or two overlays should be active at once.
 
-## Performance Rules
-
-- Do not recreate all meshes every simulation tick.
-- Diff state changes and update only changed objects.
-- Use object pools where useful.
-- Use instanced meshes for repeated objects.
-- Merge static geometries.
-- Avoid expensive raycasts against every object if grid picking is enough.
-- Dispose of removed geometries and materials.
-
 ## Render State Cache
 
 Maintain a mapping of `buildingId → mesh/object` and `roadCoord → mesh/object` so rendering can update changed objects without rebuilding everything.

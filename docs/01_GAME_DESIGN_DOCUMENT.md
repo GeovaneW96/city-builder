@@ -25,43 +25,7 @@ The city should feel alive enough to create curiosity, but simple enough that th
 Plan -> Build -> Simulate -> Diagnose -> Fix -> Grow -> Unlock -> Repeat
 ```
 
-### Plan
-
-The player decides what the city needs:
-
-- roads;
-- housing;
-- jobs;
-- shops;
-- services;
-- expansion.
-
-### Build
-
-The player places roads, zones, and buildings.
-
-### Simulate
-
-The city updates:
-
-- buildings grow;
-- population changes;
-- money changes;
-- demand changes;
-- happiness changes;
-- problems appear.
-
-### Diagnose
-
-The player reads stats, overlays, warnings, and city behavior.
-
-### Fix
-
-The player adjusts layout, budget, services, zoning, and infrastructure.
-
-### Grow
-
-The city reaches new milestones and unlocks.
+See `02_CORE_GAMEPLAY_LOOP.md` for the detailed breakdown of each phase.
 
 ## Main Resources
 
@@ -144,82 +108,11 @@ Demand should not be a simple random value. It should derive from city condition
 
 ## Zones
 
-### Residential
-
-Creates homes and population.
-
-Needs:
-
-- road access;
-- demand;
-- power/water;
-- acceptable pollution.
-
-Provides:
-
-- citizens;
-- tax income;
-- workforce.
-
-### Commercial
-
-Creates shops and jobs.
-
-Needs:
-
-- road access;
-- residents/customers;
-- workers.
-
-Provides:
-
-- jobs;
-- tax income;
-- commercial services.
-
-### Industrial
-
-Creates jobs and goods.
-
-Needs:
-
-- road access;
-- workers.
-
-Provides:
-
-- jobs;
-- tax income;
-- goods supply.
-
-Downsides:
-
-- pollution;
-- noise;
-- traffic.
+Three zone types — residential, commercial, industrial — are painted on empty tiles with road access. See `07_BUILDINGS_AND_ZONES.md` for detailed needs, outputs, and tradeoffs per zone type.
 
 ## Buildings
 
-Buildings can be:
-
-- zone-grown;
-- manually placed;
-- service buildings;
-- infrastructure;
-- unique buildings.
-
-Each building should have:
-
-- id;
-- name;
-- category;
-- size;
-- construction cost;
-- upkeep;
-- unlock condition;
-- requirements;
-- effects;
-- visual asset id.
+Buildings can be zone-grown or manually placed. See `07_BUILDINGS_AND_ZONES.md` for building definition fields, placement rules, and individual building specs.
 
 ## Roads
 
@@ -241,23 +134,7 @@ Road features include:
 
 ## Services
 
-Services improve city function and happiness.
-
-Initial services:
-
-- power;
-- water;
-- park;
-- clinic;
-- school.
-
-Additional services:
-
-- police;
-- fire;
-- garbage;
-- public transport;
-- emergency services.
+Services improve city function and happiness. Initial services include power, water, parks, clinic, and school. See `07_BUILDINGS_AND_ZONES.md` for building specs and `04_SIMULATION_SYSTEMS.md` for service system mechanics.
 
 ## Failure States
 
@@ -283,17 +160,7 @@ First scenario win condition:
 
 ## Tutorial
 
-The first scenario should teach through objectives:
-
-1. Move camera.
-2. Place road.
-3. Zone residential.
-4. Wait for homes.
-5. Build power.
-6. Add commercial.
-7. Balance budget.
-8. Add park or clinic.
-9. Reach 1,000 population.
+The first scenario teaches through objectives. See `22_SCENARIOS.md` for the objective sequence and `06_PROGRESSION_AND_UNLOCKS.md` for the milestone-based unlock flow.
 
 ## Difficulty Curve
 
