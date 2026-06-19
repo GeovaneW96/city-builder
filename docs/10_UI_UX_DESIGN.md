@@ -43,7 +43,7 @@ Do not show every advanced stat at the start.
 
 Overlays let the player diagnose spatial problems.
 
-MVP/later overlays:
+Overlays:
 
 - zoning;
 - power;

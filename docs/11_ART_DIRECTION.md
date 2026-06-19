@@ -2,7 +2,7 @@
 
 ## Visual Style
 
-Recommended MVP style:
+Recommended style:
 
 > Cozy low-poly diorama city.
 
@@ -78,7 +78,7 @@ Services:
 
 ## Environment
 
-MVP:
+Initial environment:
 
 - grass tiles;
 - subtle grid;
@@ -110,7 +110,7 @@ Important visual states:
 
 ## Animation
 
-MVP can use simple animations:
+Use simple animations:
 
 - building pop-in;
 - construction progress;

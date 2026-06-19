@@ -26,24 +26,20 @@ Example:
 
 ## Core State
 
-Suggested high-level state:
+Suggested high-level state fields:
 
-```ts
-type CityState = {
-  map: MapState;
-  buildings: Record<BuildingId, BuildingInstance>;
-  roads: RoadNetworkState;
-  zones: ZoneState;
-  economy: EconomyState;
-  population: PopulationState;
-  demand: DemandState;
-  services: ServiceState;
-  happiness: HappinessState;
-  progression: ProgressionState;
-  warnings: WarningState;
-  time: GameTimeState;
-};
-```
+- `map` — grid + tiles;
+- `buildings` — runtime building instances;
+- `roads` — road network state;
+- `zones` — painted zone tiles;
+- `economy` — money, income, expenses, tax rates;
+- `population` — total, capacity, employment;
+- `demand` — RCI demand values;
+- `services` — capacity and coverage;
+- `happiness` — city-level score with component breakdown;
+- `progression` — milestones, unlocks, scenario state;
+- `warnings` — active warnings;
+- `time` — tick, month, year, speed.
 
 ## Grid System
 
@@ -58,13 +54,13 @@ Each tile should know:
 - pollution level;
 - land value later.
 
-MVP terrain is flat and buildable.
+Initial terrain is flat and buildable.
 
 ## Road Connectivity
 
 Roads determine access.
 
-MVP rules:
+Basic rules:
 
 - road tiles connect orthogonally;
 - buildings require adjacent road tile;
@@ -98,7 +94,7 @@ A zone can grow a building if:
 
 ## Building Growth
 
-MVP building growth can be simple:
+Building growth can be simple:
 
 1. Find valid zoned tiles.
 2. Check demand.
@@ -149,7 +145,7 @@ Worker shortages affect business productivity.
 
 ## Demand System
 
-MVP demand can be computed from city conditions.
+Demand can be computed from city conditions.
 
 ### Residential Demand
 
@@ -196,22 +192,14 @@ Decreases when:
 
 ## Economy System
 
-Economy state:
+Economy fields:
 
-```ts
-type EconomyState = {
-  money: number;
-  monthlyIncome: number;
-  monthlyExpenses: number;
-  taxRates: {
-    residential: number;
-    commercial: number;
-    industrial: number;
-  };
-  isBankrupt: boolean;
-  monthsBelowZero: number;
-};
-```
+- `money` — current funds;
+- `monthlyIncome` — cached income from taxes;
+- `monthlyExpenses` — cached upkeep total;
+- `taxRates` — residential, commercial, industrial rates (percentage);
+- `isBankrupt` — true if bankruptcy condition met;
+- `monthsBelowZero` — consecutive months with negative money.
 
 Income sources:
 
@@ -229,11 +217,11 @@ Expenses:
 
 ## Happiness System
 
-Happiness is a city-level value in MVP.
+Happiness is a city-level value initially.
 
 Later it can become neighborhood-level.
 
-MVP components:
+Components:
 
 - base happiness;
 - tax modifier;
@@ -255,7 +243,7 @@ Negative: taxes -3, pollution -4, unemployment -6
 
 Services can be implemented as capacity-based or radius-based.
 
-MVP recommendation:
+Recommendation:
 
 - power/water: capacity-based first;
 - park/clinic/school: radius-based.
@@ -278,7 +266,7 @@ Pollution affects:
 - land value later;
 - health later.
 
-MVP can use a simple radius falloff.
+Use a simple radius falloff.
 
 ## Warnings System
 

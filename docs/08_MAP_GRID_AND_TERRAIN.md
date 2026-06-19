@@ -4,9 +4,9 @@
 
 This document defines the world model.
 
-For MVP, the map should be simple and reliable.
+The map should be simple and reliable.
 
-## MVP Map
+## Map
 
 - 64x64 tiles.
 - Flat terrain.
@@ -53,22 +53,17 @@ The choice should be consistent across rendering, picking, and placement.
 
 ## Tile State
 
-Suggested schema:
+Tile fields:
 
-```ts
-type Tile = {
-  x: number;
-  y: number;
-  terrain: "grass" | "water" | "blocked";
-  roadId?: string;
-  zone?: "residential" | "commercial" | "industrial";
-  buildingId?: string;
-  pollution: number;
-  landValue: number;
-};
-```
+- `x`, `y` — integer grid coordinates;
+- `terrain` — `"grass"`, `"water"`, or `"blocked"`;
+- `roadId` — set if this tile is a road;
+- `zone` — `"residential"`, `"commercial"`, or `"industrial"` if painted;
+- `buildingId` — set if a building occupies this tile;
+- `pollution` — 0..100;
+- `landValue` — 0..100.
 
-For MVP, terrain can always be `grass`.
+Initial terrain is always `grass`.
 
 ## Placement Rules
 
@@ -93,7 +88,7 @@ For MVP, terrain can always be `grass`.
 
 ## Map Expansion
 
-Not part of MVP.
+Not in initial scope.
 
 Future expansion can use:
 

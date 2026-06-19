@@ -30,7 +30,7 @@ Scene
 
 ## Camera
 
-Recommended MVP camera:
+Recommended camera:
 
 - orthographic or perspective with city-builder angle;
 - pan;
@@ -44,20 +44,13 @@ Orthographic camera may improve readability and city-builder feel.
 
 Use raycasting to convert mouse position to grid tile.
 
-Picking should output:
-
-```ts
-type PickResult = {
-  tile?: { x: number; y: number };
-  objectId?: string;
-};
-```
+Picking should output a tile coordinate (grid x, y) and optionally an object id if a mesh was hit.
 
 Do not put simulation logic inside picking.
 
 ## Grid Rendering
 
-MVP can use:
+Can use:
 
 - grid helper;
 - custom plane with grid material;
@@ -78,7 +71,7 @@ Later:
 
 ## Buildings
 
-MVP buildings can be:
+Buildings can be:
 
 - simple low-poly boxes;
 - procedural meshes;
@@ -120,12 +113,7 @@ Only one or two overlays should be active at once.
 
 ## Render State Cache
 
-Maintain a mapping:
-
-```ts
-buildingId -> mesh/object
-roadCoord -> mesh/object
-```
+Maintain a mapping of `buildingId → mesh/object` and `roadCoord → mesh/object` so rendering can update changed objects without rebuilding everything.
 
 This lets rendering update changed objects without rebuilding everything.
 

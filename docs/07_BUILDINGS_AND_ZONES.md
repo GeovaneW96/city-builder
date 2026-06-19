@@ -68,7 +68,7 @@ Problems:
 - traffic;
 - low land value nearby.
 
-## MVP Zone-Grown Buildings
+## Zone-Grown Buildings
 
 ### Small House
 
@@ -107,7 +107,7 @@ requirements: road access, industrial demand
 effects: pollution
 ```
 
-## MVP Manual Buildings
+## Manual Buildings
 
 ### City Hall
 
@@ -171,42 +171,29 @@ Tradeoff:
 
 - high cost/upkeep.
 
-## Building Data Schema
+## Building Definition Fields
 
-Suggested TypeScript shape:
+- `id` — unique string identifier;
+- `name` — display name;
+- `category` — residential, commercial, industrial, utility, service, civic, decoration;
+- `placementType` — `"zone-grown"` or `"manual"`;
+- `size` — width and height in tiles;
+- `cost` — construction cost;
+- `upkeep` — monthly maintenance;
+- `unlockPopulation` — population milestone required (optional);
+- `requirements` — road access, demand, unlock, service, or worker conditions;
+- `effects` — power/water capacity, health/education radius, happiness, pollution, jobs, population capacity, tax type;
+- `visual` — model id and optional footprint color.
 
-```ts
-type BuildingDefinition = {
-  id: string;
-  name: string;
-  category: BuildingCategory;
-  placementType: "zone-grown" | "manual";
-  size: { width: number; height: number };
-  cost: number;
-  upkeep: number;
-  unlockPopulation?: number;
-  requirements: BuildingRequirement[];
-  effects: BuildingEffect[];
-  visual: {
-    modelId: string;
-    footprintColor?: string;
-  };
-};
-```
+## Building Instance Fields
 
-## Building Instance Schema
-
-```ts
-type BuildingInstance = {
-  id: string;
-  definitionId: string;
-  position: { x: number; y: number };
-  rotation: 0 | 90 | 180 | 270;
-  status: "constructing" | "active" | "inactive" | "abandoned";
-  warnings: string[];
-  createdAtTick: number;
-};
-```
+- `id` — unique runtime id;
+- `definitionId` — references a building definition;
+- `position` — grid coordinates;
+- `rotation` — 0, 90, 180, or 270 degrees;
+- `status` — `"constructing"`, `"active"`, `"inactive"`, or `"abandoned"`;
+- `warnings` — list of active warning strings;
+- `createdAtTick` — tick when the building was placed.
 
 ## Placement Rules
 

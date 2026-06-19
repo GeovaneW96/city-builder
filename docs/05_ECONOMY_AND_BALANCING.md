@@ -22,7 +22,7 @@ All values are provisional. Balance should be adjusted after playtesting.
 | Item | Cost |
 |---|---:|
 | Dirt road tile | 50 |
-| Paved road tile | 100 |
+| Paved road tile | 100 (— not used initially) |
 | Residential zone tile | 0 |
 | Commercial zone tile | 0 |
 | Industrial zone tile | 0 |
@@ -37,7 +37,8 @@ All values are provisional. Balance should be adjusted after playtesting.
 
 | Item | Monthly Upkeep |
 |---|---:|
-| Road tile | 1 |
+| Dirt road tile | 1 |
+| Paved road tile | 2 |
 | Power plant | 500 |
 | Water tower | 250 |
 | Park | 100 |
@@ -129,7 +130,7 @@ industrialDemand =
   - pollutionPenalty
 ```
 
-These formulas are placeholders and should be refined through testing.
+These formulas are parameterized in `src/data/balance/demand.ts` with named constants (BASE, JOB_WEIGHT, CAP_WEIGHT, etc.). Values are placeholders and should be refined through testing.
 
 ## Happiness Components
 

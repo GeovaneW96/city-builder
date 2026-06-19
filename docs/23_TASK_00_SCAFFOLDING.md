@@ -9,13 +9,10 @@ No game simulation logic yet (no economy, demand, building growth, etc.).
 ## Read First
 
 - `AGENTS.md`
-- `docs/02_MVP_PRD.md`
-- `docs/05_SIMULATION_SYSTEMS.md` (especially the Game Loop Timing section)
-- `docs/09_MAP_GRID_AND_TERRAIN.md`
-- `docs/14_TECHNICAL_ARCHITECTURE.md` (especially State Management and Event Bus sections)
-- `docs/15_THREEJS_RENDERING_GUIDE.md`
-- `docs/26_SHARED_TYPES_SPEC.md`
-- `docs/27_DATA_FILES_SPEC.md`
+- `docs/04_SIMULATION_SYSTEMS.md` (especially the Game Loop Timing section)
+- `docs/08_MAP_GRID_AND_TERRAIN.md`
+- `docs/13_TECHNICAL_ARCHITECTURE.md` (especially State Management and Event Bus sections)
+- `docs/14_THREEJS_RENDERING_GUIDE.md`
 
 ## Scope
 
@@ -30,12 +27,12 @@ No game simulation logic yet (no economy, demand, building growth, etc.).
    - Entry point `src/main.ts` that bootstraps the app
 
 2. **Shared types** (`src/shared/types.ts`)
-   - All types from `docs/26_SHARED_TYPES_SPEC.md` exactly as specified
+   - All types consumed from `docs/13_TECHNICAL_ARCHITECTURE.md` (including `CityState`, `GameEvent`, `GameCommand`, and all related types)
    - No extra types
    - No game logic
 
 3. **Data files** (`src/data/`)
-   - All files and values from `docs/27_DATA_FILES_SPEC.md`
+   - All files and values from `docs/05_ECONOMY_AND_BALANCING.md`, `docs/07_BUILDINGS_AND_ZONES.md`, `docs/06_PROGRESSION_AND_UNLOCKS.md`, and `docs/22_SCENARIOS.md`
    - Every file exports a named constant matching the spec
    - No game logic inside data files
 
@@ -53,7 +50,7 @@ No game simulation logic yet (no economy, demand, building growth, etc.).
 
 6. **UI store** (`src/ui/store.ts`)
    - Zustand store for camera, selection, hover, build mode
-   - All fields defaulted as specified in `docs/14_TECHNICAL_ARCHITECTURE.md`
+   - All fields defaulted as specified in `docs/13_TECHNICAL_ARCHITECTURE.md`
 
 7. **Three.js scene** (`src/rendering/three/scene.ts`)
    - Scene, renderer, camera setup

@@ -220,14 +220,12 @@ Optimize taxes and growth.
 
 ## Daily/Weekly Retention Ideas for Later
 
-Not MVP, but possible later:
+Possible later additions:
 
 - daily challenge map;
 - weekly scenario seed;
-- city screenshot sharing;
 - city rating leaderboard;
 - special event modifiers;
-- "fix this broken city" challenge.
 
 ## Monetization Compatibility
 

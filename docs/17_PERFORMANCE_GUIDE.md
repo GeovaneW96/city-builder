@@ -4,7 +4,7 @@
 
 Browser 3D games need performance discipline from the beginning.
 
-The MVP should avoid expensive architecture choices that prevent scaling.
+Avoid expensive architecture choices that prevent scaling.
 
 ## Performance Targets
 
@@ -13,7 +13,7 @@ Initial targets:
 - 60 FPS ideal;
 - 30 FPS minimum acceptable;
 - no noticeable freeze during placement;
-- simulation tick under a few milliseconds for MVP city;
+- simulation tick under a few milliseconds;
 - map capped at 64x64.
 
 ## Main Risks
@@ -34,7 +34,7 @@ Initial targets:
 - Avoid rendering every tile as a separate mesh.
 - Update only changed objects.
 - Use simple materials.
-- Avoid heavy post-processing in MVP.
+- Avoid heavy post-processing initially.
 - Dispose geometries/materials/textures when removed.
 
 ## Simulation Guidelines
@@ -63,7 +63,7 @@ Add debug tools later:
 - memory usage estimates;
 - slow system warnings.
 
-## MVP Limits
+## Initial Limits
 
 Initial limits:
 

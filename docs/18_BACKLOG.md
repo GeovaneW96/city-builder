@@ -2,7 +2,7 @@
 
 ## Now
 
-- **Execute `docs/28_TASK_00_SCAFFOLDING.md`** — Project scaffolding, shared types, data files, stores, event bus, Three.js scene, grid, camera, hover/selection.
+- **Execute `docs/23_TASK_00_SCAFFOLDING.md`** — Project scaffolding, shared types, data files, stores, event bus, Three.js scene, grid, camera, hover/selection.
 - Add road placement command.
 - Add zone painting command.
 - Add top HUD (money, population, date).
@@ -48,7 +48,7 @@
 - Scenario editor.
 - Mod support.
 
-## Rejected for MVP
+## Rejected for Initial Scope
 
 - Multiplayer.
 - Realistic traffic.

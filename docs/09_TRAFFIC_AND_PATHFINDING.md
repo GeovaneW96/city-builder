@@ -2,11 +2,9 @@
 
 ## Purpose
 
-Traffic is a major city-builder system, but it should not be overbuilt in MVP.
+Traffic is a major city-builder system. The first version should use an abstract traffic model before simulating individual cars.
 
-The first version should use an abstract traffic model before simulating individual cars.
-
-## MVP Recommendation
+## Recommendation
 
 Do not implement full agent-based traffic in the first prototype.
 
@@ -23,7 +21,7 @@ A building has road access if at least one tile in its footprint is adjacent to 
 
 ## Road Network
 
-MVP can treat connected road tiles as a graph.
+Treat connected road tiles as a graph.
 
 Each road tile connects to orthogonal neighboring road tiles.
 
@@ -90,7 +88,7 @@ Required later:
 
 ## Do Not Do Early
 
-Avoid in MVP:
+Avoid in early version:
 
 - thousands of individual cars;
 - lane-level simulation;

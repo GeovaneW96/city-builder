@@ -8,7 +8,7 @@ The goal is not to clone a full AAA city builder at first. The goal is to create
 
 Documentation and planning phase.
 
-No production game code should be implemented until the MVP scope, core gameplay loop, and technical architecture are clear.
+No production game code should be implemented until the initial scope, core gameplay loop, and technical architecture are clear.
 
 ## Product Vision
 
@@ -43,16 +43,12 @@ Start here:
 1. `AGENTS.md` - Codex instructions and development rules.
 2. `docs/00_GAME_VISION.md` - North star for the game.
 3. `docs/01_GAME_DESIGN_DOCUMENT.md` - Main game design document.
-4. `docs/02_MVP_PRD.md` - MVP product requirements.
-5. `docs/03_CORE_GAMEPLAY_LOOP.md` - Core loop and player motivation.
-6. `docs/04_GAMIFICATION_AND_RETENTION.md` - Hook, progression, goals, rewards.
-7. `docs/05_SIMULATION_SYSTEMS.md` - Simulation model.
-8. `docs/14_TECHNICAL_ARCHITECTURE.md` - Engineering architecture.
-9. `docs/19_CODEX_WORKFLOW.md` - How to work with Codex safely.
-10. `docs/20_BACKLOG.md` - Prioritized backlog.
-11. `docs/26_SHARED_TYPES_SPEC.md` - Consolidated TypeScript types.
-12. `docs/27_DATA_FILES_SPEC.md` - Data-driven configuration files.
-13. `docs/28_TASK_00_SCAFFOLDING.md` - First implementation task.
+4. `docs/02_CORE_GAMEPLAY_LOOP.md` - Core loop and player motivation.
+5. `docs/03_GAMIFICATION_AND_RETENTION.md` - Hook, progression, goals, rewards.
+6. `docs/04_SIMULATION_SYSTEMS.md` - Simulation model.
+7. `docs/13_TECHNICAL_ARCHITECTURE.md` - Engineering architecture.
+8. `docs/18_BACKLOG.md` - Prioritized backlog.
+9. `docs/23_TASK_00_SCAFFOLDING.md` - First implementation task.
 
 ## First Implementation Target
 
@@ -74,7 +70,7 @@ Build the game in this order:
 1. Game design and loop.
 2. Core technical architecture.
 3. Tiny playable prototype.
-4. Simulation MVP.
+4. Initial simulation.
 5. Progression and retention.
 6. Content and polish.
 

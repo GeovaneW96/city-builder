@@ -126,13 +126,10 @@ Player actions should be represented as commands.
 
 Examples:
 
-```ts
-type GameCommand =
-  | { type: "PLACE_ROAD"; x: number; y: number; roadType: string }
-  | { type: "PAINT_ZONE"; tiles: Coord[]; zoneType: ZoneType }
-  | { type: "PLACE_BUILDING"; x: number; y: number; buildingId: string }
-  | { type: "DEMOLISH"; x: number; y: number };
-```
+- `PLACE_ROAD` — place road at (x, y) with a road type;
+- `PAINT_ZONE` — paint zone type on a set of tiles;
+- `PLACE_BUILDING` — place a building by id at (x, y);
+- `DEMOLISH` — remove whatever is at (x, y).
 
 Benefits:
 
@@ -224,19 +221,13 @@ The application uses two independent Zustand stores to enforce the simulation/re
 - Never imported by Three.js code.
 - UI reads from it via selectors (described below).
 
-```ts
-// Conceptual API — not the exact implementation.
-interface SimulationStore {
-  state: CityState;
-  tick: () => void;
-  processCommand: (cmd: GameCommand) => CommandResult;
-  loadSave: (save: SaveGame) => void;
-  getSaveData: () => SaveGame;
-}
-
-type CommandResult =
-  | { success: true; events: GameEvent[] }
-  | { success: false; error: string };
+```
+SimulationStore:
+  - state: CityState
+  - tick() — advance simulation one step
+  - processCommand(cmd) — validate and apply a command, return events or error
+  - loadSave(save) — restore state from save data
+  - getSaveData() — serialize current state
 ```
 
 ### UI / Client Store
@@ -245,37 +236,27 @@ type CommandResult =
 - Resets on reload / new game.
 - Written to by UI interactions.
 
-```ts
-interface UIClientStore {
-  camera: CameraState;
-  selectedTile: Coord | null;
-  hoveredTile: Coord | null;
-  buildMode: BuildMode | null;       // active tool
-  placementPreview: PlacementPreview | null;
-  activeOverlay: OverlayType | null; // zoning, power, water, etc.
-  settings: SettingsState;
-}
+```
+UIClientStore:
+  - camera — position, target, zoom, pitch, rotation
+  - selectedTile — currently selected grid tile or null
+  - hoveredTile — tile under cursor or null
+  - buildMode — active tool (road, zone, building, demolish) or null
+  - placementPreview — ghost preview during build mode
+  - activeOverlay — current overlay mode (zoning, power, water, etc.)
+  - settings — graphics, audio, controls settings
 ```
 
 ### Selector Pattern
 
 To prevent unnecessary re-renders, UI components subscribe to specific slices of simulation state:
 
-```ts
-// Good — subscribes to a specific value.
-const population = useSimulationStore(s => s.state.population.total);
-
-// Bad — subscribes to entire state object.
-const state = useSimulationStore(s => s.state);
+```
+Good — subscribes to a specific value, e.g. s.state.population.total
+Bad — subscribes to entire state object, e.g. s.state
 ```
 
-Selectors should be defined once per component or slice:
-
-```ts
-const selectMoney = (s: SimulationStore) => s.state.economy.money;
-const selectPopulation = (s: SimulationStore) => s.state.population.total;
-const selectDemand = (s: SimulationStore) => s.state.demand;
-```
+Selectors should be defined once per component or slice, e.g. subscribing only to `economy.money` instead of the entire state.
 
 ### Command Dispatch Flow
 
@@ -302,40 +283,19 @@ The event bus decouples simulation state changes from rendering and UI updates. 
 
 A lightweight typed event emitter with no external dependencies.
 
-```ts
-type EventHandler = (event: GameEvent) => void;
-
-interface EventBus {
-  subscribe: (handler: EventHandler) => () => void;  // unsubscribe
-  emit: (event: GameEvent) => void;
-}
+```
+EventBus:
+  - subscribe(handler) — register listener, returns unsubscribe function
+  - emit(event) — dispatch an event to all subscribers
 ```
 
 ### Subscription Patterns
 
-Rendering subscribes to spatial events:
-
-```ts
-eventBus.subscribe(event => {
-  if (event.type === "TILE_CHANGED") { updateTileMesh(event.coord); }
-  if (event.type === "BUILDING_ADDED") { createBuildingMesh(event.buildingId); }
-  if (event.type === "BUILDING_REMOVED") { removeBuildingMesh(event.buildingId); }
-});
-```
-
-UI subscribes to summary events:
-
-```ts
-eventBus.subscribe(event => {
-  if (event.type === "ECONOMY_TICK") { /* re-render money display */ }
-  if (event.type === "MILESTONE_REACHED") { showUnlockNotification(event); }
-  if (event.type === "SCENARIO_WIN") { showVictoryScreen(); }
-});
-```
+Rendering subscribes to spatial events (`TILE_CHANGED`, `BUILDING_ADDED`, `BUILDING_REMOVED`) to update meshes. UI subscribes to summary events (`ECONOMY_TICK`, `MILESTONE_REACHED`, `SCENARIO_WIN`) to update panels and notifications.
 
 ### Event Types
 
-See `docs/26_SHARED_TYPES_SPEC.md` for the full `GameEvent` union type.
+The full `GameEvent` union is defined in `src/shared/types.ts`.
 
 ### Batch Events
 
@@ -348,5 +308,5 @@ When a single command changes multiple tiles (e.g., drag-painting a zone), the s
 - Batch static geometry.
 - Avoid recreating meshes every frame.
 - Dispose geometries/materials when removed.
-- Keep map small for MVP.
+- Keep map small initially.
 - Profile before optimizing heavily.

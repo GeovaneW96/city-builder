@@ -134,7 +134,7 @@ Influenced by:
 
 Demand expresses what the city needs.
 
-Initial MVP uses RCI demand:
+Use RCI demand:
 
 - Residential demand;
 - Commercial demand;
@@ -225,7 +225,7 @@ Each building should have:
 
 Roads are the backbone of city function.
 
-MVP road behavior:
+Road behavior:
 
 - buildings must be adjacent to roads;
 - road placement costs money;
@@ -243,7 +243,7 @@ Later:
 
 Services improve city function and happiness.
 
-MVP services:
+Initial services:
 
 - power;
 - water;
@@ -269,7 +269,7 @@ The city can fail or enter crisis through:
 - lack of housing;
 - service collapse.
 
-For MVP, the primary failure state is:
+The primary failure state is:
 
 > The city remains bankrupt for a defined period.
 

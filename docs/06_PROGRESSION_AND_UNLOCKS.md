@@ -6,7 +6,7 @@ This document defines how the player unlocks new systems and content.
 
 Progression should create a sense of growth and prevent the player from being overwhelmed early.
 
-## MVP Milestones
+## Milestones
 
 | Population | City Stage | Unlocks |
 |---:|---|---|
@@ -74,7 +74,7 @@ Example flow:
 
 ## Future Unlocks
 
-After MVP:
+Later milestones:
 
 | Population | Possible Unlock |
 |---:|---|
@@ -96,4 +96,4 @@ Later, progression can include:
 - scenario-specific unlocks;
 - achievement-based unlocks.
 
-MVP should use simple population milestones.
+Use simple population milestones.

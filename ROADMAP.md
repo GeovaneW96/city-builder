@@ -7,7 +7,7 @@ Goal: define the game before implementation.
 Deliverables:
 
 - game vision;
-- MVP PRD;
+- PRD;
 - simulation rules;
 - technical architecture;
 - Codex workflow;
@@ -42,7 +42,7 @@ Exit criteria:
 - invalid placement feedback exists;
 - state can be inspected/debugged.
 
-## Phase 2 - Simulation MVP
+## Phase 2 - Simulation
 
 Goal: turn the prototype into a game.
 

@@ -114,11 +114,11 @@ Do not prioritize:
 - multiplayer before single-player is complete;
 - modding before stable data schemas.
 
-## MVP Scope
+## Initial Scope
 
-The MVP is a guided city-builder scenario where the player reaches 1,000 population without bankruptcy.
+The first release is a guided city-builder scenario where the player reaches 1,000 population without bankruptcy.
 
-MVP includes:
+Initial scope includes:
 
 - grid map;
 - road placement;
@@ -134,7 +134,7 @@ MVP includes:
 - save/load;
 - basic tutorial objectives.
 
-MVP excludes:
+Excluded from initial scope:
 
 - multiplayer;
 - terrain editing;
@@ -227,17 +227,16 @@ If a change affects game rules, update the corresponding design doc.
 
 Examples:
 
-- economy behavior -> `docs/06_ECONOMY_AND_BALANCING.md`
-- new unlock -> `docs/07_PROGRESSION_AND_UNLOCKS.md`
-- rendering pattern -> `docs/15_THREEJS_RENDERING_GUIDE.md`
-- new save field -> `docs/16_DATA_MODEL_AND_SAVE_SYSTEM.md`
-- shared type change -> `docs/26_SHARED_TYPES_SPEC.md`
-- data file change -> `docs/27_DATA_FILES_SPEC.md`
-- game loop timing change -> `docs/05_SIMULATION_SYSTEMS.md`
-- store or event bus change -> `docs/14_TECHNICAL_ARCHITECTURE.md`
+- economy behavior -> `docs/05_ECONOMY_AND_BALANCING.md`
+- new unlock -> `docs/06_PROGRESSION_AND_UNLOCKS.md`
+- rendering pattern -> `docs/14_THREEJS_RENDERING_GUIDE.md`
+- new save field -> `docs/15_DATA_MODEL_AND_SAVE_SYSTEM.md`
+- balance change -> `docs/05_ECONOMY_AND_BALANCING.md`
+- game loop timing change -> `docs/04_SIMULATION_SYSTEMS.md`
+- store or event bus change -> `docs/13_TECHNICAL_ARCHITECTURE.md`
 
 ## First Implementation Task
 
-Start with `docs/28_TASK_00_SCAFFOLDING.md`.
+Start with `docs/23_TASK_00_SCAFFOLDING.md`.
 
 That task scaffolds the project, shared types, data files, stores, event bus, grid rendering, and camera. Do not skip it or combine it with later tasks.

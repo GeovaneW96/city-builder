@@ -45,7 +45,7 @@ UI text should be:
 
 ## Controls
 
-Recommended MVP shortcuts:
+Recommended shortcuts:
 
 | Action | Shortcut |
 |---|---|

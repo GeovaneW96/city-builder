@@ -16,7 +16,7 @@ Audio should:
 - create ambient city life;
 - avoid becoming annoying.
 
-## MVP Sound Effects
+## Sound Effects
 
 Recommended first sounds:
 

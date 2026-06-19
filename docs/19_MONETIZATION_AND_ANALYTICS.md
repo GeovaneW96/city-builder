@@ -4,7 +4,7 @@
 
 This document records future monetization and analytics ideas.
 
-Do not implement monetization in MVP unless explicitly decided.
+Do not implement monetization unless explicitly decided.
 
 ## Monetization Principles
 
@@ -44,9 +44,9 @@ Useful metrics:
 - most ignored warning;
 - most used building category.
 
-## MVP Analytics
+## Analytics
 
-Optional for MVP.
+Optional initially.
 
 If added, keep privacy-friendly and local/dev-only first.
 

@@ -4,7 +4,7 @@
 
 Scenarios provide structured goals and replayability.
 
-The MVP should start with one scenario.
+Start with one scenario.
 
 ## Scenario 1: First Settlement
 

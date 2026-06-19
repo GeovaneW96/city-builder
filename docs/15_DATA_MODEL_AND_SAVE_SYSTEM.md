@@ -10,7 +10,7 @@ The save system should:
 
 - preserve the city state;
 - support versioning;
-- be local-first for MVP;
+- be local-first;
 - be easy to migrate;
 - avoid saving unnecessary rendering data.
 
@@ -44,17 +44,13 @@ Do not save:
 
 ## Save Schema
 
-Suggested:
+Suggested fields:
 
-```ts
-type SaveGame = {
-  version: number;
-  createdAt: string;
-  updatedAt: string;
-  cityName: string;
-  state: CityState;
-};
-```
+- `version` — schema version number;
+- `createdAt` — ISO date string of creation;
+- `updatedAt` — ISO date string of last save;
+- `cityName` — player-chosen or default name;
+- `state` — the full `CityState` object.
 
 ## Versioning
 
@@ -66,17 +62,11 @@ saveVersion = 1
 
 When breaking schema changes occur, add migrations.
 
-Example:
-
-```ts
-function migrateSave(save: unknown): SaveGame {
-  // migrate from older versions to current
-}
-```
+A migration function accepts an unknown save blob and returns a typed `SaveGame`, migrating from older versions to the current schema.
 
 ## Storage
 
-MVP options:
+Options:
 
 - localStorage for quick prototype;
 - IndexedDB for larger saves.
@@ -88,7 +78,7 @@ Recommended:
 
 ## Save Slots
 
-MVP:
+Initial:
 
 - one autosave;
 - one manual save.
@@ -130,7 +120,7 @@ When changing save schema:
 
 ## Future Cloud Saves
 
-Not MVP.
+Not in initial scope.
 
 Possible later:
 
@@ -139,4 +129,4 @@ Possible later:
 - shareable city snapshots;
 - scenario leaderboard.
 
-Do not design MVP around cloud saves.
+Do not design the initial version around cloud saves.

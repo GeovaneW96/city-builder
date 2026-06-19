@@ -104,9 +104,9 @@ Secondary target:
 
 - casual players who enjoy cozy building and progression.
 
-## MVP Identity
+## First Playable Identity
 
-The MVP should feel like:
+The first playable version should feel like:
 
 - a small but satisfying city-builder scenario;
 - easy to understand;
@@ -114,16 +114,16 @@ The MVP should feel like:
 - visually charming;
 - capable of failure through bankruptcy or poor planning.
 
-The MVP should not feel like:
+It should not feel like:
 
 - a full Cities: Skylines replacement;
 - a realistic urban planning simulator;
 - a decoration-only sandbox;
 - a tech demo with no player goals.
 
-## Non-Goals for MVP
+## Non-Goals for Initial Release
 
-The MVP will not include:
+The initial release will not include:
 
 - multiplayer;
 - full agent-based citizens;
@@ -155,7 +155,7 @@ The player should learn:
 
 ## Long-Term Potential
 
-After MVP, the game can grow into:
+Future growth can include:
 
 - scenarios;
 - challenge maps;
