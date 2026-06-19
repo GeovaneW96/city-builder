@@ -106,11 +106,11 @@ Entries are sorted by `completionTime` (ascending). Faster completion time ranks
 
 The leaderboard is shown in the scenario complete screen.
 
-| Rank | Player              | Time (months) | Population | Date       |
-| :--: | ------------------- | ------------: | ---------: | ---------- |
-| 1    | Player1             |            14 | 1,050      | 2026-06-18 |
-| 2    | Player2             |            18 | 1,100      | 2026-06-17 |
-| 3    | Player3             |            22 | 1,020      | 2026-06-16 |
+| Rank | Player  | Time (months) | Population | Date       |
+| :--: | ------- | ------------: | ---------: | ---------- |
+|  1   | Player1 |            14 |      1,050 | 2026-06-18 |
+|  2   | Player2 |            18 |      1,100 | 2026-06-17 |
+|  3   | Player3 |            22 |      1,020 | 2026-06-16 |
 
 ## Privacy
 

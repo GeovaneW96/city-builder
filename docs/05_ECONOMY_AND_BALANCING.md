@@ -139,6 +139,36 @@ happiness =
 
 Clamp between 0 and 100.
 
+## Utility and Service Demand
+
+Initial utility demand is intentionally simple and data-driven in `src/data/balance/services.ts`.
+
+Per active building:
+
+| Category    | Power Demand | Water Demand |
+| ----------- | -----------: | -----------: |
+| Residential |            1 |            1 |
+| Commercial  |            2 |            2 |
+| Industrial  |            3 |            3 |
+| Service     |            2 |            2 |
+| Utility     |            2 |            1 |
+
+City hall and parks do not require utilities in the prototype.
+
+Health and education coverage each provide up to +4 happiness at full residential coverage. Parks provide their building happiness effect up to a +15 citywide cap. A power or water shortage applies a -8 utility happiness penalty.
+
+Unemployment is intentionally soft in the first scenario so the player can reach the 50-population commercial zoning milestone before jobs exist. Full unemployment applies up to -8 happiness.
+
+## Pollution Balance
+
+Initial pollution values are data-driven in `src/data/balance/pollution.ts`.
+
+- Industrial pollution radius: 5 tiles.
+- Pollution decays by Manhattan distance from the source.
+- High pollution warning threshold: 45.
+- Residential pollution happiness penalty uses average residential tile pollution divided by 8.
+- Pollution reduces land value by 70% of the pollution added to a tile.
+
 ## Bankruptcy
 
 If money is below 0:

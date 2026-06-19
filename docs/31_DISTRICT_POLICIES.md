@@ -50,57 +50,57 @@ policy: {
 
 Reduces tax rate in the district by a percentage. The city pays a subsidy to compensate.
 
-| Field         |          Value |
-| ------------- | -------------: |
-| id            |     tax_break |
-| tax reduction |           5%  |
-| subsidy cost  |         200/month |
+| Field         |                                             Value |
+| ------------- | ------------------------------------------------: |
+| id            |                                         tax_break |
+| tax reduction |                                                5% |
+| subsidy cost  |                                         200/month |
 | requirements  | 10 commercial or industrial buildings in district |
 
 #### Service Priority
 
 Buildings in the district receive service coverage checks first during the simulation tick. Improves effective coverage but costs a premium.
 
-| Field         |                   Value |
-| ------------- | ----------------------: |
-| id            |      service_priority  |
-| effect        | service checks ordered by district flag |
-| monthly cost  |                  150   |
-| requirements  |  at least one service building in city |
+| Field        |                                   Value |
+| ------------ | --------------------------------------: |
+| id           |                        service_priority |
+| effect       | service checks ordered by district flag |
+| monthly cost |                                     150 |
+| requirements |   at least one service building in city |
 
 #### Smoking Ban
 
 Improves residential happiness in the district.
 
-| Field         |           Value |
-| ------------- | --------------: |
-| id            |   smoking_ban  |
-| happiness     |        +5 residential |
-| monthly cost  |          100   |
-| requirements  |  population ≥ 500 |
+| Field        |            Value |
+| ------------ | ---------------: |
+| id           |      smoking_ban |
+| happiness    |   +5 residential |
+| monthly cost |              100 |
+| requirements | population ≥ 500 |
 
 #### Nightlife
 
 Increases commercial demand in the district but reduces residential happiness.
 
-| Field              |            Value |
-| ------------------ | ---------------: |
-| id                 |      nightlife  |
-| commercial demand  |           +15   |
-| residential happiness |          -3   |
-| monthly cost       |           150   |
-| requirements       |  population ≥ 1000 |
+| Field                 |             Value |
+| --------------------- | ----------------: |
+| id                    |         nightlife |
+| commercial demand     |               +15 |
+| residential happiness |                -3 |
+| monthly cost          |               150 |
+| requirements          | population ≥ 1000 |
 
 #### Green Initiative
 
 Reduces pollution from industrial buildings in the district.
 
-| Field               |             Value |
-| ------------------- | ----------------: |
-| id                  | green_initiative |
-| pollution reduction |            -50%  |
-| monthly cost        |             200  |
-| requirements        |  at least one industrial building in district |
+| Field               |                                        Value |
+| ------------------- | -------------------------------------------: |
+| id                  |                             green_initiative |
+| pollution reduction |                                         -50% |
+| monthly cost        |                                          200 |
+| requirements        | at least one industrial building in district |
 
 ### Policy Limits
 
@@ -112,15 +112,15 @@ Reduces pollution from industrial buildings in the district.
 
 When a policy is active, the simulation systems read district membership to apply modifiers:
 
-| System      | Policy              | Effect                                                      |
-| ----------- | ------------------- | ----------------------------------------------------------- |
-| Economy     | Tax break           | district tax rate = city rate − 5%; subsidy deducted monthly |
-| Services    | Service priority    | buildings in district processed first in service tick       |
-| Happiness   | Smoking ban         | +5 happiness for residential buildings in district          |
-| Happiness   | Nightlife           | −3 happiness for residential buildings in district          |
-| Demand      | Nightlife           | +15 commercial demand contributed from district             |
-| Pollution   | Green initiative    | −50% pollution output from industrial buildings in district |
-| Economy     | All policies        | monthlyCost deducted from budget per active policy          |
+| System    | Policy           | Effect                                                       |
+| --------- | ---------------- | ------------------------------------------------------------ |
+| Economy   | Tax break        | district tax rate = city rate − 5%; subsidy deducted monthly |
+| Services  | Service priority | buildings in district processed first in service tick        |
+| Happiness | Smoking ban      | +5 happiness for residential buildings in district           |
+| Happiness | Nightlife        | −3 happiness for residential buildings in district           |
+| Demand    | Nightlife        | +15 commercial demand contributed from district              |
+| Pollution | Green initiative | −50% pollution output from industrial buildings in district  |
+| Economy   | All policies     | monthlyCost deducted from budget per active policy           |
 
 ## District Overlay
 
@@ -133,20 +133,20 @@ The district overlay is a rendering feature:
 
 ## Data Constants
 
-| Constant                          | Value |
-| --------------------------------- | ----: |
-| MAX_POLICIES_PER_DISTRICT         |     3 |
-| MIN_DISTRICT_SIZE                 |     2 |
-| TAX_BREAK_REDUCTION               |  0.05 |
-| TAX_BREAK_SUBSIDY                 |   200 |
-| SERVICE_PRIORITY_COST             |   150 |
-| SMOKING_BAN_HAPPINESS             |     5 |
-| SMOKING_BAN_COST                  |   100 |
-| NIGHTLIFE_COMMERCIAL_DEMAND       |    15 |
-| NIGHTLIFE_HAPPINESS_PENALTY       |    -3 |
-| NIGHTLIFE_COST                    |   150 |
-| GREEN_INITIATIVE_POLLUTION_REDUCTION | 0.50 |
-| GREEN_INITIATIVE_COST             |   200 |
+| Constant                             | Value |
+| ------------------------------------ | ----: |
+| MAX_POLICIES_PER_DISTRICT            |     3 |
+| MIN_DISTRICT_SIZE                    |     2 |
+| TAX_BREAK_REDUCTION                  |  0.05 |
+| TAX_BREAK_SUBSIDY                    |   200 |
+| SERVICE_PRIORITY_COST                |   150 |
+| SMOKING_BAN_HAPPINESS                |     5 |
+| SMOKING_BAN_COST                     |   100 |
+| NIGHTLIFE_COMMERCIAL_DEMAND          |    15 |
+| NIGHTLIFE_HAPPINESS_PENALTY          |    -3 |
+| NIGHTLIFE_COST                       |   150 |
+| GREEN_INITIATIVE_POLLUTION_REDUCTION |  0.50 |
+| GREEN_INITIATIVE_COST                |   200 |
 
 ## Tests
 

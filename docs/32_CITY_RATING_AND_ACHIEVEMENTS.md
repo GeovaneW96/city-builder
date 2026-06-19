@@ -12,13 +12,13 @@ The city rating is a single letter grade (A through F) computed from weighted ca
 
 ### Categories
 
-| Category      | Weight | Description                                      |
-| ------------- | ------ | ------------------------------------------------ |
-| Economy       | 30%    | Tax income, expenses, budget balance, debt       |
-| Happiness     | 25%    | Average citizen happiness                        |
-| Services      | 20%    | Coverage and capacity of health, education, etc. |
-| Environment   | 15%    | Pollution levels, park coverage                  |
-| Growth        | 10%    | Population growth rate, building density          |
+| Category    | Weight | Description                                      |
+| ----------- | ------ | ------------------------------------------------ |
+| Economy     | 30%    | Tax income, expenses, budget balance, debt       |
+| Happiness   | 25%    | Average citizen happiness                        |
+| Services    | 20%    | Coverage and capacity of health, education, etc. |
+| Environment | 15%    | Pollution levels, park coverage                  |
+| Growth      | 10%    | Population growth rate, building density         |
 
 Each category is scored 0–100 independently, then combined via weighted average.
 
@@ -26,13 +26,13 @@ Each category is scored 0–100 independently, then combined via weighted averag
 
 #### Economy (0–100)
 
-| Condition                                         | Score |
-| ------------------------------------------------- | ----: |
-| Positive income, no debt, healthy reserves        | 81–100 |
-| Positive income, manageable debt                  | 61–80 |
-| Sometimes negative, some debt                     | 41–60 |
-| Frequently negative, significant debt             | 21–40 |
-| In or near bankruptcy                             | 0–20 |
+| Condition                                  |  Score |
+| ------------------------------------------ | -----: |
+| Positive income, no debt, healthy reserves | 81–100 |
+| Positive income, manageable debt           |  61–80 |
+| Sometimes negative, some debt              |  41–60 |
+| Frequently negative, significant debt      |  21–40 |
+| In or near bankruptcy                      |   0–20 |
 
 #### Happiness (0–100)
 
@@ -50,33 +50,33 @@ Percentage of residential buildings within coverage radius of at least one healt
 
 #### Environment (0–100)
 
-| Condition                                                      | Score |
-| -------------------------------------------------------------- | ----: |
-| Pollution < 5%, parks cover > 10% of city                     | 81–100 |
-| Pollution < 10%, parks cover > 5%                             | 61–80 |
-| Pollution < 20%                                               | 41–60 |
-| Pollution < 40%                                               | 21–40 |
-| Pollution >= 40%                                              | 0–20 |
+| Condition                                 |  Score |
+| ----------------------------------------- | -----: |
+| Pollution < 5%, parks cover > 10% of city | 81–100 |
+| Pollution < 10%, parks cover > 5%         |  61–80 |
+| Pollution < 20%                           |  41–60 |
+| Pollution < 40%                           |  21–40 |
+| Pollution >= 40%                          |   0–20 |
 
 #### Growth (0–100)
 
-| Condition                                                            | Score |
-| -------------------------------------------------------------------- | ----: |
-| Population growth rate > 5% per month and active construction       | 81–100 |
-| Population growth rate > 2% per month                               | 61–80 |
-| Stable population (−1% to +2% per month)                            | 41–60 |
-| Population declining (−5% to −1% per month)                         | 21–40 |
-| Population declining faster than −5% per month                      | 0–20 |
+| Condition                                                     |  Score |
+| ------------------------------------------------------------- | -----: |
+| Population growth rate > 5% per month and active construction | 81–100 |
+| Population growth rate > 2% per month                         |  61–80 |
+| Stable population (−1% to +2% per month)                      |  41–60 |
+| Population declining (−5% to −1% per month)                   |  21–40 |
+| Population declining faster than −5% per month                |   0–20 |
 
 ### Letter Grade Mapping
 
-| Weighted Average | Grade | Effect on Immigration        |
-| :--------------: | :---: | ---------------------------- |
-| >= 90            | A     | +10% immigration rate bonus  |
-| >= 75            | B     | +5% immigration rate bonus   |
-| >= 60            | C     | No modifier                  |
-| >= 40            | D     | −10% immigration rate penalty|
-| < 40             | F     | −20% immigration rate penalty|
+| Weighted Average | Grade | Effect on Immigration         |
+| :--------------: | :---: | ----------------------------- |
+|      >= 90       |   A   | +10% immigration rate bonus   |
+|      >= 75       |   B   | +5% immigration rate bonus    |
+|      >= 60       |   C   | No modifier                   |
+|      >= 40       |   D   | −10% immigration rate penalty |
+|       < 40       |   F   | −20% immigration rate penalty |
 
 ### Rating Formula
 
@@ -94,9 +94,9 @@ weightedScore =
 ```ts
 interface CityRatingConfig {
   categoryWeights: Record<RatingCategory, number>; // sum to 1.0
-  gradeThresholds: Record<LetterGrade, number>;     // minimum weighted score
+  gradeThresholds: Record<LetterGrade, number>; // minimum weighted score
   immigrationModifiers: Record<LetterGrade, number>; // multiplicative factor
-  calculationInterval: number;                       // ticks between recalculation
+  calculationInterval: number; // ticks between recalculation
 }
 ```
 
@@ -134,7 +134,7 @@ interface AchievementDefinition {
   id: string;
   name: string;
   description: string;
-  icon: string;                    // icon identifier
+  icon: string; // icon identifier
   condition: (state: CityState) => boolean;
   reward?: AchievementReward;
 }
@@ -152,22 +152,22 @@ Definitions live in `src/data/achievements/` and are data-driven.
 ```ts
 interface AchievementState {
   id: string;
-  unlockedAt: number | null;       // tick when unlocked, or null if not yet
+  unlockedAt: number | null; // tick when unlocked, or null if not yet
 }
 ```
 
 ### Initial Achievement List
 
-| ID                 | Name               | Condition                                                         | Reward   |
-| ------------------ | ------------------ | ----------------------------------------------------------------- | -------: |
-| first_steps        | First Steps        | Reach 100 population                                              |    1,000 |
-| no_debt            | No Debt            | Reach 1,000 population without ever going negative on money       |    5,000 |
-| green_start        | Green Start        | Keep city-wide pollution < 10% until reaching 500 population      |    3,000 |
-| happy_town         | Happy Town         | Keep happiness > 80% for 10 consecutive ticks                     |    2,000 |
-| efficient_planner  | Efficient Planner  | Reach 1,000 population with fewer than 100 road tiles placed      |    5,000 |
-| balanced_economy   | Balanced Economy   | Maintain positive net income for 12 consecutive months            |    4,000 |
-| city_planner       | City Planner       | Unlock all milestones in a single playthrough                     |   10,000 |
-| road_builder       | Road Builder       | Place a total of 500 road tiles (cumulative across sessions)      |    2,000 |
+| ID                | Name              | Condition                                                    | Reward |
+| ----------------- | ----------------- | ------------------------------------------------------------ | -----: |
+| first_steps       | First Steps       | Reach 100 population                                         |  1,000 |
+| no_debt           | No Debt           | Reach 1,000 population without ever going negative on money  |  5,000 |
+| green_start       | Green Start       | Keep city-wide pollution < 10% until reaching 500 population |  3,000 |
+| happy_town        | Happy Town        | Keep happiness > 80% for 10 consecutive ticks                |  2,000 |
+| efficient_planner | Efficient Planner | Reach 1,000 population with fewer than 100 road tiles placed |  5,000 |
+| balanced_economy  | Balanced Economy  | Maintain positive net income for 12 consecutive months       |  4,000 |
+| city_planner      | City Planner      | Unlock all milestones in a single playthrough                | 10,000 |
+| road_builder      | Road Builder      | Place a total of 500 road tiles (cumulative across sessions) |  2,000 |
 
 ### Condition Semantics
 

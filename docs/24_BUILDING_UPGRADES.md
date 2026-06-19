@@ -20,14 +20,14 @@ Zone-grown buildings start at Tier 1 when first spawned. Upgrades happen automat
 
 A building upgrades from its current tier to the next when all of the following are met:
 
-| Condition              | Tier 1 → 2               | Tier 2 → 3               |
-| ---------------------- | ------------------------ | ------------------------ |
-| Min land value         | 30                       | 60                       |
-| Min city happiness     | 50                       | 65                       |
-| Health coverage        | Within radius of clinic  | Within radius of clinic  |
-| Education coverage     | Not required             | Within radius of school  |
-| Population milestone   | 200                      | 500                      |
-| Cooldown (ticks)       | 12                       | 24                       |
+| Condition            | Tier 1 → 2              | Tier 2 → 3              |
+| -------------------- | ----------------------- | ----------------------- |
+| Min land value       | 30                      | 60                      |
+| Min city happiness   | 50                      | 65                      |
+| Health coverage      | Within radius of clinic | Within radius of clinic |
+| Education coverage   | Not required            | Within radius of school |
+| Population milestone | 200                     | 500                     |
+| Cooldown (ticks)     | 12                      | 24                      |
 
 If the building has any active warnings (no road access, abandoned status, etc.), upgrades are blocked until warnings are resolved.
 
@@ -45,31 +45,31 @@ Each tier is a separate building definition in data files. Tier 1 definitions ar
 
 ### Residential
 
-| Field               | Tier 1 (small_house) | Tier 2 (medium_house) | Tier 3 (high_apartment) |
-| ------------------- | :------------------: | :-------------------: | :---------------------: |
-| `populationCapacity`|          8           |          20           |           50            |
-| `jobs`              |          0           |          0            |            0            |
-| `size`              |         1x1          |         2x1           |           2x2           |
-| `upkeep`            |          0           |          5            |           15            |
+| Field                | Tier 1 (small_house) | Tier 2 (medium_house) | Tier 3 (high_apartment) |
+| -------------------- | :------------------: | :-------------------: | :---------------------: |
+| `populationCapacity` |          8           |          20           |           50            |
+| `jobs`               |          0           |           0           |            0            |
+| `size`               |         1x1          |          2x1          |           2x2           |
+| `upkeep`             |          0           |           5           |           15            |
 
 ### Commercial
 
-| Field               | Tier 1 (small_shop) | Tier 2 (medium_shop) | Tier 3 (large_store) |
-| ------------------- | :-----------------: | :------------------: | :------------------: |
-| `populationCapacity`|          0          |          0           |          0           |
-| `jobs`              |          6          |          15          |          35          |
-| `size`              |         1x1         |         2x1          |         2x2          |
-| `upkeep`            |          0          |          8           |          25          |
+| Field                | Tier 1 (small_shop) | Tier 2 (medium_shop) | Tier 3 (large_store) |
+| -------------------- | :-----------------: | :------------------: | :------------------: |
+| `populationCapacity` |          0          |          0           |          0           |
+| `jobs`               |          6          |          15          |          35          |
+| `size`               |         1x1         |         2x1          |         2x2          |
+| `upkeep`             |          0          |          8           |          25          |
 
 ### Industrial
 
-| Field               | Tier 1 (small_factory) | Tier 2 (medium_factory) | Tier 3 (large_plant) |
-| ------------------- | :--------------------: | :---------------------: | :------------------: |
-| `populationCapacity`|           0            |            0            |          0           |
-| `jobs`              |           12           |           28            |          60          |
-| `size`              |          2x2           |          3x2            |         3x3          |
-| `upkeep`            |           0            |           12            |          40          |
-| `pollution`         |         medium         |          medium         |        high          |
+| Field                | Tier 1 (small_factory) | Tier 2 (medium_factory) | Tier 3 (large_plant) |
+| -------------------- | :--------------------: | :---------------------: | :------------------: |
+| `populationCapacity` |           0            |            0            |          0           |
+| `jobs`               |           12           |           28            |          60          |
+| `size`               |          2x2           |           3x2           |         3x3          |
+| `upkeep`             |           0            |           12            |          40          |
+| `pollution`          |         medium         |         medium          |         high         |
 
 ## State Tracking
 
@@ -118,15 +118,15 @@ UPGRADE_REQUIRES_EDUCATION_T3 = true
 
 ## Integration Points
 
-| System        | Integration                                                    |
-| ------------- | -------------------------------------------------------------- |
-| Land Value    | Thresholds gate upgrade eligibility                            |
-| Happiness     | City happiness minimum required per tier                       |
-| Services      | Health and education coverage checked at building location     |
-| Progression   | Population milestones unlock higher tiers globally             |
-| Warnings      | Active warnings block upgrades                                 |
-| Economy       | Upgraded buildings have higher upkeep but more jobs/tax income |
-| Rendering     | Each tier maps to a different visual asset                     |
+| System      | Integration                                                    |
+| ----------- | -------------------------------------------------------------- |
+| Land Value  | Thresholds gate upgrade eligibility                            |
+| Happiness   | City happiness minimum required per tier                       |
+| Services    | Health and education coverage checked at building location     |
+| Progression | Population milestones unlock higher tiers globally             |
+| Warnings    | Active warnings block upgrades                                 |
+| Economy     | Upgraded buildings have higher upkeep but more jobs/tax income |
+| Rendering   | Each tier maps to a different visual asset                     |
 
 ## Tests
 

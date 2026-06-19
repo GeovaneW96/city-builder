@@ -36,19 +36,19 @@ interface Neighborhood {
   bounds: { minX: number; minY: number; maxX: number; maxY: number };
   tileCount: number;
   population: number;
-  happiness: number;           // 0–100 composite
+  happiness: number; // 0–100 composite
   components: HappinessComponents;
-  buildings: string[];         // building instance IDs
+  buildings: string[]; // building instance IDs
 }
 
 interface HappinessComponents {
   base: number;
-  tax: number;                 // same city-wide tax applies
+  tax: number; // same city-wide tax applies
   unemployment: number;
   services: number;
   pollution: number;
   parks: number;
-  traffic: number;             // Phase 3 placeholder
+  traffic: number; // Phase 3 placeholder
 }
 ```
 
@@ -185,14 +185,14 @@ NEIGHBORHOOD_MIN_POPULATION = 1
 
 ## Integration Points
 
-| System    | Integration                                                           |
-| --------- | -------------------------------------------------------------------- |
-| Happiness | City happiness is weighted average of neighborhoods                  |
-| Services  | Neighborhood coverage computed per neighborhood                      |
-| Pollution | Neighborhood average pollution affects local happiness               |
-| Parks     | Neighborhood park count affects local happiness                      |
-| UI        | Overlay rendering, tooltip per neighborhood                          |
-| Warnings  | Low neighborhood happiness can trigger neighborhood-level warning     |
+| System    | Integration                                                       |
+| --------- | ----------------------------------------------------------------- |
+| Happiness | City happiness is weighted average of neighborhoods               |
+| Services  | Neighborhood coverage computed per neighborhood                   |
+| Pollution | Neighborhood average pollution affects local happiness            |
+| Parks     | Neighborhood park count affects local happiness                   |
+| UI        | Overlay rendering, tooltip per neighborhood                       |
+| Warnings  | Low neighborhood happiness can trigger neighborhood-level warning |
 
 ## Tests
 

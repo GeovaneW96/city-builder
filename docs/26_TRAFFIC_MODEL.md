@@ -8,10 +8,10 @@ This document defines the Phase 2 abstract traffic model for the city builder. T
 
 Each road type has a trip capacity per tile:
 
-| Road Type   | Capacity (trips per tile) |
-| ----------- | :-----------------------: |
-| Dirt road   |            10             |
-| Paved road  |            25             |
+| Road Type  | Capacity (trips per tile) |
+| ---------- | :-----------------------: |
+| Dirt road  |            10             |
+| Paved road |            25             |
 
 Capacity represents how many trip units a single road tile can handle before becoming congested.
 
@@ -19,12 +19,12 @@ Capacity represents how many trip units a single road tile can handle before bec
 
 Every active building generates trips based on its type and size:
 
-| Source                    | Formula                         | Example                                 |
-| ------------------------- | ------------------------------- | --------------------------------------- |
-| Residential commute trips | `population / 4`                | House with capacity 8 → 2 trips         |
-| Commercial customer trips | `commercialJobs × 2`            | Small shop (6 jobs) → 12 trips          |
-| Industrial cargo trips    | `industrialJobs × 3`            | Small factory (12 jobs) → 36 trips      |
-| Service trips             | `serviceJobs × 1`               | Clinic (8 jobs) → 8 trips               |
+| Source                    | Formula              | Example                            |
+| ------------------------- | -------------------- | ---------------------------------- |
+| Residential commute trips | `population / 4`     | House with capacity 8 → 2 trips    |
+| Commercial customer trips | `commercialJobs × 2` | Small shop (6 jobs) → 12 trips     |
+| Industrial cargo trips    | `industrialJobs × 3` | Small factory (12 jobs) → 36 trips |
+| Service trips             | `serviceJobs × 1`    | Clinic (8 jobs) → 8 trips          |
 
 All values round up (ceiling) to the nearest integer.
 
@@ -87,19 +87,19 @@ Multiplies industrial tax income and goods output. Cannot go below `INDUSTRIAL_M
 
 ### Summary Table
 
-| Effect                                  | At cityCongestion = 50 | At cityCongestion = 75 | At cityCongestion = 100 |
-| --------------------------------------- | :--------------------: | :--------------------: | :---------------------: |
-| Happiness penalty                       |           0            |          −7.5          |           −15           |
-| Commercial productivity multiplier      |          1.0           |         0.875          |          0.75           |
-| Industrial productivity multiplier      |          1.0           |          0.85          |          0.70           |
+| Effect                             | At cityCongestion = 50 | At cityCongestion = 75 | At cityCongestion = 100 |
+| ---------------------------------- | :--------------------: | :--------------------: | :---------------------: |
+| Happiness penalty                  |           0            |          −7.5          |           −15           |
+| Commercial productivity multiplier |          1.0           |         0.875          |          0.75           |
+| Industrial productivity multiplier |          1.0           |          0.85          |          0.70           |
 
 ## Warnings
 
-| Condition                      | Warning                       | Severity |
-| ------------------------------ | ----------------------------- | :------: |
-| `cityCongestion > 75`          | "Traffic congestion"          |  high    |
-| Any segment at 100% saturation | "Road segment at capacity"    |  medium  |
-| Average commute > threshold    | "Long commute times"          |  low     |
+| Condition                      | Warning                    | Severity |
+| ------------------------------ | -------------------------- | :------: |
+| `cityCongestion > 75`          | "Traffic congestion"       |   high   |
+| Any segment at 100% saturation | "Road segment at capacity" |  medium  |
+| Average commute > threshold    | "Long commute times"       |   low    |
 
 The general "Traffic congestion" warning includes the current congestion percentage and a suggestion to upgrade roads or add alternative routes.
 
@@ -126,14 +126,14 @@ SEGMENT_WARNING_THRESHOLD          = 1.0
 
 ## Integration Points
 
-| System     | Integration                                                       |
-| ---------- | ----------------------------------------------------------------- |
-| Happiness  | Traffic happiness penalty applied as negative modifier            |
-| Economy    | Commercial and industrial income multiplied by traffic penalty    |
-| Goods      | Industrial goods output scaled by industrial productivity penalty |
-| Warnings   | Traffic congestion and saturated segment warnings                 |
-| UI         | Congestion overlay, per-segment tooltip, city congestion stat     |
-| Roads      | Per-road-type capacity read from road definition                  |
+| System    | Integration                                                       |
+| --------- | ----------------------------------------------------------------- |
+| Happiness | Traffic happiness penalty applied as negative modifier            |
+| Economy   | Commercial and industrial income multiplied by traffic penalty    |
+| Goods     | Industrial goods output scaled by industrial productivity penalty |
+| Warnings  | Traffic congestion and saturated segment warnings                 |
+| UI        | Congestion overlay, per-segment tooltip, city congestion stat     |
+| Roads     | Per-road-type capacity read from road definition                  |
 
 ## Tests
 

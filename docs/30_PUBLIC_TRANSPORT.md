@@ -12,34 +12,36 @@ This document defines the bus system — the first public transit option in the 
 
 ## Bus Stop
 
-| Field        |  Value |
-| ------------ | -----: |
-| id           | bus_stop |
-| category     | transit |
-| size         |    1×1 |
-| placedOn     |   road |
-| cost         |    500 |
-| upkeep       |     50 |
-| unlockPopulation | 2500 |
+| Field            |    Value |
+| ---------------- | -------: |
+| id               | bus_stop |
+| category         |  transit |
+| size             |      1×1 |
+| placedOn         |     road |
+| cost             |      500 |
+| upkeep           |       50 |
+| unlockPopulation |     2500 |
 
 Placement rules:
+
 - must be placed on an existing road tile;
 - multiple stops can exist on the same tile (route nodes, not physical collisions);
 - stops are not buildings in the traditional sense — they are lightweight markers on the road network.
 
 ## Bus Depot
 
-| Field        |                 Value |
-| ------------ | --------------------: |
-| id           |           bus_depot |
-| category     |              transit |
-| size         |                 3×3 |
-| cost         |              15,000 |
-| upkeep       |                800 |
-| workers      |                 15 |
-| unlockPopulation |             2500 |
+| Field            |     Value |
+| ---------------- | --------: |
+| id               | bus_depot |
+| category         |   transit |
+| size             |       3×3 |
+| cost             |    15,000 |
+| upkeep           |       800 |
+| workers          |        15 |
+| unlockPopulation |      2500 |
 
 Placement rules:
+
 - standard building placement (3x3 footprint, road adjacent);
 - at least one depot must exist for routes to operate;
 - multiple depots allowed.
@@ -74,11 +76,11 @@ A building is "covered by transit" if it is within 4 tiles of any bus stop.
 
 ### Coverage Effects
 
-| Building Type | Effect                                    |
-| ------------- | ----------------------------------------- |
-| Residential   | Traffic congestion −20%, happiness +3     |
-| Commercial    | Traffic congestion −20%, happiness +2     |
-| Industrial    | Traffic congestion −20%                   |
+| Building Type | Effect                                |
+| ------------- | ------------------------------------- |
+| Residential   | Traffic congestion −20%, happiness +3 |
+| Commercial    | Traffic congestion −20%, happiness +2 |
+| Industrial    | Traffic congestion −20%               |
 
 ### Ridership
 
@@ -105,29 +107,29 @@ publicTransportState: {
 
 ## Warnings
 
-| Warning                    | Condition                           |
-| -------------------------- | ----------------------------------- |
-| Bus route has no depot     | A route exists with no valid depot  |
-| Route too short            | A route has < 2 stops               |
-| No bus depot               | Stops exist but no depot is built   |
+| Warning                | Condition                          |
+| ---------------------- | ---------------------------------- |
+| Bus route has no depot | A route exists with no valid depot |
+| Route too short        | A route has < 2 stops              |
+| No bus depot           | Stops exist but no depot is built  |
 
 ## Data Constants
 
-| Constant                       |  Value |
-| ------------------------------ | -----: |
-| BUS_STOP_COST                  |    500 |
-| BUS_STOP_UPKEEP                |     50 |
-| BUS_DEPOT_COST                 |  15000 |
-| BUS_DEPOT_UPKEEP               |    800 |
-| BUS_DEPOT_WORKERS              |     15 |
-| BUS_ROUTE_UPKEEP               |    100 |
-| BUS_UNLOCK_POP                 |   2500 |
-| TRANSIT_COVERAGE_RADIUS        |      4 |
-| TRAFFIC_REDUCTION_PERCENT      |   0.20 |
-| RESIDENTIAL_HAPPINESS_BONUS    |      3 |
-| COMMERCIAL_HAPPINESS_BONUS     |      2 |
-| RIDERSHIP_PERCENT_OF_COVERED   |   0.30 |
-| MIN_STOPS_PER_ROUTE            |      2 |
+| Constant                     | Value |
+| ---------------------------- | ----: |
+| BUS_STOP_COST                |   500 |
+| BUS_STOP_UPKEEP              |    50 |
+| BUS_DEPOT_COST               | 15000 |
+| BUS_DEPOT_UPKEEP             |   800 |
+| BUS_DEPOT_WORKERS            |    15 |
+| BUS_ROUTE_UPKEEP             |   100 |
+| BUS_UNLOCK_POP               |  2500 |
+| TRANSIT_COVERAGE_RADIUS      |     4 |
+| TRAFFIC_REDUCTION_PERCENT    |  0.20 |
+| RESIDENTIAL_HAPPINESS_BONUS  |     3 |
+| COMMERCIAL_HAPPINESS_BONUS   |     2 |
+| RIDERSHIP_PERCENT_OF_COVERED |  0.30 |
+| MIN_STOPS_PER_ROUTE          |     2 |
 
 ## Tests
 

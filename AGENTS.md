@@ -281,5 +281,3 @@ Examples:
 - balance change -> `docs/05_ECONOMY_AND_BALANCING.md`
 - game loop timing change -> `docs/04_SIMULATION_SYSTEMS.md`
 - store or event bus change -> `docs/13_TECHNICAL_ARCHITECTURE.md`
-
-

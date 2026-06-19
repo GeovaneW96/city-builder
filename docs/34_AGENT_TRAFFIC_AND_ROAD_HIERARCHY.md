@@ -10,13 +10,13 @@ Three road types with distinct capacity, speed, and cost.
 
 ### Road Type Definitions
 
-| Property         |     Local |   Collector |   Arterial |
-| ---------------- | --------: | ----------: | ---------: |
-| Capacity         |        25 |          50 |        100 |
-| Speed multiplier |       1.0 |         1.5 |        2.0 |
-| Cost per tile    |        50 |         150 |        300 |
-| Monthly upkeep   |         1 |           3 |          5 |
-| Road type        | unpaved   | paved       | paved      |
+| Property         |   Local | Collector | Arterial |
+| ---------------- | ------: | --------: | -------: |
+| Capacity         |      25 |        50 |      100 |
+| Speed multiplier |     1.0 |       1.5 |      2.0 |
+| Cost per tile    |      50 |       150 |      300 |
+| Monthly upkeep   |       1 |         3 |        5 |
+| Road type        | unpaved |     paved |    paved |
 
 ### Upgrade and Downgrade
 
@@ -59,11 +59,11 @@ interface TrafficAgent:
 
 ### Agent Spawning Rules
 
-| Agent Type   | Origin              | Destination                  | Spawn Condition                     |
-| ------------ | ------------------- | ---------------------------- | ----------------------------------- |
-| Commuter     | Residential building | Job building                 | Residential has workers, job exists |
-| Customer     | Residential building | Commercial building          | Commercial has capacity             |
-| Cargo        | Industrial building  | Commercial building          | Industrial produces goods           |
+| Agent Type | Origin               | Destination         | Spawn Condition                     |
+| ---------- | -------------------- | ------------------- | ----------------------------------- |
+| Commuter   | Residential building | Job building        | Residential has workers, job exists |
+| Customer   | Residential building | Commercial building | Commercial has capacity             |
+| Cargo      | Industrial building  | Commercial building | Industrial produces goods           |
 
 ### Agent Budget
 
@@ -89,10 +89,10 @@ pathfind(startTile, endTile):
 
 ### Agent Travel Time Effects
 
-| Effect                  | Formula                                                          |
-| ----------------------- | ---------------------------------------------------------------- |
-| Happiness penalty       | `-floor(commuteTicks / 10)` (per commuting agent, averaged)      |
-| Commercial effectiveness| `commercialIncome *= max(0.5, 1 - avgCommuteTicks / 50)`         |
+| Effect                   | Formula                                                     |
+| ------------------------ | ----------------------------------------------------------- |
+| Happiness penalty        | `-floor(commuteTicks / 10)` (per commuting agent, averaged) |
+| Commercial effectiveness | `commercialIncome *= max(0.5, 1 - avgCommuteTicks / 50)`    |
 
 ### Agent Despawn
 
@@ -106,11 +106,11 @@ An intersection is any road tile where two or more road segments meet orthogonal
 
 ### Traffic Light Placement
 
-| Property   | Value    |
-| ---------- | -------- |
-| Cost       | 1,000    |
-| Upkeep     | 50/month |
-| Effect     | Reduces intersection congestion by 50% |
+| Property | Value                                  |
+| -------- | -------------------------------------- |
+| Cost     | 1,000                                  |
+| Upkeep   | 50/month                               |
+| Effect   | Reduces intersection congestion by 50% |
 
 Traffic lights are placed manually on intersections. Only one traffic light per intersection.
 
@@ -126,12 +126,12 @@ Color is determined each tick from the intersection's outgoing edge congestion.
 
 ## Performance Budget
 
-| Constraint                         |        Value |
-| ---------------------------------- | -----------: |
-| Max active agents                  |          200 |
-| Max pathfind steps per agent       |          500 |
-| Agent tick frequency               | Every 4th simulation tick |
-| Road network dirty rebuild         | On road add/remove only |
+| Constraint                   |                     Value |
+| ---------------------------- | ------------------------: |
+| Max active agents            |                       200 |
+| Max pathfind steps per agent |                       500 |
+| Agent tick frequency         | Every 4th simulation tick |
+| Road network dirty rebuild   |   On road add/remove only |
 
 ### Dirty Tracking
 

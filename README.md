@@ -6,9 +6,9 @@ The goal is not to clone a full AAA city builder at first. The goal is to create
 
 ## Current Status
 
-Documentation and planning phase.
+First playable foundation slice.
 
-No production game code should be implemented until the initial scope, core gameplay loop, and technical architecture are clear.
+The browser app now includes a 64x64 Three.js grid, build tools for roads, zoning, manual services, auto-growing buildings, monthly simulation ticks, economy, demand, happiness, warnings, milestones, tutorial objectives, and local save/load.
 
 ## Product Vision
 

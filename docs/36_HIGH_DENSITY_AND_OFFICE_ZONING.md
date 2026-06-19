@@ -43,11 +43,11 @@ High-density industrial is excluded (industrial remains medium-density maximum).
 
 | Building             | Zone Type  | Size | Population Capacity | Jobs | Land Value Required |
 | -------------------- | ---------- | ---: | ------------------: | ---: | ------------------: |
-| Medium house         | medium_res |  1x1 |                  20 |    0 |                 50 |
-| High-rise apartment  | high_res   |  2x2 |                  50 |    0 |                 75 |
-| Medium shop          | medium_com |  1x1 |                   0 |   15 |                 50 |
-| High-rise commercial | high_com   |  2x2 |                   0 |   40 |                 75 |
-| Medium factory       | medium_ind |  2x2 |                   0 |   30 |                 50 |
+| Medium house         | medium_res |  1x1 |                  20 |    0 |                  50 |
+| High-rise apartment  | high_res   |  2x2 |                  50 |    0 |                  75 |
+| Medium shop          | medium_com |  1x1 |                   0 |   15 |                  50 |
+| High-rise commercial | high_com   |  2x2 |                   0 |   40 |                  75 |
+| Medium factory       | medium_ind |  2x2 |                   0 |   30 |                  50 |
 
 ### Zone Painting UI
 
@@ -94,8 +94,8 @@ Office zones provide skilled, high-tax jobs with no pollution. They require an e
 
 | Building     | Size | Population Capacity | Jobs | Cost | Upkeep |
 | ------------ | ---: | ------------------: | ---: | ---: | -----: |
-| Small office |  2x2 |                   0 |   20 | 0*   |    0   |
-| Large office |  3x3 |                   0 |   50 | 0*   |    0   |
+| Small office |  2x2 |                   0 |   20 |  0\* |      0 |
+| Large office |  3x3 |                   0 |   50 |  0\* |      0 |
 
 \*No construction cost. Office buildings are zone-grown (paint the zone, building grows automatically).
 
@@ -136,13 +136,13 @@ Where `officeTaxMultiplier = taxRate / 10` (same as other zone types).
 
 ### Comparison: Office vs Commercial
 
-| Property          |      Commercial |            Office |
-| ----------------- | --------------: | ----------------: |
-| Base tax per job  |               5 |                10 |
-| Education req.    |            None | Workforce >= 40%  |
-| Pollution         |            Low  |                 0 |
-| Unlock            |            None | 5,000 pop + 40% edu |
-| Demand sensitivity| Population-based| Education + capacity |
+| Property           |       Commercial |               Office |
+| ------------------ | ---------------: | -------------------: |
+| Base tax per job   |                5 |                   10 |
+| Education req.     |             None |     Workforce >= 40% |
+| Pollution          |              Low |                    0 |
+| Unlock             |             None |  5,000 pop + 40% edu |
+| Demand sensitivity | Population-based | Education + capacity |
 
 Office zones complement commercial zones — they pay more taxes per job but require an educated population to function effectively.
 
@@ -184,15 +184,15 @@ Density and office logic is integrated into existing steps:
 
 Land value affects density viability. The base land value system is defined in `23_LAND_VALUE_SYSTEM.md`. Density-specific thresholds build on that system with these additional notes:
 
-| Source                | Land Value Effect |
-| --------------------- | ----------------: |
-| Park nearby           |               +5  |
-| Health coverage       |               +3  |
-| Education coverage    |               +3  |
-| Road access           |              +10  |
-| Police/fire coverage  |              +10  |
-| Industrial pollution  |               -8  |
-| Noise (traffic/ind.)  |               -5  |
+| Source               | Land Value Effect |
+| -------------------- | ----------------: |
+| Park nearby          |                +5 |
+| Health coverage      |                +3 |
+| Education coverage   |                +3 |
+| Road access          |               +10 |
+| Police/fire coverage |               +10 |
+| Industrial pollution |                -8 |
+| Noise (traffic/ind.) |                -5 |
 
 See `23_LAND_VALUE_SYSTEM.md` for full modifier tables, radii, falloff formulas, and data parameters. The values above match the Phase 2 land value system — additional Phase 3 modifiers (police, fire) use the same radius-based falloff model.
 

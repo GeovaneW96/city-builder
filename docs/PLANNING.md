@@ -4,13 +4,13 @@ This document maps ROADMAP.md phases to the feature-by-feature breakdown in `MAS
 
 ## Phase Mapping
 
-| ROADMAP Phase | MFL Phase | Scope |
-|---|---|---|
-| Phase 1 — Interaction Prototype | — | Three.js scene, grid, camera, hover, tile selection (scaffolding only) |
-| Phase 2 — Simulation | Phase 1 (Foundation) | Demand, auto-growing buildings, population, jobs, money, taxes, upkeep, happiness, road connectivity, basic power/water, warnings |
-| Phase 3 — Progression & Retention | Phase 1 (Foundation) | Milestones, unlocks, tutorial objectives, first scenario, achievements, city rating, feedback |
-| Phase 4 — Depth Systems | Phase 2 (Services & Depth) | Pollution, land value, education, health, fire/police, parks, traffic, public transport, districts, policies |
-| Phase 5 — Content & Polish | Phase 3 (Complexity) + Phase 4 (Expansion) | Events, disasters, audio, animations, overlays, save slots, settings, performance, mod support, content packs, biomes, terrain editing |
+| ROADMAP Phase                     | MFL Phase                                  | Scope                                                                                                                                  |
+| --------------------------------- | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Phase 1 — Interaction Prototype   | —                                          | Three.js scene, grid, camera, hover, tile selection (scaffolding only)                                                                 |
+| Phase 2 — Simulation              | Phase 1 (Foundation)                       | Demand, auto-growing buildings, population, jobs, money, taxes, upkeep, happiness, road connectivity, basic power/water, warnings      |
+| Phase 3 — Progression & Retention | Phase 1 (Foundation)                       | Milestones, unlocks, tutorial objectives, first scenario, achievements, city rating, feedback                                          |
+| Phase 4 — Depth Systems           | Phase 2 (Services & Depth)                 | Pollution, land value, education, health, fire/police, parks, traffic, public transport, districts, policies                           |
+| Phase 5 — Content & Polish        | Phase 3 (Complexity) + Phase 4 (Expansion) | Events, disasters, audio, animations, overlays, save slots, settings, performance, mod support, content packs, biomes, terrain editing |
 
 The first release (Phase 1 of MFL) covers ROADMAP Phases 2 + 3 combined — the player can reach 1,000 population without bankruptcy.
 

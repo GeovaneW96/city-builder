@@ -21,21 +21,21 @@ City crime rate is the average crime across all buildings, weighted by populatio
 |       0–10 |                0 |
 |      11–25 |               -3 |
 |      26–50 |               -8 |
-|         51+ |              -15 |
+|        51+ |              -15 |
 
 ### Police Station
 
-| Field               |                 Value |
-| ------------------- | --------------------: |
-| id                  |         police_station |
-| category            |              security |
-| size                |                  2×2 |
-| cost                |               10,000 |
-| upkeep              |                  400 |
-| workers             |                    8 |
-| unlockPopulation    |                2,000 |
-| crimeRadius         |                    8 |
-| crimeSuppression    |                  100 |
+| Field            |          Value |
+| ---------------- | -------------: |
+| id               | police_station |
+| category         |       security |
+| size             |            2×2 |
+| cost             |         10,000 |
+| upkeep           |            400 |
+| workers          |              8 |
+| unlockPopulation |          2,000 |
+| crimeRadius      |              8 |
+| crimeSuppression |            100 |
 
 ## Fire Service
 
@@ -49,17 +49,17 @@ If fire risk reaches 100, the building burns down (removed from simulation) and 
 
 ### Fire Station
 
-| Field               |                 Value |
-| ------------------- | --------------------: |
-| id                  |         fire_station |
-| category            |              security |
-| size                |                  3×3 |
-| cost                |               12,000 |
-| upkeep              |                  500 |
-| workers             |                   10 |
-| unlockPopulation    |                2,000 |
-| fireRadius          |                    8 |
-| riskSuppression     |                   10 |
+| Field            |        Value |
+| ---------------- | -----------: |
+| id               | fire_station |
+| category         |     security |
+| size             |          3×3 |
+| cost             |       12,000 |
+| upkeep           |          500 |
+| workers          |           10 |
+| unlockPopulation |        2,000 |
+| fireRadius       |            8 |
+| riskSuppression  |           10 |
 
 ## Garbage System
 
@@ -67,26 +67,26 @@ If fire risk reaches 100, the building burns down (removed from simulation) and 
 
 Each building produces garbage per month:
 
-| Building Type   | Garbage per Month |
-| --------------- | ----------------: |
-| Residential     |   1 per 10 pop    |
-| Commercial      | 1 per 5 jobs      |
-| Industrial      | 2 per 10 jobs     |
+| Building Type | Garbage per Month |
+| ------------- | ----------------: |
+| Residential   |      1 per 10 pop |
+| Commercial    |      1 per 5 jobs |
+| Industrial    |     2 per 10 jobs |
 
 ### Landfill
 
 Landfills collect garbage from surrounding buildings within 12 tiles.
 
-| Field            |                    Value |
-| ---------------- | -----------------------: |
-| id               |                 landfill |
-| category         |          utility         |
-| size             |                     3×3 |
-| cost             |                  8,000  |
-| upkeep           |                    300  |
-| workers          |                      4  |
-| collectionRadius |                     12  |
-| capacityPerMonth |                   500   |
+| Field            |    Value |
+| ---------------- | -------: |
+| id               | landfill |
+| category         |  utility |
+| size             |      3×3 |
+| cost             |    8,000 |
+| upkeep           |      300 |
+| workers          |        4 |
+| collectionRadius |       12 |
+| capacityPerMonth |      500 |
 
 ### Uncollected Garbage
 
@@ -108,11 +108,11 @@ garbageState: {
 
 ## Warnings
 
-| Warning          | Condition                             |
-| ---------------- | ------------------------------------- |
-| High crime       | police coverage < 50% of buildings    |
-| Fire risk        | fire coverage < 50% of at-risk buildings |
-| Garbage buildup  | uncollected garbage > 50 units        |
+| Warning         | Condition                                |
+| --------------- | ---------------------------------------- |
+| High crime      | police coverage < 50% of buildings       |
+| Fire risk       | fire coverage < 50% of at-risk buildings |
+| Garbage buildup | uncollected garbage > 50 units           |
 
 ## Building Definitions
 
@@ -170,35 +170,35 @@ garbageState: {
 
 ## Data Constants
 
-| Constant                    | Value |
-| --------------------------- | ----: |
-| POLICE_RADIUS               |     8 |
-| POLICE_COST                 | 10000 |
-| POLICE_UPKEEP               |   400 |
-| POLICE_WORKERS              |     8 |
-| POLICE_UNLOCK_POP           |  2000 |
-| FIRE_RADIUS                 |     8 |
-| FIRE_COST                   |  12000 |
-| FIRE_UPKEEP                 |   500 |
-| FIRE_WORKERS                |    10 |
-| FIRE_UNLOCK_POP             |  2000 |
-| LANDFILL_RADIUS             |    12 |
-| LANDFILL_COST               |  8000 |
-| LANDFILL_UPKEEP             |   300 |
-| LANDFILL_WORKERS            |     4 |
-| LANDFILL_CAPACITY           |   500 |
-| BASE_CRIME                  |    10 |
-| CRIME_GROWTH_PER_MONTH      |   0.5 |
-| FIRE_BASE_RISK_INDUSTRIAL   |     5 |
-| FIRE_BASE_RISK_RESIDENTIAL  |     2 |
-| FIRE_RISK_GROWTH_PER_MONTH  |     1 |
-| FIRE_RISK_THRESHOLD         |   100 |
-| GARBAGE_RES_PER_10_POP      |     1 |
-| GARBAGE_COM_PER_5_JOBS      |     1 |
-| GARBAGE_IND_PER_10_JOBS     |     2 |
-| GARBAGE_HAPPINESS_PER_10    |    -1 |
-| GARBAGE_DECAY_PER_MONTH     |     5 |
-| GARBAGE_WARNING_THRESHOLD   |    50 |
+| Constant                   | Value |
+| -------------------------- | ----: |
+| POLICE_RADIUS              |     8 |
+| POLICE_COST                | 10000 |
+| POLICE_UPKEEP              |   400 |
+| POLICE_WORKERS             |     8 |
+| POLICE_UNLOCK_POP          |  2000 |
+| FIRE_RADIUS                |     8 |
+| FIRE_COST                  | 12000 |
+| FIRE_UPKEEP                |   500 |
+| FIRE_WORKERS               |    10 |
+| FIRE_UNLOCK_POP            |  2000 |
+| LANDFILL_RADIUS            |    12 |
+| LANDFILL_COST              |  8000 |
+| LANDFILL_UPKEEP            |   300 |
+| LANDFILL_WORKERS           |     4 |
+| LANDFILL_CAPACITY          |   500 |
+| BASE_CRIME                 |    10 |
+| CRIME_GROWTH_PER_MONTH     |   0.5 |
+| FIRE_BASE_RISK_INDUSTRIAL  |     5 |
+| FIRE_BASE_RISK_RESIDENTIAL |     2 |
+| FIRE_RISK_GROWTH_PER_MONTH |     1 |
+| FIRE_RISK_THRESHOLD        |   100 |
+| GARBAGE_RES_PER_10_POP     |     1 |
+| GARBAGE_COM_PER_5_JOBS     |     1 |
+| GARBAGE_IND_PER_10_JOBS    |     2 |
+| GARBAGE_HAPPINESS_PER_10   |    -1 |
+| GARBAGE_DECAY_PER_MONTH    |     5 |
+| GARBAGE_WARNING_THRESHOLD  |    50 |
 
 ## Tests
 

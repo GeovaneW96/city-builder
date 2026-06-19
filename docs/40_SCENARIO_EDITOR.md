@@ -23,15 +23,15 @@ In editor mode:
 
 Tools for setting up initial map state.
 
-| Tool | Function |
-| ---- | -------- |
-| Place Road | Click/drag to paint road tiles |
-| Zone Residential | Paint residential zone tiles |
-| Zone Commercial | Paint commercial zone tiles |
-| Zone Industrial | Paint industrial zone tiles |
-| Place Building | Drop-down selector + click to place any building |
-| Eraser | Remove roads, zones, or buildings |
-| Clear All | Reset map to empty flat terrain |
+| Tool             | Function                                         |
+| ---------------- | ------------------------------------------------ |
+| Place Road       | Click/drag to paint road tiles                   |
+| Zone Residential | Paint residential zone tiles                     |
+| Zone Commercial  | Paint commercial zone tiles                      |
+| Zone Industrial  | Paint industrial zone tiles                      |
+| Place Building   | Drop-down selector + click to place any building |
+| Eraser           | Remove roads, zones, or buildings                |
+| Clear All        | Reset map to empty flat terrain                  |
 
 Right-click to remove. Left-click to place/paint. Selection highlights the current tool.
 
@@ -39,61 +39,61 @@ Right-click to remove. Left-click to place/paint. Selection highlights the curre
 
 Form inputs for scenario initial state:
 
-| Field | Type | Default |
-| ----- | ---- | ------: |
-| Starting money | number input | 50,000 |
-| Starting population | number input | 0 |
-| Starting happiness | number input (0–100) | 70 |
-| Initial unlocks | multi-select checkboxes | none |
-| Starting buildings | auto-populated from map | — |
+| Field               | Type                    | Default |
+| ------------------- | ----------------------- | ------: |
+| Starting money      | number input            |  50,000 |
+| Starting population | number input            |       0 |
+| Starting happiness  | number input (0–100)    |      70 |
+| Initial unlocks     | multi-select checkboxes |    none |
+| Starting buildings  | auto-populated from map |       — |
 
 ### 3. Objectives
 
 Ordered list of objectives. Each objective has:
 
-| Field | Type | Description |
-| ----- | ---- | ----------- |
-| id | string | auto-generated uuid |
-| order | number | position in sequence |
-| description | text | player-facing text |
-| condition type | dropdown | See condition types below |
-| condition value | number | threshold value |
-| optional | checkbox | if true, objective can be skipped |
+| Field           | Type     | Description                       |
+| --------------- | -------- | --------------------------------- |
+| id              | string   | auto-generated uuid               |
+| order           | number   | position in sequence              |
+| description     | text     | player-facing text                |
+| condition type  | dropdown | See condition types below         |
+| condition value | number   | threshold value                   |
+| optional        | checkbox | if true, objective can be skipped |
 
 Condition types:
 
-| Type | Value Meaning |
-| ---- | ------------- |
-| `population` | population >= value |
-| `money` | money >= value |
-| `happiness` | happiness >= value |
-| `build_building` | building of given id exists |
-| `place_roads` | road tiles >= value |
-| `zone_residential` | residential zone tiles >= value |
-| `zone_commercial` | commercial zone tiles >= value |
-| `zone_industrial` | industrial zone tiles >= value |
+| Type                 | Value Meaning                   |
+| -------------------- | ------------------------------- |
+| `population`         | population >= value             |
+| `money`              | money >= value                  |
+| `happiness`          | happiness >= value              |
+| `build_building`     | building of given id exists     |
+| `place_roads`        | road tiles >= value             |
+| `zone_residential`   | residential zone tiles >= value |
+| `zone_commercial`    | commercial zone tiles >= value  |
+| `zone_industrial`    | industrial zone tiles >= value  |
 | `has_building_count` | count of a building id >= value |
 
 The editor provides an "Add Objective" button that appends a new row. Objectives can be reordered (drag handle) and deleted.
 
 ### 4. Win / Loss Conditions
 
-| Condition | Type | Default |
-| --------- | ---- | ------- |
-| Win condition | dropdown + number | population >= 1,000 |
-| Win: money >= | number | 0 |
-| Win: happiness >= | number (0–100) | 50 |
-| Loss condition | dropdown | bankruptcy |
-| Loss: bankruptcy months | number | 5 |
+| Condition               | Type              | Default             |
+| ----------------------- | ----------------- | ------------------- |
+| Win condition           | dropdown + number | population >= 1,000 |
+| Win: money >=           | number            | 0                   |
+| Win: happiness >=       | number (0–100)    | 50                  |
+| Loss condition          | dropdown          | bankruptcy          |
+| Loss: bankruptcy months | number            | 5                   |
 
 ### 5. Milestone Overrides
 
 Optional overrides for the default progression system.
 
-| Field | Type |
-| ----- | ---- |
+| Field                         | Type                                     |
+| ----------------------------- | ---------------------------------------- |
 | Override milestone thresholds | table of population → unlock ID mappings |
-| Disable default milestones | checkbox |
+| Disable default milestones    | checkbox                                 |
 
 If no overrides are provided, the default milestone table is used.
 
@@ -133,11 +133,20 @@ Exported scenarios match the ScenarioDefinition schema (see doc 22) and are outp
   "initialUnlocks": ["road", "residential_zone"],
   "startingBuildings": [],
   "startingMap": {
-    "roads": [{ "x": 30, "y": 30 }, { "x": 31, "y": 30 }],
+    "roads": [
+      { "x": 30, "y": 30 },
+      { "x": 31, "y": 30 }
+    ],
     "zones": [{ "x": 28, "y": 30, "type": "residential" }]
   },
   "objectives": [
-    { "id": "obj-1", "order": 1, "description": "Place a road", "condition": { "type": "place_roads", "value": 1 }, "optional": false }
+    {
+      "id": "obj-1",
+      "order": 1,
+      "description": "Place a road",
+      "condition": { "type": "place_roads", "value": 1 },
+      "optional": false
+    }
   ],
   "winConditions": {
     "population": 1000,

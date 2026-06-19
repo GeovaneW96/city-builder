@@ -8,14 +8,14 @@ This document defines the save slot system, autosave behavior, and export/import
 
 ### Slot Layout
 
-| # | Slot ID       | Type      | Description                         |
-| - | ------------- | --------- | ----------------------------------- |
-| 0 | `autosave`    | Autosave  | Overwritten automatically           |
-| 1 | `manual_0`    | Manual    | Player-named slot                   |
-| 2 | `manual_1`    | Manual    | Player-named slot                   |
-| 3 | `manual_2`    | Manual    | Player-named slot                   |
-| 4 | `manual_3`    | Manual    | Player-named slot                   |
-| 5 | `manual_4`    | Manual    | Player-named slot                   |
+| #   | Slot ID    | Type     | Description               |
+| --- | ---------- | -------- | ------------------------- |
+| 0   | `autosave` | Autosave | Overwritten automatically |
+| 1   | `manual_0` | Manual   | Player-named slot         |
+| 2   | `manual_1` | Manual   | Player-named slot         |
+| 3   | `manual_2` | Manual   | Player-named slot         |
+| 4   | `manual_3` | Manual   | Player-named slot         |
+| 5   | `manual_4` | Manual   | Player-named slot         |
 
 Total: 1 autosave + 5 manual slots.
 
@@ -25,16 +25,16 @@ Each slot has associated metadata stored separately from the full save blob for 
 
 ```ts
 interface SlotMetadata {
-  id: string;             // "autosave" | "manual_0" .. "manual_4"
-  name: string;           // player-chosen name (empty for autosave)
-  cityName: string;       // city name from save
+  id: string; // "autosave" | "manual_0" .. "manual_4"
+  name: string; // player-chosen name (empty for autosave)
+  cityName: string; // city name from save
   population: number;
   money: number;
-  happiness: number;      // 0–100 average happiness
-  playTime: number;       // total ticks elapsed
-  date: string;           // ISO 8601 real timestamp of last save
-  saveVersion: number;    // schema version used when saving
-  scenarioId: string;     // scenario identifier, if applicable
+  happiness: number; // 0–100 average happiness
+  playTime: number; // total ticks elapsed
+  date: string; // ISO 8601 real timestamp of last save
+  saveVersion: number; // schema version used when saving
+  scenarioId: string; // scenario identifier, if applicable
 }
 ```
 
@@ -42,11 +42,11 @@ Metadata is updated on every save.
 
 ### Storage Keys (localStorage)
 
-| Key Pattern                    | Content          |
-| ------------------------------ | ---------------- |
-| `save_slot_{id}`               | Full save blob   |
-| `save_metadata_{id}`           | `SlotMetadata`   |
-| `save_index`                   | Array of slot IDs |
+| Key Pattern          | Content           |
+| -------------------- | ----------------- |
+| `save_slot_{id}`     | Full save blob    |
+| `save_metadata_{id}` | `SlotMetadata`    |
+| `save_index`         | Array of slot IDs |
 
 ### Autosave Behavior
 
@@ -86,15 +86,15 @@ Export serializes the current save slot to a downloadable `.json` file.
 ```ts
 interface ExportFile {
   meta: {
-    exportVersion: number;        // export format version (starts at 1)
-    exportedAt: string;           // ISO 8601
+    exportVersion: number; // export format version (starts at 1)
+    exportedAt: string; // ISO 8601
     sourceSlotId: string;
-    gameVersion: string;          // game build version
+    gameVersion: string; // game build version
   };
   save: {
-    version: number;              // save schema version
+    version: number; // save schema version
     cityName: string;
-    state: unknown;               // the full CityState object
+    state: unknown; // the full CityState object
   };
   achievements: {
     achievements: AchievementState[];
@@ -170,10 +170,10 @@ const migrations: Record<number, MigrationFn> = {
 
 ### Migration Examples
 
-| From | To   | Change                           |
-| ---- | ---- | -------------------------------- |
-| 1    | 2    | Add achievements state field     |
-| 2    | 3    | Add district policies state      |
+| From | To  | Change                       |
+| ---- | --- | ---------------------------- |
+| 1    | 2   | Add achievements state field |
+| 2    | 3   | Add district policies state  |
 
 ### Error Handling
 
@@ -203,12 +203,12 @@ interface SaveStorage {
 
 ```ts
 interface SaveManagementConfig {
-  autosaveIntervalMs: number;       // default: 300000 (5 min)
-  maxManualSlots: number;           // default: 5
-  exportVersion: number;            // default: 1
-  saveVersion: number;              // current schema version
-  localStorageKeyPrefix: string;    // default: "save_"
-  maxSaveBlobSizeBytes: number;     // default: 4194304 (4 MB warning threshold)
+  autosaveIntervalMs: number; // default: 300000 (5 min)
+  maxManualSlots: number; // default: 5
+  exportVersion: number; // default: 1
+  saveVersion: number; // current schema version
+  localStorageKeyPrefix: string; // default: "save_"
+  maxSaveBlobSizeBytes: number; // default: 4194304 (4 MB warning threshold)
 }
 ```
 

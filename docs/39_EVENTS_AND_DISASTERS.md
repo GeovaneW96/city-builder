@@ -44,15 +44,15 @@ type EventType = "fire" | "economic_boom" | "economic_downturn" | "epidemic" | "
 
 ### Fire
 
-| Property | Value |
-| -------- | ----- |
-| Trigger | Random chance each tick when fire coverage < 30% |
-| Target | Random occupied building tile |
-| Spread | Spreads to adjacent buildings each tick if unresolved |
-| Resolution | Resolved when fire station covers the tile |
-| Effect | Destroys buildings (sets to empty tile) |
-| Duration | Until resolved by fire coverage or building destroyed |
-| Frequency check | Every tick: `chance = (30 - fireCoverage%) × 0.01` |
+| Property        | Value                                                 |
+| --------------- | ----------------------------------------------------- |
+| Trigger         | Random chance each tick when fire coverage < 30%      |
+| Target          | Random occupied building tile                         |
+| Spread          | Spreads to adjacent buildings each tick if unresolved |
+| Resolution      | Resolved when fire station covers the tile            |
+| Effect          | Destroys buildings (sets to empty tile)               |
+| Duration        | Until resolved by fire coverage or building destroyed |
+| Frequency check | Every tick: `chance = (30 - fireCoverage%) × 0.01`    |
 
 If fire coverage is at 10%, each tick has a `(30 - 10) × 0.01 = 0.2` (20%) chance of starting a new fire.
 
@@ -60,40 +60,40 @@ Fire spreads to one adjacent building per unresolved tick. A destroyed building 
 
 ### Economic Boom
 
-| Property | Value |
-| -------- | ----- |
-| Trigger | Random when happiness > 70% and population > 500 |
-| Duration | 6 months (6 ticks) |
-| Effect | +50% tax income |
-| Frequency cap | Max once per 24 months |
+| Property      | Value                                            |
+| ------------- | ------------------------------------------------ |
+| Trigger       | Random when happiness > 70% and population > 500 |
+| Duration      | 6 months (6 ticks)                               |
+| Effect        | +50% tax income                                  |
+| Frequency cap | Max once per 24 months                           |
 
 ### Economic Downturn
 
-| Property | Value |
-| -------- | ----- |
-| Trigger | Random when happiness < 40% |
-| Duration | 6 months (6 ticks) |
-| Effect | −30% tax income |
-| Frequency cap | Max once per 24 months |
+| Property      | Value                       |
+| ------------- | --------------------------- |
+| Trigger       | Random when happiness < 40% |
+| Duration      | 6 months (6 ticks)          |
+| Effect        | −30% tax income             |
+| Frequency cap | Max once per 24 months      |
 
 ### Epidemic
 
-| Property | Value |
-| -------- | ----- |
-| Trigger | When health coverage < 30% |
+| Property | Value                                    |
+| -------- | ---------------------------------------- |
+| Trigger  | When health coverage < 30%               |
 | Duration | Until health coverage restored to >= 30% |
-| Effect | −20 happiness |
-| Target | City-wide |
+| Effect   | −20 happiness                            |
+| Target   | City-wide                                |
 
 The epidemic ends immediately when health coverage >= 30%.
 
 ### Festival
 
-| Property | Value |
-| -------- | ----- |
-| Trigger | On landmark placement |
-| Duration | 3 months (3 ticks) |
-| Effect | +10 happiness |
+| Property | Value                                              |
+| -------- | -------------------------------------------------- |
+| Trigger  | On landmark placement                              |
+| Duration | 3 months (3 ticks)                                 |
+| Effect   | +10 happiness                                      |
 | Stacking | Multiple festivals do not stack (refresh duration) |
 
 ## Data Definitions
@@ -112,7 +112,12 @@ interface EventDefinition {
 }
 
 interface EventTrigger {
-  condition: "happiness_gt" | "happiness_lt" | "coverage_lt" | "building_placed" | "random_chance";
+  condition:
+    | "happiness_gt"
+    | "happiness_lt"
+    | "coverage_lt"
+    | "building_placed"
+    | "random_chance";
   value?: number; // threshold or probability
   target?: string; // service type for coverage checks
 }

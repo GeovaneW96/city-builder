@@ -10,11 +10,11 @@ Resources add an economic layer to industrial zones. Biomes give visual and stra
 
 ### Resource Types
 
-| Type        | Effect                                    | Initial Richness |
-| ----------- | ----------------------------------------- | ---------------: |
-| Ore         | +50% industrial output on deposits        | 50–100           |
-| Oil         | +100% industrial output, +50% pollution   | 50–100           |
-| Fertile soil| +50% farming output (if farming exists)   | 50–100           |
+| Type         | Effect                                  | Initial Richness |
+| ------------ | --------------------------------------- | ---------------: |
+| Ore          | +50% industrial output on deposits      |           50–100 |
+| Oil          | +100% industrial output, +50% pollution |           50–100 |
+| Fertile soil | +50% farming output (if farming exists) |           50–100 |
 
 ### Resource Tile Data
 
@@ -53,11 +53,11 @@ A warning fires when richness drops below 20.
 
 Special buildings that must be placed on resource tiles.
 
-| Building       | Size | Cost   | Upkeep | Jobs | Required Resource |
-| -------------- | ---- | ------ | ------ | ---- | ----------------- |
-| Mine           | 3×3  | 20,000 | 1,000  | 20   | ore               |
-| Oil derrick    | 3×3  | 30,000 | 1,500  | 15   | oil               |
-| Farm           | 4×4  | 15,000 | 500    | 15   | fertile_soil      |
+| Building    | Size | Cost   | Upkeep | Jobs | Required Resource |
+| ----------- | ---- | ------ | ------ | ---- | ----------------- |
+| Mine        | 3×3  | 20,000 | 1,000  | 20   | ore               |
+| Oil derrick | 3×3  | 30,000 | 1,500  | 15   | oil               |
+| Farm        | 4×4  | 15,000 | 500    | 15   | fertile_soil      |
 
 Extraction buildings:
 
@@ -78,13 +78,13 @@ Toggleable overlay that shows:
 
 ### Biome Types
 
-| Biome    | Water  | Ore          | Oil          | Fertile Soil |
-| -------- | ------ | ------------ | ------------ | ------------ |
-| Temperate| Normal | Moderate     | Low          | Moderate     |
-| Desert   | None   | Low          | High         | None         |
-| Tropical | High   | None         | Low          | High         |
-| Arctic   | Normal | Low          | High         | None         |
-| Volcanic | Normal | High         | None         | Low          |
+| Biome     | Water  | Ore      | Oil  | Fertile Soil |
+| --------- | ------ | -------- | ---- | ------------ |
+| Temperate | Normal | Moderate | Low  | Moderate     |
+| Desert    | None   | Low      | High | None         |
+| Tropical  | High   | None     | Low  | High         |
+| Arctic    | Normal | Low      | High | None         |
+| Volcanic  | Normal | High     | None | Low          |
 
 Water availability refers to natural water tiles at map start (ocean and inland water).
 

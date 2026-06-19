@@ -20,20 +20,20 @@ Clamped to [0, 100].
 
 ### Positive Modifiers
 
-| Factor                 | Value  | Radius  | Falloff          | Notes                                     |
-| ---------------------- | :----: | :-----: | ---------------- | ----------------------------------------- |
-| Park proximity         |   +5   |    4    | Linear per tile  | Each park within radius contributes       |
-| Health coverage        |   +3   |    6    | Linear per tile  | Clinic/hospital coverage                 |
-| Education coverage     |   +3   |    6    | Linear per tile  | School coverage                           |
-| Road access            |  +10   |    —    | None (binary)    | Applied if tile is adjacent to a road     |
-| Waterfront (Phase 4)   |  +15   |    2    | Linear per tile  | Adjacent to water; placeholder value      |
+| Factor               | Value | Radius | Falloff         | Notes                                 |
+| -------------------- | :---: | :----: | --------------- | ------------------------------------- |
+| Park proximity       |  +5   |   4    | Linear per tile | Each park within radius contributes   |
+| Health coverage      |  +3   |   6    | Linear per tile | Clinic/hospital coverage              |
+| Education coverage   |  +3   |   6    | Linear per tile | School coverage                       |
+| Road access          |  +10  |   —    | None (binary)   | Applied if tile is adjacent to a road |
+| Waterfront (Phase 4) |  +15  |   2    | Linear per tile | Adjacent to water; placeholder value  |
 
 ### Negative Modifiers
 
-| Factor              | Value | Radius | Falloff          | Notes                                 |
-| ------------------- | :---: | :----: | ---------------- | ------------------------------------- |
-| Industrial pollution |  -8   |   5    | Linear per tile  | Per industrial building within radius |
-| Noise               |  -5   |   3    | Linear per tile  | Near industry or heavy traffic        |
+| Factor               | Value | Radius | Falloff         | Notes                                 |
+| -------------------- | :---: | :----: | --------------- | ------------------------------------- |
+| Industrial pollution |  -8   |   5    | Linear per tile | Per industrial building within radius |
+| Noise                |  -5   |   3    | Linear per tile | Near industry or heavy traffic        |
 
 ### Distance Falloff Formula
 
@@ -74,11 +74,11 @@ LAND_VALUE_MAX         = 100
 
 Land value thresholds gate building tier upgrades:
 
-| Tier Transition  | Min Land Value |
-| ---------------- | :------------: |
-| Low → Medium     |       30       |
-| Medium → High    |       60       |
-| High → landmark  |       90       |
+| Tier Transition | Min Land Value |
+| --------------- | :------------: |
+| Low → Medium    |       30       |
+| Medium → High   |       60       |
+| High → landmark |       90       |
 
 See `docs/24_BUILDING_UPGRADES.md` for full upgrade rules.
 
@@ -116,19 +116,19 @@ Pollution: -4
 
 ## Integration Points
 
-| System                  | Integration                                                         |
-| ----------------------- | ------------------------------------------------------------------- |
-| Building Upgrades       | Land value thresholds gate tier eligibility                         |
-| Economy                 | Commercial income multiplier; industrial productivity penalty        |
-| Demand                  | High land value areas attract residential demand                    |
-| Happiness               | Low land value reduces local happiness                              |
-| Services                | Health/education coverage contributes positively                    |
-| Pollution               | Industrial pollution reduces nearby land value                      |
-| Progression             | Unlocks may raise or remove land value caps                         |
+| System            | Integration                                                   |
+| ----------------- | ------------------------------------------------------------- |
+| Building Upgrades | Land value thresholds gate tier eligibility                   |
+| Economy           | Commercial income multiplier; industrial productivity penalty |
+| Demand            | High land value areas attract residential demand              |
+| Happiness         | Low land value reduces local happiness                        |
+| Services          | Health/education coverage contributes positively              |
+| Pollution         | Industrial pollution reduces nearby land value                |
+| Progression       | Unlocks may raise or remove land value caps                   |
 
 ## Tick Behavior
 
-Land value is recomputed every simulation tick for every tile. This is an O(tiles * sources) operation. Optimization (dirty regions, spatial hashing) is deferred until performance measurement shows it is needed.
+Land value is recomputed every simulation tick for every tile. This is an O(tiles \* sources) operation. Optimization (dirty regions, spatial hashing) is deferred until performance measurement shows it is needed.
 
 ## Tests
 

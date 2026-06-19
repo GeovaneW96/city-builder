@@ -12,11 +12,11 @@ Each commercial building demands goods based on its number of jobs:
 goodsDemand = commercialJobs × GOODS_PER_JOB
 ```
 
-| Building      | Jobs | Goods Per Job | Total Demand |
-| ------------- | :--: | :-----------: | :----------: |
-| Small shop    |  6   |       2       |      12      |
-| Medium shop   |  15  |       2       |      30      |
-| Large store   |  35  |       2       |      70      |
+| Building    | Jobs | Goods Per Job | Total Demand |
+| ----------- | :--: | :-----------: | :----------: |
+| Small shop  |  6   |       2       |      12      |
+| Medium shop |  15  |       2       |      30      |
+| Large store |  35  |       2       |      70      |
 
 Total city goods demand is the sum across all commercial buildings.
 
@@ -80,11 +80,11 @@ commercialTaxIncome = baseIncome × goodsIncomeMultiplier
 
 | Shortage % | Happiness Penalty | Income Multiplier |
 | :--------: | :---------------: | :---------------: |
-|     0%     |         0          |       1.00        |
-|    25%     |        −3.8        |       0.88        |
-|    50%     |        −7.5        |       0.75        |
-|    75%     |       −11.3        |       0.63        |
-|    100%    |        −15         |       0.50        |
+|     0%     |         0         |       1.00        |
+|    25%     |       −3.8        |       0.88        |
+|    50%     |       −7.5        |       0.75        |
+|    75%     |       −11.3       |       0.63        |
+|    100%    |        −15        |       0.50        |
 
 ## Connection to Traffic
 
@@ -135,10 +135,10 @@ GOODS_INCOME_PENALTY         = 0.5    // 50% max reduction
 
 ## Warnings
 
-| Condition                     | Warning                        | Severity |
-| ----------------------------- | ------------------------------ | :------: |
-| `goodsShortagePct > 25`       | "Goods shortage"               |  medium  |
-| `goodsShortagePct > 50`       | "Severe goods shortage"        |  high    |
+| Condition               | Warning                 | Severity |
+| ----------------------- | ----------------------- | :------: |
+| `goodsShortagePct > 25` | "Goods shortage"        |  medium  |
+| `goodsShortagePct > 50` | "Severe goods shortage" |   high   |
 
 ## Tests
 

@@ -8,11 +8,11 @@ This document defines the multi-tier education and healthcare systems. Both syst
 
 ### Education Building Definitions
 
-| Building        | Size |    Cost | Upkeep/Month | Radius | Student Capacity | Unlock Population |
-| --------------- | ---: | ------: | -----------: | -----: | ---------------: | ----------------: |
-| Elementary      |  3x3 |  15,000 |          600 |     10 |              200 |             2,000 |
-| High School     |  4x4 |  25,000 |        1,000 |     15 |              500 |             5,000 |
-| University      |  5x5 |  50,000 |        2,000 |     20 |            1,000 |            10,000 |
+| Building    | Size |   Cost | Upkeep/Month | Radius | Student Capacity | Unlock Population |
+| ----------- | ---: | -----: | -----------: | -----: | ---------------: | ----------------: |
+| Elementary  |  3x3 | 15,000 |          600 |     10 |              200 |             2,000 |
+| High School |  4x4 | 25,000 |        1,000 |     15 |              500 |             5,000 |
+| University  |  5x5 | 50,000 |        2,000 |     20 |            1,000 |            10,000 |
 
 ### Education Quality
 
@@ -31,14 +31,14 @@ Clamped to 0–100.
 
 ### Education Effects
 
-| Effect                        | Formula                                               |
-| ----------------------------- | ----------------------------------------------------- |
-| Workforce quality             | `educationQuality` (capped 0–100)                     |
-| Commercial income bonus       | `commercialIncome *= 1 + educationQuality * 0.002`    |
+| Effect                        | Formula                                                  |
+| ----------------------------- | -------------------------------------------------------- |
+| Workforce quality             | `educationQuality` (capped 0–100)                        |
+| Commercial income bonus       | `commercialIncome *= 1 + educationQuality * 0.002`       |
 | Industrial productivity bonus | `industrialProductivity *= 1 + educationQuality * 0.001` |
-| Unlocks high-tech industry    | Requires educationQuality >= 60                        |
-| Unlocks office zones          | Requires educationQuality >= 40                        |
-| Unlocks building upgrades     | Education quality threshold varies by upgrade tier     |
+| Unlocks high-tech industry    | Requires educationQuality >= 60                          |
+| Unlocks office zones          | Requires educationQuality >= 40                          |
+| Unlocks building upgrades     | Education quality threshold varies by upgrade tier       |
 
 ### Workforce Quality
 
@@ -58,11 +58,11 @@ Used by:
 
 ### Healthcare Building Definitions
 
-| Building       | Size |    Cost | Upkeep/Month | Radius | Patient Capacity | Unlock Population | Tier Weight |
-| -------------- | ---: | ------: | -----------: | -----: | ---------------: | ----------------: | ----------: |
-| Clinic         |  2x2 |   8,000 |          400 |      8 |              100 |                 0 |           1 |
-| Hospital       |  4x4 |  30,000 |        1,500 |     15 |              500 |             5,000 |           2 |
-| Medical Center |  5x5 |  60,000 |        3,000 |     20 |            1,000 |            15,000 |           3 |
+| Building       | Size |   Cost | Upkeep/Month | Radius | Patient Capacity | Unlock Population | Tier Weight |
+| -------------- | ---: | -----: | -----------: | -----: | ---------------: | ----------------: | ----------: |
+| Clinic         |  2x2 |  8,000 |          400 |      8 |              100 |                 0 |           1 |
+| Hospital       |  4x4 | 30,000 |        1,500 |     15 |              500 |             5,000 |           2 |
+| Medical Center |  5x5 | 60,000 |        3,000 |     20 |            1,000 |            15,000 |           3 |
 
 ### Health Quality
 
@@ -79,11 +79,11 @@ Clamped to 0–100.
 
 ### Health Effects
 
-| Effect                        | Formula                                                |
-| ----------------------------- | ------------------------------------------------------ |
-| Happiness bonus               | `happiness += floor(healthQuality / 10)`               |
-| Population growth rate bonus  | `growthRate *= 1 + healthQuality * 0.005`              |
-| Building abandonment threshold| Buildings abandon at 18 consecutive ticks (was 12) if healthQuality >= 50 |
+| Effect                         | Formula                                                                   |
+| ------------------------------ | ------------------------------------------------------------------------- |
+| Happiness bonus                | `happiness += floor(healthQuality / 10)`                                  |
+| Population growth rate bonus   | `growthRate *= 1 + healthQuality * 0.005`                                 |
+| Building abandonment threshold | Buildings abandon at 18 consecutive ticks (was 12) if healthQuality >= 50 |
 
 ## Data Tables
 
@@ -193,12 +193,12 @@ Healthcare is computed in the Services step:
 ### Unlock Dependencies
 
 | Feature            | Population Requirement | Education Requirement |
-| ------------------ | :-------------------: | :-------------------: |
-| Elementary school  |         2,000         |          —            |
-| High school        |         5,000         |          —            |
-| University         |        10,000         |          —            |
-| Office zone        |         5,000         |        >= 40%         |
-| High-tech industry |        10,000         |        >= 60%         |
+| ------------------ | :--------------------: | :-------------------: |
+| Elementary school  |         2,000          |           —           |
+| High school        |         5,000          |           —           |
+| University         |         10,000         |           —           |
+| Office zone        |         5,000          |        >= 40%         |
+| High-tech industry |         10,000         |        >= 60%         |
 
 ## Tests
 

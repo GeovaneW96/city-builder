@@ -25,12 +25,12 @@ No specialization is active at game start.
 
 ### Industrial Hub
 
-| Effect | Value |
-| ------ | ----: |
-| Industrial income | +50% |
-| Industrial jobs | +25% |
-| Pollution output | +50% |
-| Happiness from pollution | −10 |
+| Effect                   | Value |
+| ------------------------ | ----: |
+| Industrial income        |  +50% |
+| Industrial jobs          |  +25% |
+| Pollution output         |  +50% |
+| Happiness from pollution |   −10 |
 
 Requirements:
 
@@ -39,11 +39,11 @@ Requirements:
 
 ### Commercial Hub
 
-| Effect | Value |
-| ------ | ----: |
-| Commercial income | +50% |
-| Commercial jobs | +25% |
-| Traffic congestion | +20% |
+| Effect             | Value |
+| ------------------ | ----: |
+| Commercial income  |  +50% |
+| Commercial jobs    |  +25% |
+| Traffic congestion |  +20% |
 
 Requirements:
 
@@ -53,11 +53,11 @@ Requirements:
 
 ### Tourist Destination
 
-| Effect | Value |
-| ------ | ----: |
-| Tourism income | +100% |
-| Attractiveness | +25% |
-| Commercial income | −20% |
+| Effect            | Value |
+| ----------------- | ----: |
+| Tourism income    | +100% |
+| Attractiveness    |  +25% |
+| Commercial income |  −20% |
 
 Requirements:
 
@@ -67,11 +67,11 @@ Requirements:
 
 ### Education Center
 
-| Effect | Value |
-| ------ | ----: |
-| Education effectiveness | +50% |
-| Workforce quality | +25% |
-| Education upkeep | +50% |
+| Effect                  | Value |
+| ----------------------- | ----: |
+| Education effectiveness |  +50% |
+| Workforce quality       |  +25% |
+| Education upkeep        |  +50% |
 
 Requirements:
 
@@ -80,11 +80,11 @@ Requirements:
 
 ### Green City
 
-| Effect | Value |
-| ------ | ----: |
-| Pollution output | −50% |
-| Happiness | +10 |
-| Industrial income | −30% |
+| Effect            | Value |
+| ----------------- | ----: |
+| Pollution output  |  −50% |
+| Happiness         |   +10 |
+| Industrial income |  −30% |
 
 Requirements:
 
@@ -135,14 +135,14 @@ interface SpecializationState {
 
 ### Effect Application Points
 
-| Simulation System | Effect Targets |
-| ----------------- | -------------- |
-| Economy | industrialIncome, commercialIncome, tourismIncome |
-| Happiness | happiness (additive) |
-| Services | educationEffectiveness, educationUpkeep |
-| Pollution | pollutionOutput (multiplier on industry pollution) |
-| Jobs | industrialJobs, commercialJobs (multiplier on jobs created) |
-| Traffic | trafficCongestion (modifier) |
+| Simulation System | Effect Targets                                              |
+| ----------------- | ----------------------------------------------------------- |
+| Economy           | industrialIncome, commercialIncome, tourismIncome           |
+| Happiness         | happiness (additive)                                        |
+| Services          | educationEffectiveness, educationUpkeep                     |
+| Pollution         | pollutionOutput (multiplier on industry pollution)          |
+| Jobs              | industrialJobs, commercialJobs (multiplier on jobs created) |
+| Traffic           | trafficCongestion (modifier)                                |
 
 ## UI
 

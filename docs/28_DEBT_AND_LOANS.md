@@ -7,10 +7,10 @@ Allow the player to borrow money when the city is in financial trouble. Loans pr
 ## Loan Types
 
 | Loan Name | Principal | Interest (APR) | Term (months) | Monthly Payment |
-| --------- | :-------: | :------------: | :------------: | :-------------: |
-| Small     |  $5,000   |      10%       |       12       |     $458.33     |
-| Medium    |  $10,000  |      10%       |       12       |     $916.67     |
-| Large     |  $20,000  |      10%       |       12       |    $1,833.33    |
+| --------- | :-------: | :------------: | :-----------: | :-------------: |
+| Small     |  $5,000   |      10%       |      12       |     $458.33     |
+| Medium    |  $10,000  |      10%       |      12       |     $916.67     |
+| Large     |  $20,000  |      10%       |      12       |    $1,833.33    |
 
 ## Loan Mechanics
 
@@ -38,7 +38,7 @@ interface Loan {
   principal: number;
   monthlyPayment: number;
   remainingMonths: number;
-  missedPayments: number;      // consecutive months without payment
+  missedPayments: number; // consecutive months without payment
 }
 ```
 
@@ -99,11 +99,11 @@ Loan missed payments are tracked per loan, not globally. Missing a payment on on
 
 ## Limits
 
-| Limit                       | Value |
-| --------------------------- | :---: |
-| Max outstanding loans       |   3   |
-| Loan cooldown (ticks)       |   6   |
-| Max missed payments allowed |   3   |
+| Limit                       |  Value  |
+| --------------------------- | :-----: |
+| Max outstanding loans       |    3    |
+| Loan cooldown (ticks)       |    6    |
+| Max missed payments allowed |    3    |
 | Loan eligibility threshold  | $10,000 |
 
 ## UI Integration
@@ -137,12 +137,12 @@ Loans:
 
 ### Warnings
 
-| Condition                                       | Warning                    | Severity |
-| ----------------------------------------------- | -------------------------- | :------: |
-| `activeLoans > 0`                               | "Outstanding loans"        |  low     |
-| Any loan has `missedPayments >= 1`              | "Loan payment due"         |  high    |
-| Any loan has `missedPayments >= 2`              | "Loan default imminent"    |  critical|
-| Money below threshold and eligible for loan     | "City running low on funds"|  medium  |
+| Condition                                   | Warning                     | Severity |
+| ------------------------------------------- | --------------------------- | :------: |
+| `activeLoans > 0`                           | "Outstanding loans"         |   low    |
+| Any loan has `missedPayments >= 1`          | "Loan payment due"          |   high   |
+| Any loan has `missedPayments >= 2`          | "Loan default imminent"     | critical |
+| Money below threshold and eligible for loan | "City running low on funds" |  medium  |
 
 ## Data Parameters
 
@@ -165,9 +165,9 @@ LOAN_COOLDOWN_TICKS            = 6
 | System     | Integration                                               |
 | ---------- | --------------------------------------------------------- |
 | Economy    | Monthly payment deducted as expense; principal added      |
-| Bankruptcy | Missed payments trigger bankruptcy after threshold         |
-| UI         | Loan dialog, loan status panel, take-loan button           |
-| Warnings   | Loan-related warnings for missed and approaching payments  |
+| Bankruptcy | Missed payments trigger bankruptcy after threshold        |
+| UI         | Loan dialog, loan status panel, take-loan button          |
+| Warnings   | Loan-related warnings for missed and approaching payments |
 
 ## Tests
 

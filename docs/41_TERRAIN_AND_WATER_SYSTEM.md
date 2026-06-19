@@ -10,11 +10,11 @@ Terrain editing adds a new spatial layer to the simulation. Water introduces new
 
 Each tile has an integer elevation from 0 to 10.
 
-| Value | Meaning            |
-| ----: | ------------------ |
-|     0 | Sea level / water  |
-|     1 | Default flat       |
-|  2-10 | Raised terrain     |
+| Value | Meaning           |
+| ----: | ----------------- |
+|     0 | Sea level / water |
+|     1 | Default flat      |
+|  2-10 | Raised terrain    |
 
 Initial map starts entirely at elevation 1.
 
@@ -28,12 +28,12 @@ tile.elevation  // 0..10, integer
 
 The player can raise or lower terrain with a brush tool.
 
-| Property                         | Value                      |
-| -------------------------------- | -------------------------- |
-| Cost per tile per level          | 100                        |
-| Max elevation change per action  | 1 level                    |
-| Brush size                       | 1×1, 3×3, 5×5             |
-| Cannot raise water tiles         | —                          |
+| Property                        | Value         |
+| ------------------------------- | ------------- |
+| Cost per tile per level         | 100           |
+| Max elevation change per action | 1 level       |
+| Brush size                      | 1×1, 3×3, 5×5 |
+| Cannot raise water tiles        | —             |
 
 Raising or lowering a tile costs money per level changed. Lowering a non-water tile to elevation 0 turns it into water. Raising a water tile above 0 turns it into land (elevation 1).
 
@@ -43,11 +43,11 @@ Tile changes on water tiles only affect the targeted tile. Adjacent water tiles 
 
 Building and road placement restrictions:
 
-| Feature               | Max Elevation | Notes                                 |
-| --------------------- | ------------: | ------------------------------------- |
-| Buildings             |             3 | Buildings on elevation 3 pay +50%     |
-| Roads                 |             5 |                                      |
-| Steep slope (roads)   |            —  | Adjacent tiles with delta > 1 block  |
+| Feature             | Max Elevation | Notes                               |
+| ------------------- | ------------: | ----------------------------------- |
+| Buildings           |             3 | Buildings on elevation 3 pay +50%   |
+| Roads               |             5 |                                     |
+| Steep slope (roads) |             — | Adjacent tiles with delta > 1 block |
 
 Buildings can be placed on elevation 0-3. For elevation 3, a +50% construction surcharge applies (terracing cost). Roads can be placed on elevation 0-5. If the elevation difference between two adjacent tiles exceeds 1, a road cannot be built between them.
 
@@ -57,12 +57,12 @@ Buildings can be placed on elevation 0-3. For elevation 3, a +50% construction s
 
 A tile with elevation 0 is a water tile.
 
-| Property               | Rule                                   |
-| ---------------------- | -------------------------------------- |
-| Buildable              | No                                     |
-| Road placement         | No                                     |
-| Zone painting          | No                                     |
-| Fishing / resource use | Future                                 |
+| Property               | Rule   |
+| ---------------------- | ------ |
+| Buildable              | No     |
+| Road placement         | No     |
+| Zone painting          | No     |
+| Fishing / resource use | Future |
 
 ### Waterfront Bonus
 
@@ -99,11 +99,11 @@ Ocean edge tiles are elevation 0, are not editable, and serve as the water sourc
 
 Map size is configurable at game start. All sizes use the same tile coordinate system.
 
-| Size     | Tiles    | Suggested Use         |
-| -------- | -------- | --------------------- |
-| 64×64    | 4,096    | Default               |
-| 128×128  | 16,384   | Large city            |
-| 256×256  | 65,536   | Max (performance sensitive) |
+| Size    | Tiles  | Suggested Use               |
+| ------- | ------ | --------------------------- |
+| 64×64   | 4,096  | Default                     |
+| 128×128 | 16,384 | Large city                  |
+| 256×256 | 65,536 | Max (performance sensitive) |
 
 Memory and performance budget:
 

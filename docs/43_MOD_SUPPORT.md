@@ -41,17 +41,17 @@ Every mod must have a `manifest.json` in its root directory.
 }
 ```
 
-| Field          | Required | Description                                         |
-| -------------- | -------- | --------------------------------------------------- |
-| `id`           | Yes      | Unique mod identifier, lowercase with underscores    |
-| `name`         | Yes      | Display name                                         |
-| `version`      | Yes      | Semantic version string                              |
-| `author`       | No       | Creator name                                         |
-| `description`  | No       | Short description for mod list UI                    |
-| `type`         | Yes      | `"data"` or `"script"`                               |
-| `dependencies` | No       | Array of mod IDs this mod depends on                 |
-| `entryPoint`   | For script| Relative path to JS entry file                       |
-| `minGameVersion`| No      | Minimum game version this mod supports               |
+| Field            | Required   | Description                                       |
+| ---------------- | ---------- | ------------------------------------------------- |
+| `id`             | Yes        | Unique mod identifier, lowercase with underscores |
+| `name`           | Yes        | Display name                                      |
+| `version`        | Yes        | Semantic version string                           |
+| `author`         | No         | Creator name                                      |
+| `description`    | No         | Short description for mod list UI                 |
+| `type`           | Yes        | `"data"` or `"script"`                            |
+| `dependencies`   | No         | Array of mod IDs this mod depends on              |
+| `entryPoint`     | For script | Relative path to JS entry file                    |
+| `minGameVersion` | No         | Minimum game version this mod supports            |
 
 ## Data Mods
 
@@ -134,13 +134,13 @@ A single failing mod never crashes the game.
 
 The settings panel includes a mod list with:
 
-| Column       | Description                    |
-| ------------ | ------------------------------ |
-| Name         | Display name                   |
-| Author       | Creator                        |
-| Version      | Version string                 |
-| Status       | Enabled / Disabled / Error     |
-| Toggle       | Enable/disable switch          |
+| Column  | Description                |
+| ------- | -------------------------- |
+| Name    | Display name               |
+| Author  | Creator                    |
+| Version | Version string             |
+| Status  | Enabled / Disabled / Error |
+| Toggle  | Enable/disable switch      |
 
 Players can enable or disable mods from this list. Changes take effect on next game start. The mod list is stored in localStorage.
 

@@ -1,0 +1,65 @@
+import {
+  BANKRUPTCY_GRACE_MONTHS,
+  MONTHLY_UPKEEP,
+  TAX_INCOME_FORMULAS,
+  calculateTaxIncome,
+} from "../../data/balance";
+import { getBuildingById } from "../../data/buildings";
+import type { CityState } from "../../shared/types";
+import type { CityMetrics } from "./metrics";
+
+export function runEconomy(state: CityState, metrics: CityMetrics): void {
+  const income = calculateMonthlyIncome(state, metrics);
+  const expenses = calculateMonthlyExpenses(state);
+  state.economy.monthlyIncome = income;
+  state.economy.monthlyExpenses = expenses;
+  state.economy.money += income - expenses;
+  updateBankruptcyState(state);
+}
+
+export function calculateMonthlyIncome(state: CityState, metrics: CityMetrics): number {
+  const residentialBase =
+    state.population.total * TAX_INCOME_FORMULAS.RESIDENTIAL_BASE_PER_PERSON;
+  const commercialBase =
+    metrics.commercialJobsFilled * TAX_INCOME_FORMULAS.COMMERCIAL_BASE_PER_JOB;
+  const industrialBase =
+    metrics.industrialJobsFilled * TAX_INCOME_FORMULAS.INDUSTRIAL_BASE_PER_JOB;
+
+  return Math.round(
+    calculateTaxIncome(residentialBase, state.economy.taxRates.residential) +
+      calculateTaxIncome(commercialBase, state.economy.taxRates.commercial) +
+      calculateTaxIncome(industrialBase, state.economy.taxRates.industrial),
+  );
+}
+
+export function calculateMonthlyExpenses(state: CityState): number {
+  return calculateRoadUpkeep(state) + calculateBuildingUpkeep(state);
+}
+
+function calculateRoadUpkeep(state: CityState): number {
+  return state.roads.reduce((total, road) => {
+    const upkeep =
+      road.type === "dirt"
+        ? MONTHLY_UPKEEP.DIRT_ROAD_PER_TILE
+        : MONTHLY_UPKEEP.PAVED_ROAD_PER_TILE;
+    return total + upkeep;
+  }, 0);
+}
+
+function calculateBuildingUpkeep(state: CityState): number {
+  return state.buildings.reduce((total, building) => {
+    const definition = getBuildingById(building.definitionId);
+    return total + (definition?.upkeep ?? 0);
+  }, 0);
+}
+
+function updateBankruptcyState(state: CityState): void {
+  if (state.economy.money >= 0) {
+    state.economy.monthsBelowZero = 0;
+    state.economy.isBankrupt = false;
+    return;
+  }
+
+  state.economy.monthsBelowZero += 1;
+  state.economy.isBankrupt = state.economy.monthsBelowZero >= BANKRUPTCY_GRACE_MONTHS;
+}

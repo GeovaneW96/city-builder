@@ -12,13 +12,13 @@ Attractiveness is a city-wide score from 0–100.
 
 ### Attractiveness Factors
 
-| Factor | Contribution | Notes |
-| ------ | -----------: | ----- |
-| Parks | `sum(park happiness effects) × 2` | Each park has a happiness effect value; total is doubled |
-| Landmarks | `+15 per landmark` | Each placed landmark adds a flat bonus |
-| Service coverage | `+5` if health + education coverage > 50% | Both services must be above 50% coverage |
-| Low pollution | `+10` if average city pollution < 20 | Based on grid-wide average pollution |
-| Beaches/waterfront | `+20` | Deferred to Phase 4 |
+| Factor             |                              Contribution | Notes                                                    |
+| ------------------ | ----------------------------------------: | -------------------------------------------------------- |
+| Parks              |         `sum(park happiness effects) × 2` | Each park has a happiness effect value; total is doubled |
+| Landmarks          |                        `+15 per landmark` | Each placed landmark adds a flat bonus                   |
+| Service coverage   | `+5` if health + education coverage > 50% | Both services must be above 50% coverage                 |
+| Low pollution      |      `+10` if average city pollution < 20 | Based on grid-wide average pollution                     |
+| Beaches/waterfront |                                     `+20` | Deferred to Phase 4                                      |
 
 Attractiveness is recomputed every simulation tick.
 
@@ -37,9 +37,9 @@ Tourism income is computed per tick:
 tourismIncome = baseIncome + attractiveness × 50
 ```
 
-| Variable | Value |
-| -------- | ----: |
-| baseIncome | 0 |
+| Variable                 |        Value |
+| ------------------------ | -----------: |
+| baseIncome               |            0 |
 | attractivenessMultiplier | 50 per point |
 
 Tourists are abstract. They are not simulated as agents. Income appears in the economy panel as a separate line item.
@@ -48,35 +48,35 @@ Tourists are abstract. They are not simulated as agents. Income appears in the e
 
 ### Hotel
 
-| Field | Value |
-| ----- | ----: |
-| id | `hotel` |
-| category | commercial |
-| placementType | manual |
-| size | 2×2 |
-| cost | 20,000 |
-| upkeep | 800 |
-| jobs | 10 |
-| populationCapacity | 0 |
-| requirements | commercial demand, road access |
-| effects | attractiveness +5 |
-| unlockPopulation | none |
+| Field              |                          Value |
+| ------------------ | -----------------------------: |
+| id                 |                        `hotel` |
+| category           |                     commercial |
+| placementType      |                         manual |
+| size               |                            2×2 |
+| cost               |                         20,000 |
+| upkeep             |                            800 |
+| jobs               |                             10 |
+| populationCapacity |                              0 |
+| requirements       | commercial demand, road access |
+| effects            |              attractiveness +5 |
+| unlockPopulation   |                           none |
 
 ### Landmark Statue
 
-| Field | Value |
-| ----- | ----: |
-| id | `landmark_statue` |
-| category | civic |
-| placementType | manual |
-| size | 2×2 |
-| cost | 30,000 |
-| upkeep | 500 |
-| jobs | 5 |
-| populationCapacity | 0 |
-| requirements | road access, milestone: 10,000 pop |
-| effects | attractiveness +15 |
-| unlockPopulation | 10,000 |
+| Field              |                              Value |
+| ------------------ | ---------------------------------: |
+| id                 |                  `landmark_statue` |
+| category           |                              civic |
+| placementType      |                             manual |
+| size               |                                2×2 |
+| cost               |                             30,000 |
+| upkeep             |                                500 |
+| jobs               |                                  5 |
+| populationCapacity |                                  0 |
+| requirements       | road access, milestone: 10,000 pop |
+| effects            |                 attractiveness +15 |
+| unlockPopulation   |                             10,000 |
 
 Hotels and landmarks are placed manually (not zone-grown).
 
@@ -112,11 +112,11 @@ interface LandmarkDefinition {
 
 Landmarks planned for Phase 3:
 
-| id | name | cost | upkeep | unlockPop | attractivenessBonus |
-| -- | ---- | ---: | -----: | --------: | ------------------: |
-| `landmark_statue` | Landmark Statue | 30,000 | 500 | 10,000 | +15 |
-| `landmark_fountain` | Grand Fountain | 25,000 | 300 | 8,000 | +10 |
-| `landmark_clocktower` | Clock Tower | 40,000 | 700 | 15,000 | +20 |
+| id                    | name            |   cost | upkeep | unlockPop | attractivenessBonus |
+| --------------------- | --------------- | -----: | -----: | --------: | ------------------: |
+| `landmark_statue`     | Landmark Statue | 30,000 |    500 |    10,000 |                 +15 |
+| `landmark_fountain`   | Grand Fountain  | 25,000 |    300 |     8,000 |                 +10 |
+| `landmark_clocktower` | Clock Tower     | 40,000 |    700 |    15,000 |                 +20 |
 
 ## Economy Integration
 

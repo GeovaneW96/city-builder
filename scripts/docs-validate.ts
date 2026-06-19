@@ -21,8 +21,8 @@ const ROOT = resolve(import.meta.dirname, "..");
 const DOCS_DIR = join(ROOT, "docs");
 
 let exitCode = 0;
-let errors: string[] = [];
-let warnings: string[] = [];
+const errors: string[] = [];
+const warnings: string[] = [];
 
 function error(msg: string) {
   errors.push(msg);
@@ -114,21 +114,7 @@ function checkPlanningAlignment() {
     return; // already reported
   }
 
-  // Extract feature names from PLANNING.md: bullet points under "### Features"
-  // e.g. "- Project scaffolding (Vite, TypeScript, Three.js, React, Zustand, Vitest)"
-  const planFeatures: string[] = [];
-  const inFeaturesSection = /^### Features$/m;
-  const featuresMatch = plan.match(/(?:^|\n)### Features\n([\s\S]*?)(?=\n###|\n##|$)/g);
-  if (featuresMatch) {
-    for (const section of featuresMatch) {
-      const bullets = section.match(/^- (.+)$/gm);
-      if (bullets) {
-        for (const b of bullets) {
-          planFeatures.push(b.replace(/^- /, "").trim());
-        }
-      }
-    }
-  }
+  const planFeatures = extractPlanningFeatures(plan);
 
   // Extract feature names from MASTER_FEATURE_LIST: "### X.Y FeatureName"
   const mflFeatures: string[] = [];
@@ -157,13 +143,26 @@ function checkPlanningAlignment() {
       const pfWords = normalized.split(/\s+/).filter(Boolean);
       const keyWords = pfWords.slice(0, 4);
       const mfWords = mfNorm.split(/\s+/).filter(Boolean);
-      const matchCount = keyWords.filter((w) => w.length >= 2 && mfWords.includes(w)).length;
+      const matchCount = keyWords.filter(
+        (w) => w.length >= 2 && mfWords.includes(w),
+      ).length;
       return keyWords.length <= 1 ? matchCount >= 1 : matchCount >= 2;
     });
     if (!found) {
       warn(`PLANNING.md feature "${pf}" has no matching entry in MASTER_FEATURE_LIST.md`);
     }
   }
+}
+
+function extractPlanningFeatures(plan: string): string[] {
+  const features: string[] = [];
+  const featuresMatch = plan.match(/(?:^|\n)### Features\n([\s\S]*?)(?=\n###|\n##|$)/g);
+  if (!featuresMatch) return features;
+  for (const section of featuresMatch) {
+    const bullets = section.match(/^- (.+)$/gm);
+    bullets?.forEach((bullet) => features.push(bullet.replace(/^- /, "").trim()));
+  }
+  return features;
 }
 
 // ────────────────
@@ -196,7 +195,12 @@ function checkBackwardRefs() {
 
   const docFiles = listDocFiles();
   for (const file of docFiles) {
-    if (file === "INDEX.md" || file === "MASTER_FEATURE_LIST.md" || file.startsWith("templates/")) continue;
+    if (
+      file === "INDEX.md" ||
+      file === "MASTER_FEATURE_LIST.md" ||
+      file.startsWith("templates/")
+    )
+      continue;
     if (!idx.includes(file)) {
       warn(`"${file}" is not listed in INDEX.md`);
     }

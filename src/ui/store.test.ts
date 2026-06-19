@@ -17,6 +17,9 @@ describe("UIStore", () => {
   it("starts with no build mode", () => {
     const state = useUIStore.getState();
     expect(state.buildMode).toBeNull();
+    expect(state.selectedRoadType).toBe("dirt");
+    expect(state.selectedZoneType).toBe("residential");
+    expect(state.selectedBuildingId).toBeNull();
   });
 
   it("sets build mode and clears preview", () => {
@@ -24,6 +27,17 @@ describe("UIStore", () => {
     store.setBuildMode("road");
     expect(useUIStore.getState().buildMode).toBe("road");
     expect(useUIStore.getState().placementPreview).toBeNull();
+  });
+
+  it("sets concrete build tools", () => {
+    const store = useUIStore.getState();
+    store.setZoneTool("commercial");
+    expect(useUIStore.getState().buildMode).toBe("zone");
+    expect(useUIStore.getState().selectedZoneType).toBe("commercial");
+
+    store.setBuildingTool("clinic");
+    expect(useUIStore.getState().buildMode).toBe("building");
+    expect(useUIStore.getState().selectedBuildingId).toBe("clinic");
   });
 
   it("sets selected tile", () => {

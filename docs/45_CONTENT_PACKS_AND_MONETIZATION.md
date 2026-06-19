@@ -10,13 +10,13 @@ Monetization is not in initial scope. This document describes the intended struc
 
 The game avoids predatory mechanics.
 
-| Avoid                    | Acceptable               |
-| ------------------------ | ------------------------ |
-| Pay-to-win               | Premium version          |
-| Energy timers            | Cosmetic packs           |
-| Forced ads               | Content packs            |
-| Manipulative streaks     | Supporter edition        |
-| Slow progress to sell    | DLC expansions           |
+| Avoid                 | Acceptable        |
+| --------------------- | ----------------- |
+| Pay-to-win            | Premium version   |
+| Energy timers         | Cosmetic packs    |
+| Forced ads            | Content packs     |
+| Manipulative streaks  | Supporter edition |
+| Slow progress to sell | DLC expansions    |
 
 ## Content Pack Structure
 
@@ -68,36 +68,36 @@ pack_id/
 
 ### Free Version
 
-| Feature            | Included |
-| ------------------ | :------: |
-| Phase 1 gameplay   | Yes      |
-| Phase 2 gameplay   | Yes      |
-| All scenarios       | Yes      |
-| Unlimited play time | Yes      |
-| Ads                | No       |
-| Save/load          | Yes      |
+| Feature             | Included |
+| ------------------- | :------: |
+| Phase 1 gameplay    |   Yes    |
+| Phase 2 gameplay    |   Yes    |
+| All scenarios       |   Yes    |
+| Unlimited play time |   Yes    |
+| Ads                 |    No    |
+| Save/load           |   Yes    |
 
 ### Premium Version
 
 One-time purchase. Includes all content packs.
 
-| Feature                     | Included |
-| --------------------------- | :------: |
-| Everything in Free          | Yes      |
-| All content packs           | Yes      |
-| Scenario editor             | Yes      |
-| Priority support            | No       |
+| Feature            | Included |
+| ------------------ | :------: |
+| Everything in Free |   Yes    |
+| All content packs  |   Yes    |
+| Scenario editor    |   Yes    |
+| Priority support   |    No    |
 
 ### Supporter Edition
 
 Premium + exclusive cosmetic pack + early access.
 
-| Feature                     | Included |
-| --------------------------- | :------: |
-| Everything in Premium       | Yes      |
-| Exclusive cosmetic pack     | Yes      |
-| Early access to new packs   | Yes      |
-| Supporter badge in credits  | Yes      |
+| Feature                    | Included |
+| -------------------------- | :------: |
+| Everything in Premium      |   Yes    |
+| Exclusive cosmetic pack    |   Yes    |
+| Early access to new packs  |   Yes    |
+| Supporter badge in credits |   Yes    |
 
 ## Store UI
 
@@ -105,12 +105,12 @@ The store is a panel accessible from the main menu.
 
 ### Pack Browser
 
-| Section        | Content                           |
-| -------------- | --------------------------------- |
-| Featured       | Highlighted packs                 |
-| Cosmetic       | All cosmetic packs                |
-| Content        | All content packs                 |
-| Supporter      | Supporter edition info            |
+| Section   | Content                |
+| --------- | ---------------------- |
+| Featured  | Highlighted packs      |
+| Cosmetic  | All cosmetic packs     |
+| Content   | All content packs      |
+| Supporter | Supporter edition info |
 
 ### Pack Preview
 

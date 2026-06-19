@@ -15,6 +15,13 @@ export interface Tile {
 export interface Road {
   id: string;
   type: "dirt" | "paved";
+  position: [number, number];
+  connections: {
+    north: boolean;
+    east: boolean;
+    south: boolean;
+    west: boolean;
+  };
 }
 
 export type PlacementType = "zone-grown" | "manual";
@@ -61,6 +68,8 @@ export interface BuildingInstance {
   status: BuildingStatus;
   warnings: string[];
   createdAtTick: number;
+  lockedUntilTick: number;
+  unresolvedWarningTicks: number;
 }
 
 export interface EconomyState {
@@ -108,6 +117,7 @@ export interface HappinessState {
     services: number;
     pollution: number;
     parks: number;
+    utility: number;
   };
 }
 
@@ -122,9 +132,11 @@ export interface ProgressionState {
   currentMilestone: number;
   unlockedFeatures: string[];
   completedObjectives: string[];
+  scenarioStatus: "active" | "won" | "lost";
 }
 
 export interface Warning {
+  id: string;
   severity: "low" | "medium" | "high";
   message: string;
   targetTile?: [number, number];
@@ -158,7 +170,13 @@ export type GameCommand =
   | { type: "REMOVE_ROAD"; x: number; y: number }
   | { type: "PAINT_ZONE"; x: number; y: number; zoneType: ZoneType }
   | { type: "REMOVE_ZONE"; x: number; y: number }
-  | { type: "PLACE_BUILDING"; definitionId: string; x: number; y: number }
+  | {
+      type: "PLACE_BUILDING";
+      definitionId: string;
+      x: number;
+      y: number;
+      rotation?: 0 | 90 | 180 | 270;
+    }
   | { type: "DEMOLISH"; x: number; y: number }
   | {
       type: "SET_TAX_RATE";
@@ -221,8 +239,18 @@ export interface UIState {
   selectedTile: [number, number] | null;
   hoveredTile: [number, number] | null;
   buildMode: BuildMode;
+  selectedRoadType: "dirt" | "paved";
+  selectedZoneType: ZoneType | null;
+  selectedBuildingId: string | null;
   placementPreview: PlacementPreview | null;
-  activeOverlay: "zoning" | "power" | "water" | "pollution" | null;
+  activeOverlay:
+    | "zoning"
+    | "power"
+    | "water"
+    | "pollution"
+    | "health"
+    | "education"
+    | null;
   settings: UISettings;
 }
 
