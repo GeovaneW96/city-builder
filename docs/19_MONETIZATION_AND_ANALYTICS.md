@@ -2,9 +2,9 @@
 
 ## Purpose
 
-This document records future monetization and analytics ideas.
+This document records monetization and analytics considerations.
 
-Do not implement monetization unless explicitly decided.
+Monetization is not in initial scope. Do not implement monetization unless explicitly decided.
 
 ## Monetization Principles
 
@@ -46,9 +46,7 @@ Useful metrics:
 
 ## Analytics
 
-Optional initially.
-
-If added, keep privacy-friendly and local/dev-only first.
+Analytics should be privacy-friendly and local/dev-only if added.
 
 ## Product Questions to Answer
 

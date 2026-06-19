@@ -49,7 +49,7 @@ Buildings should use:
 - simple geometry;
 - category-specific silhouettes;
 - clear colors/materials;
-- small animated details later.
+- small animated details.
 
 Residential:
 
@@ -68,7 +68,7 @@ Industrial:
 - larger footprints;
 - smoke stacks;
 - grey/brown tones;
-- visible pollution later.
+- visible pollution.
 
 Services:
 
@@ -86,7 +86,7 @@ Initial environment:
 - simple sky/background;
 - optional trees/decorations.
 
-Later:
+Environmental variety:
 
 - terrain variation;
 - water;
@@ -115,7 +115,7 @@ Use simple animations:
 - building pop-in;
 - construction progress;
 - UI milestone celebration;
-- subtle car movement later.
+- subtle car movement.
 
 Avoid excessive animation that hurts readability.
 

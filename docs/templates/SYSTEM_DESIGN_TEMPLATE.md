@@ -48,6 +48,6 @@ Describe data-driven configuration.
 
 List unit and integration tests.
 
-## Future Extensions
+## Extensions
 
-List possible future improvements.
+List extensions and related systems.

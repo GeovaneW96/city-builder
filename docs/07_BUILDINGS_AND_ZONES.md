@@ -20,7 +20,7 @@ Requirements:
 
 - adjacent road;
 - residential demand;
-- available services later.
+- available services.
 
 Problems:
 
@@ -46,7 +46,7 @@ Problems:
 
 - lack of workers;
 - lack of customers;
-- traffic later.
+- traffic.
 
 ### Industrial Zone
 
@@ -54,7 +54,7 @@ Purpose:
 
 - creates jobs;
 - generates tax income;
-- supplies goods later.
+- supplies goods.
 
 Requirements:
 
@@ -115,7 +115,7 @@ Purpose:
 
 - scenario anchor;
 - starting building;
-- future upgrade visual.
+- upgrade visual.
 
 ### Power Plant
 
@@ -127,7 +127,7 @@ Tradeoff:
 
 - high cost;
 - upkeep;
-- pollution later.
+- pollution.
 
 ### Water Tower
 
@@ -143,7 +143,7 @@ Tradeoff:
 
 Purpose:
 
-- improves nearby happiness and land value later.
+- improves nearby happiness and land value.
 
 Tradeoff:
 
@@ -215,17 +215,3 @@ Buildings should be:
 - low-poly and stylized;
 - not overly detailed;
 - aligned to grid.
-
-## Future Building Categories
-
-- police;
-- fire;
-- garbage;
-- public transport;
-- offices;
-- tourism;
-- landmarks;
-- utilities;
-- parks/plazas;
-- education tiers;
-- healthcare tiers.

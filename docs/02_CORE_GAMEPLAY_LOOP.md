@@ -18,7 +18,7 @@ The player places:
 - zones;
 - infrastructure;
 - services;
-- decorations later.
+- decorations.
 
 The act of building must feel responsive and satisfying.
 
@@ -29,7 +29,7 @@ Requirements:
 - cost preview;
 - invalid placement feedback;
 - immediate visual result;
-- undo/remove support later.
+- undo/remove support.
 
 ### 2. Simulate
 
@@ -104,8 +104,8 @@ Examples:
 
 - parks introduce land value/happiness strategy;
 - clinics introduce health coverage;
-- schools introduce education and better commercial/office growth later;
-- public transport introduces traffic strategy later.
+- schools introduce education and better commercial/office growth;
+- public transport introduces traffic strategy.
 
 ## Short-Term Goals
 

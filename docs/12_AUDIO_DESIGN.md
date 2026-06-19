@@ -31,13 +31,13 @@ Recommended first sounds:
 
 ## Ambient Audio
 
-Later:
+Ambient audio:
 
 - quiet city ambience;
 - traffic hum;
 - birds/park ambience;
 - industrial hum;
-- rain/weather later.
+- rain/weather.
 
 ## Music
 
@@ -64,7 +64,7 @@ Use:
 
 ## Audio Settings
 
-Eventually support:
+Audio settings:
 
 - master volume;
 - music volume;

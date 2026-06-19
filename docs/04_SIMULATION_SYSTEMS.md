@@ -52,7 +52,7 @@ Each tile should know:
 - building id if occupied;
 - service modifiers;
 - pollution level;
-- land value later.
+- land value.
 
 Initial terrain is flat and buildable.
 
@@ -65,9 +65,9 @@ Basic rules:
 - road tiles connect orthogonally;
 - buildings require adjacent road tile;
 - disconnected buildings show warning;
-- road network may be treated as one connected graph initially.
+- road network is treated as one connected graph.
 
-Later:
+Road network features:
 
 - road capacity;
 - congestion;
@@ -102,7 +102,7 @@ Building growth can be simple:
 4. Deduct or reserve nothing unless zoning has cost.
 5. Update population/jobs/capacity.
 
-Building upgrades later depend on:
+Building upgrades depend on:
 
 - land value;
 - happiness;
@@ -181,7 +181,7 @@ Decreases when:
 Increases when:
 
 - jobs are needed;
-- commercial goods demand exists later;
+- commercial goods demand exists;
 - economy needs tax base.
 
 Decreases when:
@@ -213,13 +213,11 @@ Expenses:
 - road upkeep;
 - service upkeep;
 - building upkeep;
-- debt later.
+- debt.
 
 ## Happiness System
 
-Happiness is a city-level value initially.
-
-Later it can become neighborhood-level.
+Happiness is a city-level value with component breakdown. It can be refined to neighborhood-level granularity.
 
 Components:
 
@@ -263,8 +261,8 @@ Industrial buildings produce pollution.
 Pollution affects:
 
 - nearby residential happiness;
-- land value later;
-- health later.
+- land value;
+- health.
 
 Use a simple radius falloff.
 

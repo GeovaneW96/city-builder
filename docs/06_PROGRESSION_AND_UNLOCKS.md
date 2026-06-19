@@ -35,7 +35,7 @@ Example:
 
 ## Milestone Rewards
 
-Each milestone may provide:
+Each milestone provides:
 
 - new building/tool;
 - money bonus;
@@ -72,28 +72,18 @@ Example flow:
 9. Build a school.
 10. Reach 1,000 population.
 
-## Future Unlocks
+## Extended Milestones
 
-Later milestones:
+The milestone table above covers the first scenario. A broader milestone table for post-scenario play:
 
-| Population | Possible Unlock            |
-| ---------: | -------------------------- |
-|      2,000 | Police and fire            |
-|      3,500 | Medium-density residential |
-|      5,000 | Bus system                 |
-|      7,500 | District policies          |
-|     10,000 | High-density zoning        |
-|     15,000 | Train/cargo                |
-|     25,000 | Landmarks                  |
+| Population | Unlock                    |
+| ---------: | ------------------------- |
+|      2,000 | Police and fire           |
+|      3,500 | Medium-density residential|
+|      5,000 | Bus system                |
+|      7,500 | District policies         |
+|     10,000 | High-density zoning       |
+|     15,000 | Train/cargo               |
+|     25,000 | Landmarks                 |
 
-## Alternative Progression Models
-
-Later, progression can include:
-
-- research tree;
-- city reputation;
-- mayor level;
-- scenario-specific unlocks;
-- achievement-based unlocks.
-
-Use simple population milestones.
+Progression uses simple population milestones. Alternative models (research tree, city reputation, mayor level, scenario-specific unlocks, achievement-based unlocks) can be introduced per scenario design.

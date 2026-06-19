@@ -30,6 +30,10 @@
 - `16_TESTING_STRATEGY.md`
 - `17_PERFORMANCE_GUIDE.md`
 
+## Planning
+
+- `PLANNING.md` — Implementation phase breakdown
+
 ## Operations
 
 - `18_BACKLOG.md`

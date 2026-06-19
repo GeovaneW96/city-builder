@@ -38,7 +38,7 @@ Recommended camera:
 - optional rotation;
 - constrained bounds.
 
-Orthographic camera may improve readability and city-builder feel.
+Orthographic camera improves readability and city-builder feel.
 
 ## Picking
 
@@ -62,7 +62,7 @@ Avoid rendering thousands of individual tile meshes if unnecessary.
 
 Roads can initially be simple plane/box meshes.
 
-Later:
+Road rendering variants:
 
 - road variants based on neighboring connections;
 - intersections;
@@ -107,7 +107,7 @@ Only one or two overlays should be active at once.
 - Diff state changes and update only changed objects.
 - Use object pools where useful.
 - Use instanced meshes for repeated objects.
-- Merge static geometries later.
+- Merge static geometries.
 - Avoid expensive raycasts against every object if grid picking is enough.
 - Dispose of removed geometries and materials.
 

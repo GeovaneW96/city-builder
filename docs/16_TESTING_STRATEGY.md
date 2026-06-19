@@ -86,9 +86,9 @@ Useful integration tests:
 - verify houses grow;
 - verify population/income changes.
 
-## E2E Tests Later
+## E2E Tests
 
-Use Playwright later for:
+Use Playwright for:
 
 - app loads;
 - player can place road;

@@ -134,7 +134,7 @@ Examples:
 Benefits:
 
 - validation;
-- undo/redo later;
+- undo/redo;
 - replay/debugging;
 - testing.
 
@@ -299,7 +299,7 @@ The full `GameEvent` union is defined in `src/shared/types.ts`.
 
 ### Batch Events
 
-When a single command changes multiple tiles (e.g., drag-painting a zone), the simulation should emit one `GameEvent` per changed tile rather than a single batch event. The event bus implementation must handle bursts efficiently (microtask batching or RAF coalescing can be added later if profiling shows it matters).
+When a single command changes multiple tiles (e.g., drag-painting a zone), the simulation should emit one `GameEvent` per changed tile rather than a single batch event. The event bus implementation must handle bursts efficiently (microtask batching or RAF coalescing if profiling shows it matters).
 
 ## Performance Principles
 

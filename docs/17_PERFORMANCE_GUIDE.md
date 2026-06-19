@@ -44,7 +44,7 @@ Initial targets:
 - Cache derived data where useful.
 - Avoid recalculating the entire city unnecessarily.
 - Keep pathfinding limited and staged.
-- Use dirty flags for changed regions later.
+- Use dirty flags for changed regions.
 
 ## UI Guidelines
 
@@ -54,7 +54,7 @@ Initial targets:
 
 ## Profiling
 
-Add debug tools later:
+Debug tools:
 
 - FPS counter;
 - draw call count;

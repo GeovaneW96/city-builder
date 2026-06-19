@@ -31,7 +31,7 @@ Milestones should be celebrated with:
 - UI animation;
 - unlock panel;
 - money bonus;
-- visible city hall upgrade later.
+- visible city hall upgrade.
 
 ### 2. Unlocks
 
@@ -72,7 +72,7 @@ Objectives should be:
 - short;
 - visible;
 - rewarding;
-- skippable later.
+- skippable.
 
 ### 4. Achievements
 
@@ -218,15 +218,6 @@ Need more money.
 Optimize taxes and growth.
 ```
 
-## Daily/Weekly Retention Ideas for Later
-
-Possible later additions:
-
-- daily challenge map;
-- weekly scenario seed;
-- city rating leaderboard;
-- special event modifiers;
-
 ## Monetization Compatibility
 
 The game should not be designed around predatory retention.
@@ -238,10 +229,12 @@ Avoid:
 - pay-to-win;
 - aggressive ads.
 
-Potential ethical monetization later:
+Monetization options considered:
 
 - premium version;
 - cosmetic packs;
 - scenario packs;
 - supporter edition;
 - paid expansion systems.
+
+Monetization is not in initial scope.

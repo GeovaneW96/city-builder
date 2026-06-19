@@ -83,7 +83,7 @@ Sinks:
 - building construction;
 - service upkeep;
 - infrastructure upkeep;
-- loan payments later.
+- loan payments.
 
 Failure:
 
@@ -152,7 +152,7 @@ Needs:
 
 - road access;
 - demand;
-- power/water later;
+- power/water;
 - acceptable pollution.
 
 Provides:
@@ -190,7 +190,7 @@ Provides:
 
 - jobs;
 - tax income;
-- goods supply later.
+- goods supply.
 
 Downsides:
 
@@ -206,7 +206,7 @@ Buildings can be:
 - manually placed;
 - service buildings;
 - infrastructure;
-- unique buildings later.
+- unique buildings.
 
 Each building should have:
 
@@ -232,7 +232,7 @@ Road behavior:
 - roads connect zones to the network;
 - disconnected buildings receive warnings.
 
-Later:
+Road features include:
 
 - traffic capacity;
 - intersections;
@@ -251,7 +251,7 @@ Initial services:
 - clinic;
 - school.
 
-Later services:
+Additional services:
 
 - police;
 - fire;

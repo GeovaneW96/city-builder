@@ -86,30 +86,6 @@ Initial terrain is always `grass`.
 - require valid footprint;
 - may require adjacent road.
 
-## Map Expansion
-
-Not in initial scope.
-
-Future expansion can use:
-
-- unlockable map chunks;
-- purchaseable land;
-- natural obstacles;
-- different biomes;
-- resource deposits.
-
-## Terrain Features Later
-
-Possible future features:
-
-- rivers;
-- coastlines;
-- hills;
-- forests;
-- fertile land;
-- ore/oil resources;
-- protected areas.
-
 ## Camera Bounds
 
 The camera should be constrained so the player cannot lose the map.

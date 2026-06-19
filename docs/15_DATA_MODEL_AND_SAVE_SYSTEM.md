@@ -83,7 +83,7 @@ Initial:
 - one autosave;
 - one manual save.
 
-Later:
+Additional save features:
 
 - multiple save slots;
 - named cities;
@@ -118,15 +118,4 @@ When changing save schema:
 - add test for old save fixture;
 - avoid breaking existing player saves after release.
 
-## Future Cloud Saves
-
-Not in initial scope.
-
-Possible later:
-
-- user accounts;
-- cloud storage;
-- shareable city snapshots;
-- scenario leaderboard.
-
-Do not design the initial version around cloud saves.
+Cloud saves are not in scope for the initial version.

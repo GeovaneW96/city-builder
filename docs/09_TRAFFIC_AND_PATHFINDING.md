@@ -41,9 +41,9 @@ Congestion affects:
 - commercial/industrial productivity;
 - warnings.
 
-## Local Congestion Later
+## Local Congestion
 
-Later, assign traffic pressure to road segments.
+For finer modeling, assign traffic pressure to road segments.
 
 Sources:
 
@@ -52,9 +52,9 @@ Sources:
 - industrial buildings create cargo trips;
 - services create utility trips.
 
-## Pathfinding Later
+## Pathfinding
 
-When needed, use pathfinding for:
+Pathfinding is used for:
 
 - cars;
 - service vehicles;
@@ -78,7 +78,7 @@ Traffic should:
 
 ## Traffic UI
 
-Required later:
+Traffic UI:
 
 - congestion overlay;
 - road capacity tooltip;
