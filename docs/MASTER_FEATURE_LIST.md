@@ -2,6 +2,8 @@
 
 This document lists every feature across all four implementation phases. Under each feature, every piece of logic that must have unit tests is enumerated. Cross-references to design docs are provided.
 
+> **Values and formulas are authoritative in the referenced design docs.** This document summarizes testable logic — if numbers in this list differ from the source doc, the source doc wins.
+
 ---
 
 ## Phase 1: Foundation
@@ -33,7 +35,7 @@ This document lists every feature across all four implementation phases. Under e
 | 1.2.2 | Event bus `unsubscribe` stops receiving events | |
 | 1.2.3 | Event bus supports multiple subscribers per event | |
 | 1.2.4 | Event bus emits correct event types (TileChanged, RoadPlaced, etc.) | |
-| 1.2.5 | CityState default values match docs (50000 money, 70 happiness, etc.) | |
+| 1.2.5 | CityState default values match `05_ECONOMY_AND_BALANCING.md` (starting money, base happiness, etc.) | |
 | 1.2.6 | Tile default state is grass terrain, no road, no zone, no building | |
 | 1.2.7 | GameCommand union accepts all command types | |
 | 1.2.8 | BuildingDefinition fields serialize as expected | |
@@ -121,9 +123,9 @@ This document lists every feature across all four implementation phases. Under e
 
 | # | Testable Logic | Status |
 | - | - | - |
-| 1.8.1 | Residential tax income = population × 2 × (rate/10) | |
-| 1.8.2 | Commercial tax income = filled commercial jobs × 5 × (rate/10) | |
-| 1.8.3 | Industrial tax income = filled industrial jobs × 6 × (rate/10) | |
+| 1.8.1 | Residential tax income computed per `05_ECONOMY_AND_BALANCING.md` formula | |
+| 1.8.2 | Commercial tax income computed per `05_ECONOMY_AND_BALANCING.md` formula | |
+| 1.8.3 | Industrial tax income computed per `05_ECONOMY_AND_BALANCING.md` formula | |
 | 1.8.4 | Monthly expenses = sum of all building upkeep + road upkeep | |
 | 1.8.5 | Money updates by income − expenses each tick | |
 | 1.8.6 | Bankruptcy warning appears when money below 0 | |
@@ -140,15 +142,15 @@ This document lists every feature across all four implementation phases. Under e
 
 | # | Testable Logic | Status |
 | - | - | - |
-| 1.9.1 | Residential demand starts at 50 | |
+| 1.9.1 | Residential demand starts at base value per `05_ECONOMY_AND_BALANCING.md` | |
 | 1.9.2 | Residential demand increases with available jobs | |
 | 1.9.3 | Residential demand decreases with unemployment | |
 | 1.9.4 | Residential demand decreases with excess housing capacity | |
-| 1.9.5 | Commercial demand starts at 30 | |
+| 1.9.5 | Commercial demand starts at base value per `05_ECONOMY_AND_BALANCING.md` | |
 | 1.9.6 | Commercial demand increases with population | |
 | 1.9.7 | Commercial demand decreases with excess commercial capacity | |
 | 1.9.8 | Commercial demand penalized by worker shortage | |
-| 1.9.9 | Industrial demand starts at 30 | |
+| 1.9.9 | Industrial demand starts at base value per `05_ECONOMY_AND_BALANCING.md` | |
 | 1.9.10 | Industrial demand increases with unemployment | |
 | 1.9.11 | Industrial demand decreases with excess industrial capacity | |
 | 1.9.12 | Industrial demand penalized by pollution | |
@@ -174,7 +176,7 @@ This document lists every feature across all four implementation phases. Under e
 
 | # | Testable Logic | Status |
 | - | - | - |
-| 1.11.1 | Happiness starts at 70 (base) | |
+| 1.11.1 | Happiness starts at base value per `05_ECONOMY_AND_BALANCING.md` | |
 | 1.11.2 | Tax happiness modifier applied correctly per rate bracket | |
 | 1.11.3 | Unemployment happiness penalty applied | |
 | 1.11.4 | Service coverage happiness bonus applied | |
@@ -235,13 +237,13 @@ This document lists every feature across all four implementation phases. Under e
 
 | # | Testable Logic | Status |
 | - | - | - |
-| 1.15.1 | Milestone 0 (Settlement Site) grants road + residential + city hall | |
-| 1.15.2 | Milestone 50 (Hamlet) grants commercial zoning + 2000 bonus | |
-| 1.15.3 | Milestone 100 (Village) grants industrial zoning + 3000 bonus | |
-| 1.15.4 | Milestone 250 (Small Town) grants park + 5000 bonus | |
-| 1.15.5 | Milestone 500 (Growing Town) grants clinic + 7500 bonus | |
-| 1.15.6 | Milestone 750 (Local Center) grants school + 10000 bonus | |
-| 1.15.7 | Milestone 1000 (First City) completes scenario | |
+| 1.15.1 | Milestone at population 0 (Settlement Site) grants road + residential + city hall | |
+| 1.15.2 | Milestone at population 50 (Hamlet) grants commercial zoning + bonus per `06_PROGRESSION_AND_UNLOCKS.md` | |
+| 1.15.3 | Milestone at population 100 (Village) grants industrial zoning + bonus per `06_PROGRESSION_AND_UNLOCKS.md` | |
+| 1.15.4 | Milestone at population 250 (Small Town) grants park + bonus per `06_PROGRESSION_AND_UNLOCKS.md` | |
+| 1.15.5 | Milestone at population 500 (Growing Town) grants clinic + bonus per `06_PROGRESSION_AND_UNLOCKS.md` | |
+| 1.15.6 | Milestone at population 750 (Local Center) grants school + bonus per `06_PROGRESSION_AND_UNLOCKS.md` | |
+| 1.15.7 | Milestone at population 1000 (First City) completes scenario | |
 | 1.15.8 | Milestone reward applied exactly once | |
 | 1.15.9 | Milestone checked every tick | |
 | 1.15.10 | Unlocked features persist in progression state | |
@@ -266,8 +268,8 @@ This document lists every feature across all four implementation phases. Under e
 
 | # | Testable Logic | Status |
 | - | - | - |
-| 1.17.1 | Scenario starts with correct initial state (50000 money, empty map) | |
-| 1.17.2 | Win condition checked: population ≥ 1000, money ≥ 0, happiness ≥ 50 | |
+| 1.17.1 | Scenario starts with correct initial state (money per `05_ECONOMY_AND_BALANCING.md`, empty map) | |
+| 1.17.2 | Win condition checked: population ≥ 1000 per `06_PROGRESSION_AND_UNLOCKS.md`, money ≥ 0, happiness ≥ threshold per `05_ECONOMY_AND_BALANCING.md` | |
 | 1.17.3 | Loss condition checked: monthsBelowZero ≥ 5 | |
 | 1.17.4 | Scenario win triggers SCENARIO_WIN event | |
 | 1.17.5 | Scenario loss triggers SCENARIO_LOSE event | |

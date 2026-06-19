@@ -6,26 +6,7 @@ This document records monetization and analytics considerations.
 
 Monetization is not in initial scope. Do not implement monetization unless explicitly decided.
 
-## Monetization Principles
-
-The game should avoid predatory mechanics.
-
-Avoid:
-
-- energy timers;
-- pay-to-win;
-- forced ads;
-- manipulative daily streaks;
-- intentionally slow progress to sell boosts.
-
-Potential acceptable models:
-
-- paid premium version;
-- cosmetic packs;
-- scenario packs;
-- supporter edition;
-- DLC-style expansions;
-- optional donations.
+Monetization principles are defined in `45_CONTENT_PACKS_AND_MONETIZATION.md`.
 
 ## Analytics Goals
 

@@ -61,7 +61,9 @@ A single tool cycles density with a dropdown or toggle button.
 
 ### Building Upgrade Path
 
-When density is unlocked and land value meets thresholds, existing low-density buildings can upgrade:
+The Phase 2 upgrade system (defined in `24_BUILDING_UPGRADES.md`) handles organic tier upgrades (Tier 1→2→3) for existing buildings using land value thresholds of 30/60. In Phase 3, density zoning provides an alternative path: players can paint medium/high density zones, and buildings grow at those densities directly when conditions are met.
+
+When density is unlocked and land value meets thresholds, existing low-density buildings can also upgrade along this path:
 
 ```txt
 small_house -> medium_house: landValue >= 50, density unlocked
@@ -72,6 +74,8 @@ small_factory -> medium_factory: landValue >= 50, density unlocked
 ```
 
 Upgrades happen automatically during the building growth step when conditions are met. The old building is replaced with the new definition. No refund is given for the old building.
+
+**Note on system layering:** The Phase 2 tier system (`24_BUILDING_UPGRADES.md`) uses land value thresholds 30/60 and applies universally. The Phase 3 density upgrade path uses thresholds 50/75 and is gated by density zone unlocks. These are complementary — higher density zones require higher land values and later milestones. When both systems are active, the density path takes priority for buildings in density-zoned tiles.
 
 ## Office Zones
 
@@ -178,17 +182,19 @@ Density and office logic is integrated into existing steps:
 
 ### Land Value Interaction
 
-Land value affects density viability:
+Land value affects density viability. The base land value system is defined in `23_LAND_VALUE_SYSTEM.md`. Density-specific thresholds build on that system with these additional notes:
 
 | Source                | Land Value Effect |
 | --------------------- | ----------------: |
-| Park nearby           |              +15  |
-| Service coverage      |              +10  |
+| Park nearby           |               +5  |
+| Health coverage       |               +3  |
+| Education coverage    |               +3  |
+| Road access           |              +10  |
 | Police/fire coverage  |              +10  |
-| Pollution source      |              -20  |
-| Industrial zone       |              -10  |
+| Industrial pollution  |               -8  |
+| Noise (traffic/ind.)  |               -5  |
 
-Land value is computed per tile and exposed in a data overlay.
+See `23_LAND_VALUE_SYSTEM.md` for full modifier tables, radii, falloff formulas, and data parameters. The values above match the Phase 2 land value system — additional Phase 3 modifiers (police, fire) use the same radius-based falloff model.
 
 ## Tests
 

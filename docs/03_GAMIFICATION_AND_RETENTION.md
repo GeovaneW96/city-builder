@@ -55,15 +55,9 @@ Objectives should be:
 
 Achievements are optional goals fully defined in `32_CITY_RATING_AND_ACHIEVEMENTS.md`.
 
-Initial achievements: First Steps, No Debt, Green Start, Happy Town, Efficient Planner, Balanced Economy, City Planner, Road Builder.
-
 ### 5. City Rating
 
-A city rating summarizes performance as a letter grade (A–F), defined in `32_CITY_RATING_AND_ACHIEVEMENTS.md`.
-
-Categories (weighted): Economy (30%), Happiness (25%), Services (20%), Environment (15%), Growth (10%).
-
-The rating affects citizen immigration rate (A = +10%, F = −20%).
+A city rating summarizes performance as a letter grade (A–F). Weights, modifiers, and immigration effects are defined in `32_CITY_RATING_AND_ACHIEVEMENTS.md`.
 
 ### 6. Visual Rewards
 

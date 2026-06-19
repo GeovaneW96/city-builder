@@ -41,20 +41,7 @@ Suggested high-level state fields:
 - `warnings` — active warnings;
 - `time` — tick, month, year, speed.
 
-## Grid System
-
-Each tile should know:
-
-- coordinates;
-- terrain type;
-- road id if present;
-- zone type if present;
-- building id if occupied;
-- service modifiers;
-- pollution level;
-- land value.
-
-Initial terrain is flat and buildable.
+Tile state is defined in `08_MAP_GRID_AND_TERRAIN.md`.
 
 ## Road Connectivity
 

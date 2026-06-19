@@ -150,16 +150,7 @@ Use Playwright for full-browser scenario tests:
 - Import the downloaded file → city state matches original
 - Import invalid file → error message shown
 
-## Debug Tools Testing
-
-The debug overlay (FPS counter, draw calls, simulation tick time) must be tested:
-
-- Toggle debug overlay → FPS counter appears and updates
-- Draw call count is visible and non-negative
-- Tick time shows last tick duration in milliseconds
-- Debug overlay does not affect simulation or save data
-- Debug overlay persists across scene navigation
-- Debug overlay hotkey (configurable, default F12) works
+Debug tool specifications and overlay details are defined in `17_PERFORMANCE_GUIDE.md`.
 
 ## Performance Regression Tests
 
