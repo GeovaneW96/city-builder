@@ -140,19 +140,7 @@ Benefits:
 
 ## Game Loop
 
-Separate:
-
-- render loop;
-- simulation loop;
-- input handling.
-
-Example:
-
-```txt
-requestAnimationFrame -> render current state
-fixed interval/tick -> update simulation
-input events -> dispatch commands
-```
+The game loop separates rendering, simulation, and input handling. See `docs/04_SIMULATION_SYSTEMS.md` for the full specification — tick rate, speed controls, pause behavior, and the tick pipeline order.
 
 ## State Ownership
 
@@ -303,10 +291,4 @@ When a single command changes multiple tiles (e.g., drag-painting a zone), the s
 
 ## Performance Principles
 
-- Use instanced meshes for repeated objects.
-- Avoid one draw call per tile where possible.
-- Batch static geometry.
-- Avoid recreating meshes every frame.
-- Dispose geometries/materials when removed.
-- Keep map small initially.
-- Profile before optimizing heavily.
+Performance targets and guidelines are defined in `docs/17_PERFORMANCE_GUIDE.md`. Key rendering techniques (instanced meshes, batching, disposal discipline) are detailed there.

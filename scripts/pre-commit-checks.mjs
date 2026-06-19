@@ -7,7 +7,7 @@ const DOC_MAPPINGS = [
   { prefix: "src/simulation/economy/", doc: "docs/05_ECONOMY_AND_BALANCING.md" },
   { prefix: "src/simulation/buildings/", doc: "docs/07_BUILDINGS_AND_ZONES.md" },
   { prefix: "src/simulation/progression/", doc: "docs/06_PROGRESSION_AND_UNLOCKS.md" },
-  { prefix: "src/simulation/traffic/", doc: "docs/09_TRAFFIC_AND_PATHFINDING.md" },
+  { prefix: "src/simulation/traffic/", doc: "docs/26_TRAFFIC_MODEL.md" },
   { prefix: "src/simulation/grid/", doc: "docs/08_MAP_GRID_AND_TERRAIN.md" },
   { prefix: "src/simulation/scenarios/", doc: "docs/22_SCENARIOS.md" },
   { prefix: "src/simulation/services/", doc: "docs/04_SIMULATION_SYSTEMS.md" },
