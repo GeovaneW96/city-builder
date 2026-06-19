@@ -197,14 +197,7 @@ Tradeoff:
 
 ## Placement Rules
 
-A building can be placed if:
-
-- all footprint tiles are within map bounds;
-- all footprint tiles are buildable;
-- no conflicting building exists;
-- required road adjacency exists if required;
-- player has enough money;
-- building is unlocked.
+General placement rules for roads, zones, and buildings are defined in `08_MAP_GRID_AND_TERRAIN.md` (Placement Rules section). Building-specific rules additionally require sufficient money and the building being unlocked.
 
 ## Visual Rules
 

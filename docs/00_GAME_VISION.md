@@ -121,37 +121,13 @@ It should not feel like:
 - a decoration-only sandbox;
 - a tech demo with no player goals.
 
-## Non-Goals for Initial Release
+## Initial Scope
 
-The initial release will not include:
-
-- multiplayer;
-- full agent-based citizens;
-- advanced traffic simulation;
-- realistic terrain editing;
-- modding;
-- huge maps;
-- disasters;
-- public transport;
-- mobile-specific UI;
-- complex asset pipeline;
-- procedural city generation.
+The development scope is defined in `AGENTS.md` (Initial Scope section). See also `MASTER_FEATURE_LIST.md` for the complete feature breakdown across all phases.
 
 ## First Playable Goal
 
-The first scenario should be:
-
-> Build a small city and reach 1,000 citizens without going bankrupt.
-
-The player should learn:
-
-- roads connect the city;
-- zones create buildings;
-- buildings need services;
-- citizens create income and demand;
-- services cost upkeep;
-- happiness affects growth;
-- poor planning creates problems.
+The first scenario is defined in `docs/22_SCENARIOS.md`. It teaches roads, zoning, services, economy, happiness, and problem-solving.
 
 ## Long-Term Potential
 

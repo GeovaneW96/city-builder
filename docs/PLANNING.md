@@ -16,15 +16,11 @@ The first release (Phase 1 of MFL) covers ROADMAP Phases 2 + 3 combined — the 
 
 ## Phase 1: Foundation
 
-**Goal:** Player can reach 1,000 population in the first scenario without bankruptcy.
-
 See `MASTER_FEATURE_LIST.md` sections 1.1–1.25 for the full feature list, testable logic, and status.
 
-Building growth, economy, demand, happiness, services, pollution, warnings, milestones, save/load, and the first scenario are all in this phase. The Tutorial objectives and UI (HUD, build mode, overlays, camera) are also part of the foundation.
+Building growth, economy, demand, happiness, services, pollution, warnings, milestones, save/load, and the first scenario are all in this phase. The tutorial objectives and UI (HUD, build mode, overlays, camera) are also part of the foundation.
 
 ## Phase 2: Services & Depth
-
-**Goal:** Full service city simulation with deeper city management.
 
 See `MASTER_FEATURE_LIST.md` sections 2.1–2.17 for the full feature list, testable logic, and status.
 
@@ -32,15 +28,11 @@ Land value, building upgrades, neighborhood happiness, traffic, commercial goods
 
 ## Phase 3: Complexity
 
-**Goal:** Advanced city systems with meaningful tradeoffs and optimization.
-
 See `MASTER_FEATURE_LIST.md` sections 3.1–3.11 for the full feature list, testable logic, and status.
 
 Agent-based traffic, road hierarchy, traffic lights, education/healthcare tiers, high-density and office zoning, tourism, city specialization, events/disasters, and the scenario editor.
 
 ## Phase 4: Expansion
-
-**Goal:** Extended content and replayability.
 
 See `MASTER_FEATURE_LIST.md` sections 4.1–4.10 for the full feature list, testable logic, and status.
 

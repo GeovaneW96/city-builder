@@ -6,26 +6,13 @@ This document defines the game design for a browser-based 3D city builder.
 
 The game is a systems-driven management game where players build roads, zone land, provide services, manage budget, respond to city problems, and unlock new tools as the city grows.
 
-## Core Player Experience
-
-The player should constantly cycle through:
-
-1. Build something.
-2. Watch the city react.
-3. Notice a new problem or opportunity.
-4. Fix or optimize.
-5. Unlock something new.
-6. Expand.
-
-The city should feel alive enough to create curiosity, but simple enough that the player understands cause and effect.
-
 ## Core Loop
 
-```txt
-Plan -> Build -> Simulate -> Diagnose -> Fix -> Grow -> Unlock -> Repeat
-```
+The core gameplay loop is defined in `02_CORE_GAMEPLAY_LOOP.md`:
 
-See `02_CORE_GAMEPLAY_LOOP.md` for the detailed breakdown of each phase.
+```
+Build -> Simulate -> Diagnose -> Fix -> Grow -> Unlock -> Repeat
+```
 
 ## Main Resources
 
@@ -152,11 +139,7 @@ The primary failure state is:
 
 ## Win Conditions
 
-Sandbox games do not require a hard win, but scenarios should.
-
-First scenario win condition:
-
-> Reach 1,000 population with non-negative money and happiness above 50%.
+Sandbox games do not require a hard win, but scenarios should. The first scenario win/loss conditions are defined in `docs/22_SCENARIOS.md`.
 
 ## Tutorial
 

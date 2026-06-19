@@ -77,17 +77,7 @@ Suggested initial model:
 
 ## Population and Jobs
 
-Initial building values:
-
-| Building      | Population Capacity | Jobs |
-| ------------- | ------------------: | ---: |
-| Small house   |                   8 |    0 |
-| Small shop    |                   0 |    6 |
-| Small factory |                   0 |   12 |
-| Clinic        |                   0 |    8 |
-| School        |                   0 |   12 |
-| Power plant   |                   0 |   10 |
-| Water tower   |                   0 |    2 |
+Building definitions (population capacity, jobs, costs, upkeep) are defined in `docs/07_BUILDINGS_AND_ZONES.md` and data files under `src/data/`.
 
 ## Demand Rules
 

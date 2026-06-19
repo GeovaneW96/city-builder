@@ -92,60 +92,7 @@ Pressure must be readable and solvable.
 
 ## First 30 Minutes
 
-### Minute 0-2
-
-Player learns camera and places first road.
-
-Reward:
-
-- road appears instantly;
-- objective completes.
-
-### Minute 2-5
-
-Player zones housing.
-
-Reward:
-
-- houses grow;
-- population increases;
-- first tax income appears.
-
-### Minute 5-10
-
-Player unlocks commerce/industry.
-
-Problem:
-
-- residents need jobs and shops.
-
-Reward:
-
-- economy starts working.
-
-### Minute 10-20
-
-Player faces services and budget.
-
-Problem:
-
-- happiness drops if services are missing.
-
-Reward:
-
-- parks/clinic/school improve city.
-
-### Minute 20-30
-
-Player optimizes to reach 1,000 population.
-
-Problem:
-
-- growth requires balance.
-
-Reward:
-
-- scenario victory.
+Pacing guidance is defined in `02_CORE_GAMEPLAY_LOOP.md` (Loop Timing section). The first scenario objective sequence in `22_SCENARIOS.md` drives the early experience.
 
 ## Hook Formula
 
