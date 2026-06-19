@@ -1,0 +1,12 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": [
+    "src/data/balance/index.ts",
+    "src/data/buildings/index.ts",
+    "src/data/scenarios/index.ts",
+    "src/data/unlocks/index.ts"
+  ],
+  "project": ["src/**/*.ts"],
+  "ignoreDependencies": ["react-dom", "remark-validate-links"],
+  "ignoreExportsUsedInFile": { "interface": true, "type": true }
+}
