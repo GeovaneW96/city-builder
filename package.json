@@ -14,6 +14,7 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "docs:check": "npx tsx scripts/docs-validate.ts",
     "depcruise": "depcruise src",
     "depcruise:graph": "depcruise src --output-type dot | dot -T svg > docs/dependency-graph.svg",
     "prepare": "husky"

@@ -76,35 +76,17 @@ Objectives should be:
 
 ### 4. Achievements
 
-Achievements are optional goals.
+Achievements are optional goals fully defined in `32_CITY_RATING_AND_ACHIEVEMENTS.md`.
 
-Examples:
-
-- No Debt: reach 1,000 population without going negative.
-- Green Start: keep pollution below 10%.
-- Happy Town: keep happiness above 80% for 10 minutes.
-- Efficient Planner: reach 1,000 population with fewer than 100 road tiles.
-- Balanced Economy: maintain positive income for 12 months.
+Initial achievements: First Steps, No Debt, Green Start, Happy Town, Efficient Planner, Balanced Economy, City Planner, Road Builder.
 
 ### 5. City Rating
 
-A city rating can summarize performance.
+A city rating summarizes performance as a letter grade (A–F), defined in `32_CITY_RATING_AND_ACHIEVEMENTS.md`.
 
-Categories:
+Categories (weighted): Economy (30%), Happiness (25%), Services (20%), Environment (15%), Growth (10%).
 
-- economy;
-- happiness;
-- services;
-- traffic;
-- environment;
-- growth.
-
-Example:
-
-```txt
-City Rating: B+
-Strong economy, weak healthcare, moderate pollution.
-```
+The rating affects citizen immigration rate (A = +10%, F = −20%).
 
 ### 6. Visual Rewards
 

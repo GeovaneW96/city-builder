@@ -86,15 +86,137 @@ Useful integration tests:
 - verify houses grow;
 - verify population/income changes.
 
-## E2E Tests
+## E2E Tests (Playwright)
 
-Use Playwright for:
+Use Playwright for full-browser scenario tests:
 
-- app loads;
-- player can place road;
-- player can zone area;
-- HUD updates;
-- save/load works.
+### App Load
+
+- App loads without console errors
+- Three.js canvas is rendered
+- HUD shows default state (money, population, date)
+- City hall building is visible on the grid
+- Toolbar buttons are present
+
+### Road Placement
+
+- Click road tool, click tile → road appears
+- Drag across multiple tiles → all tiles become roads
+- Road cost is deducted from money
+- Invalid placement (outside bounds) shows error and does not place
+- Hover preview shows valid/invalid state
+
+### Zone Painting
+
+- Select zone type (residential), paint on empty tiles → zone appears
+- Zone on road tile → rejected
+- Zone on existing building → rejected
+- Remove zone → tile returns to empty
+
+### HUD Updates
+
+- Zone residential → houses grow → population increases
+- Population change reflects in HUD within expected tick count
+- Money changes after road placement
+- Demand bars move in response to zoning
+
+### Save/Load Round-Trip
+
+- Save game to a manual slot
+- Reload page
+- Load from the saved slot
+- Verify city state matches (population, money, buildings, roads)
+- Verify rating and achievements state are restored
+- Simulation continues from loaded state without errors
+
+### Milestone Unlock
+
+- Reach milestone population threshold → unlock notification appears
+- New building/tool becomes available in toolbar
+- Money bonus is awarded
+- Milestone is persisted after save/load
+
+### Slot Management
+
+- Slot list shows all 6 slots
+- Save to an empty slot → slot shows metadata
+- Save to an occupied slot → slot is overwritten
+- Delete slot → slot returns to empty
+- Autosave slot is populated after 5 minutes of unpaused play
+
+### Export/Import
+
+- Export a save → file is downloaded as `.json`
+- Import the downloaded file → city state matches original
+- Import invalid file → error message shown
+
+## Debug Tools Testing
+
+The debug overlay (FPS counter, draw calls, simulation tick time) must be tested:
+
+- Toggle debug overlay → FPS counter appears and updates
+- Draw call count is visible and non-negative
+- Tick time shows last tick duration in milliseconds
+- Debug overlay does not affect simulation or save data
+- Debug overlay persists across scene navigation
+- Debug overlay hotkey (configurable, default F12) works
+
+## Performance Regression Tests
+
+Performance tests measure critical metrics to catch regressions:
+
+- Simulation tick with 1,000+ buildings completes in under 16 ms
+- Initial load time under 3 seconds (cold cache)
+- Save serialization for a 1,000-building city under 500 ms
+- Load deserialization for a 1,000-building city under 500 ms
+- Road drag across 50 tiles renders preview without frame drops
+- Zone painting across 100 tiles processes in under 1 tick
+
+Test thresholds are defined in a config file and run against a reference build. Use Vitest benchmarks (`vitest bench`) for repeatable perf comparisons.
+
+## Docs Validation
+
+Documentation must stay consistent with the implemented code:
+
+- A `npm run docs:check` script verifies:
+  - Every feature in `MASTER_FEATURE_LIST.md` has a corresponding docs file referenced.
+  - Every docs file referenced in `MASTER_FEATURE_LIST.md` exists on disk.
+  - No dangling references to nonexistent document sections.
+  - All `Status` fields in `MASTER_FEATURE_LIST.md` are marked (empty, WIP, or done).
+- The check runs as part of CI.
+- Docs changes must not break `docs:check` — this is a pre-commit gate.
+
+## How to Write Tests for New Features
+
+When implementing a new feature, follow this checklist:
+
+1. **Read `MASTER_FEATURE_LIST.md`** — locate the feature's section and understand its testable logic entries.
+2. **Add/update unit tests** — every testable logic row should map to at least one unit test. Tests live in `src/` co-located with the implementation file (`.test.ts`).
+3. **Add/update integration tests** — if the feature spans multiple systems (e.g. economy + services + happiness), write a test that exercises the combined behavior.
+4. **Add/update E2E tests** — if the feature has a visible UI result, add a Playwright test in `e2e/` that validates the user-visible behavior.
+5. **Update `MASTER_FEATURE_LIST.md`** — mark the feature's status as implemented once tests pass.
+6. **Run the full test suite** — `npm test` must pass.
+7. **Run `npm run docs:check`** — ensure documentation references are consistent.
+
+### Per-Feature Test Coverage Template
+
+```txt
+For any feature in MASTER_FEATURE_LIST.md:
+
+Unit tests:
+  - [ ] Core logic (pure function tests)
+  - [ ] Edge cases (empty state, max values, invalid input)
+  - [ ] Error paths (validation rejection, boundary conditions)
+
+Integration tests (if applicable):
+  - [ ] Cross-system interaction (e.g. new economy rule + demand)
+  - [ ] Save/load with new state fields
+
+E2E tests (if UI-visible):
+  - [ ] Player can perform the action
+  - [ ] HUD/UI reflects the action
+  - [ ] State persists after reload
+```
 
 ## Manual Playtest Checklist
 
