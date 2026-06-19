@@ -282,8 +282,4 @@ Examples:
 - game loop timing change -> `docs/04_SIMULATION_SYSTEMS.md`
 - store or event bus change -> `docs/13_TECHNICAL_ARCHITECTURE.md`
 
-## First Implementation Task
 
-Start with `docs/23_TASK_00_SCAFFOLDING.md`.
-
-That task scaffolds the project, shared types, data files, stores, event bus, grid rendering, and camera. Do not skip it or combine it with later tasks.

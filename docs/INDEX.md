@@ -41,10 +41,6 @@
 - `20_ACCESSIBILITY_AND_SETTINGS.md`
 - `21_CONTENT_PIPELINE.md`
 
-## Implementation Tasks
-
-- `23_TASK_00_SCAFFOLDING.md` — First concrete implementation task
-
 ## Templates
 
 - `templates/FEATURE_SPEC_TEMPLATE.md`

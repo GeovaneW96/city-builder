@@ -48,7 +48,6 @@ Start here:
 6. `docs/04_SIMULATION_SYSTEMS.md` - Simulation model.
 7. `docs/13_TECHNICAL_ARCHITECTURE.md` - Engineering architecture.
 8. `docs/18_BACKLOG.md` - Prioritized backlog.
-9. `docs/23_TASK_00_SCAFFOLDING.md` - First implementation task.
 
 ## First Implementation Target
 

@@ -4,7 +4,6 @@ This backlog tracks current active work items. Long-term planning lives in `PLAN
 
 ## Active
 
-- **Execute `docs/23_TASK_00_SCAFFOLDING.md`** — Project scaffolding, shared types, data files, stores, event bus, Three.js scene, grid, camera, hover/selection.
 - Add road placement command.
 - Add zone painting command.
 - Add top HUD (money, population, date).
