@@ -317,27 +317,27 @@ Rendering runs at display refresh rate (typically 60 fps). Simulation runs on a 
 
 ### Tick Rate and Time Model
 
-| Property | Value | Rationale |
-|----------|:-----:|-----------|
-| Simulation tick interval | 250 ms real-time | 4 ticks per real second |
-| In-game months per tick | 1 month per tick **at speed 1** | One tick = one month |
-| Ticks per month | 1 (at speed 1) | Simple: each tick advances one month |
-| Economy tick | Every simulation tick | Monthly income/expenses computed each tick |
-| Building growth check | Every simulation tick | Spawn buildings if conditions are met |
-| Demand recomputation | Every simulation tick | Recalculate RCI demand |
-| Happiness recomputation | Every simulation tick | Recalculate city happiness |
-| Service coverage check | Every simulation tick | Buildings re-evaluate service state |
-| Warning refresh | Every simulation tick | Rebuild active warning list |
-| Milestone check | Every simulation tick | Check population against thresholds |
+| Property                 |              Value              | Rationale                                  |
+| ------------------------ | :-----------------------------: | ------------------------------------------ |
+| Simulation tick interval |        250 ms real-time         | 4 ticks per real second                    |
+| In-game months per tick  | 1 month per tick **at speed 1** | One tick = one month                       |
+| Ticks per month          |         1 (at speed 1)          | Simple: each tick advances one month       |
+| Economy tick             |      Every simulation tick      | Monthly income/expenses computed each tick |
+| Building growth check    |      Every simulation tick      | Spawn buildings if conditions are met      |
+| Demand recomputation     |      Every simulation tick      | Recalculate RCI demand                     |
+| Happiness recomputation  |      Every simulation tick      | Recalculate city happiness                 |
+| Service coverage check   |      Every simulation tick      | Buildings re-evaluate service state        |
+| Warning refresh          |      Every simulation tick      | Rebuild active warning list                |
+| Milestone check          |      Every simulation tick      | Check population against thresholds        |
 
 ### Speed Controls
 
-| Speed | Ticks per Second | Real Seconds per Tick | Game Months per Real Second |
-|:-----:|:----------------:|:---------------------:|:---------------------------:|
-| 0 (Paused) | 0 | — | 0 |
-| 1 (Normal) | 4 | 0.25 | 4 |
-| 2 (Fast) | 12 | 0.083 | 12 |
-| 3 (Very Fast) | 24 | 0.042 | 24 |
+|     Speed     | Ticks per Second | Real Seconds per Tick | Game Months per Real Second |
+| :-----------: | :--------------: | :-------------------: | :-------------------------: |
+|  0 (Paused)   |        0         |           —           |              0              |
+|  1 (Normal)   |        4         |         0.25          |              4              |
+|   2 (Fast)    |        12        |         0.083         |             12              |
+| 3 (Very Fast) |        24        |         0.042         |             24              |
 
 At speed 1: 1 real second = 4 in-game months.
 A full game "year" takes 3 real seconds at speed 1 (12 months / 4 ticks per second).
@@ -345,6 +345,7 @@ A full game "year" takes 3 real seconds at speed 1 (12 months / 4 ticks per seco
 ### Pause Behavior
 
 When paused (`speed = 0`):
+
 - No simulation ticks fire.
 - Rendering continues (camera movement, hover, selection).
 - Build mode works normally.
@@ -376,6 +377,7 @@ Within a single simulation tick, the following runs **in order**:
 ### First Tick Special Case
 
 On game start or load:
+
 - The zero-th tick initializes all derived values.
 - No economy tick runs (player cannot lose money on frame 1).
 - Building growth is suppressed for the first tick.

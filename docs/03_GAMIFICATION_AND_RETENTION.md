@@ -16,14 +16,14 @@ Milestones provide clear progress.
 
 Examples:
 
-| Population | Milestone | Reward |
-|---:|---|---|
-| 50 | Hamlet | Commercial zoning |
-| 100 | Village | Industrial zoning |
-| 250 | Small Town | Park |
-| 500 | Growing Town | Clinic |
-| 750 | Local Center | School |
-| 1,000 | First City | Scenario complete |
+| Population | Milestone    | Reward            |
+| ---------: | ------------ | ----------------- |
+|         50 | Hamlet       | Commercial zoning |
+|        100 | Village      | Industrial zoning |
+|        250 | Small Town   | Park              |
+|        500 | Growing Town | Clinic            |
+|        750 | Local Center | School            |
+|      1,000 | First City   | Scenario complete |
 
 Milestones should be celebrated with:
 

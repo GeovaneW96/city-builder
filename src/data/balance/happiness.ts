@@ -1,0 +1,8 @@
+export const HAPPINESS_DEFAULTS = {
+  BASE: 70,
+  MIN: 0,
+  MAX: 100,
+} as const;
+
+export const STARTING_MONEY = 50000;
+export const BANKRUPTCY_GRACE_MONTHS = 5;

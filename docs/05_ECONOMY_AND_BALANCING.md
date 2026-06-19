@@ -8,42 +8,42 @@ All values are provisional. Balance should be adjusted after playtesting.
 
 ## Starting Values
 
-| Value | Initial |
-|---|---:|
-| Starting money | 50,000 |
-| Bankruptcy grace period | 5 months |
-| Starting residential tax | 10% |
-| Starting commercial tax | 10% |
-| Starting industrial tax | 10% |
-| Base happiness | 70 |
+| Value                    |  Initial |
+| ------------------------ | -------: |
+| Starting money           |   50,000 |
+| Bankruptcy grace period  | 5 months |
+| Starting residential tax |      10% |
+| Starting commercial tax  |      10% |
+| Starting industrial tax  |      10% |
+| Base happiness           |       70 |
 
 ## Construction Costs
 
-| Item | Cost |
-|---|---:|
-| Dirt road tile | 50 |
-| Paved road tile | 100 (— not used initially) |
-| Residential zone tile | 0 |
-| Commercial zone tile | 0 |
-| Industrial zone tile | 0 |
-| Power plant | 10,000 |
-| Water tower | 5,000 |
-| Park | 2,500 |
-| Clinic | 8,000 |
-| School | 12,000 |
-| City hall | 0 |
+| Item                  |                       Cost |
+| --------------------- | -------------------------: |
+| Dirt road tile        |                         50 |
+| Paved road tile       | 100 (— not used initially) |
+| Residential zone tile |                          0 |
+| Commercial zone tile  |                          0 |
+| Industrial zone tile  |                          0 |
+| Power plant           |                     10,000 |
+| Water tower           |                      5,000 |
+| Park                  |                      2,500 |
+| Clinic                |                      8,000 |
+| School                |                     12,000 |
+| City hall             |                          0 |
 
 ## Monthly Upkeep
 
-| Item | Monthly Upkeep |
-|---|---:|
-| Dirt road tile | 1 |
-| Paved road tile | 2 |
-| Power plant | 500 |
-| Water tower | 250 |
-| Park | 100 |
-| Clinic | 400 |
-| School | 600 |
+| Item            | Monthly Upkeep |
+| --------------- | -------------: |
+| Dirt road tile  |              1 |
+| Paved road tile |              2 |
+| Power plant     |            500 |
+| Water tower     |            250 |
+| Park            |            100 |
+| Clinic          |            400 |
+| School          |            600 |
 
 ## Tax Income
 
@@ -68,26 +68,26 @@ A 10% tax rate means multiplier 1.0.
 Suggested initial model:
 
 | Tax Rate | Happiness Effect |
-|---:|---:|
-| 0-8% | +4 |
-| 9-10% | 0 |
-| 11-12% | -4 |
-| 13-15% | -10 |
-| 16%+ | -20 |
+| -------: | ---------------: |
+|     0-8% |               +4 |
+|    9-10% |                0 |
+|   11-12% |               -4 |
+|   13-15% |              -10 |
+|     16%+ |              -20 |
 
 ## Population and Jobs
 
 Initial building values:
 
-| Building | Population Capacity | Jobs |
-|---|---:|---:|
-| Small house | 8 | 0 |
-| Small shop | 0 | 6 |
-| Small factory | 0 | 12 |
-| Clinic | 0 | 8 |
-| School | 0 | 12 |
-| Power plant | 0 | 10 |
-| Water tower | 0 | 2 |
+| Building      | Population Capacity | Jobs |
+| ------------- | ------------------: | ---: |
+| Small house   |                   8 |    0 |
+| Small shop    |                   0 |    6 |
+| Small factory |                   0 |   12 |
+| Clinic        |                   0 |    8 |
+| School        |                   0 |   12 |
+| Power plant   |                   0 |   10 |
+| Water tower   |                   0 |    2 |
 
 ## Demand Rules
 

@@ -47,16 +47,16 @@ UI text should be:
 
 Recommended shortcuts:
 
-| Action | Shortcut |
-|---|---|
-| Cancel | Esc |
-| Pause | Space |
-| Speed 1 | 1 |
-| Speed 2 | 2 |
-| Speed 3 | 3 |
-| Demolish | D |
-| Roads | R |
-| Zones | Z |
+| Action   | Shortcut |
+| -------- | -------- |
+| Cancel   | Esc      |
+| Pause    | Space    |
+| Speed 1  | 1        |
+| Speed 2  | 2        |
+| Speed 3  | 3        |
+| Demolish | D        |
+| Roads    | R        |
+| Zones    | Z        |
 
 ## Settings Menu
 

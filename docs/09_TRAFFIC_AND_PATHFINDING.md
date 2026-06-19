@@ -65,7 +65,7 @@ Candidate algorithms:
 
 - BFS for simple grids;
 - Dijkstra for weighted roads;
-- A* for performance.
+- A\* for performance.
 
 ## Traffic Design Goals
 

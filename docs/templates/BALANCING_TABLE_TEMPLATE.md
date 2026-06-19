@@ -6,9 +6,9 @@ Explain what is being balanced.
 
 ## Current Values
 
-| Item | Value | Notes |
-|---|---:|---|
-| Example | 100 | Placeholder |
+| Item    | Value | Notes       |
+| ------- | ----: | ----------- |
+| Example |   100 | Placeholder |
 
 ## Target Experience
 
@@ -24,12 +24,12 @@ Describe how this should feel to the player.
 
 ## Playtest Notes
 
-| Date | Observation | Change Proposed |
-|---|---|---|
-| YYYY-MM-DD | | |
+| Date       | Observation | Change Proposed |
+| ---------- | ----------- | --------------- |
+| YYYY-MM-DD |             |                 |
 
 ## Change Log
 
-| Date | Changed | Reason |
-|---|---|---|
-| YYYY-MM-DD | | |
+| Date       | Changed | Reason |
+| ---------- | ------- | ------ |
+| YYYY-MM-DD |         |        |

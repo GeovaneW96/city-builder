@@ -8,15 +8,15 @@ Progression should create a sense of growth and prevent the player from being ov
 
 ## Milestones
 
-| Population | City Stage | Unlocks |
-|---:|---|---|
-| 0 | Settlement Site | Dirt road, residential zoning, city hall |
-| 50 | Hamlet | Commercial zoning |
-| 100 | Village | Industrial zoning |
-| 250 | Small Town | Park |
-| 500 | Growing Town | Clinic |
-| 750 | Local Center | School |
-| 1,000 | First City | Scenario victory |
+| Population | City Stage      | Unlocks                                  |
+| ---------: | --------------- | ---------------------------------------- |
+|          0 | Settlement Site | Dirt road, residential zoning, city hall |
+|         50 | Hamlet          | Commercial zoning                        |
+|        100 | Village         | Industrial zoning                        |
+|        250 | Small Town      | Park                                     |
+|        500 | Growing Town    | Clinic                                   |
+|        750 | Local Center    | School                                   |
+|      1,000 | First City      | Scenario victory                         |
 
 ## Unlock Design Rules
 
@@ -46,14 +46,14 @@ Each milestone may provide:
 
 Suggested bonuses:
 
-| Population | Bonus |
-|---:|---:|
-| 50 | 2,000 |
-| 100 | 3,000 |
-| 250 | 5,000 |
-| 500 | 7,500 |
-| 750 | 10,000 |
-| 1,000 | scenario complete |
+| Population |             Bonus |
+| ---------: | ----------------: |
+|         50 |             2,000 |
+|        100 |             3,000 |
+|        250 |             5,000 |
+|        500 |             7,500 |
+|        750 |            10,000 |
+|      1,000 | scenario complete |
 
 ## Tutorial Objectives
 
@@ -76,15 +76,15 @@ Example flow:
 
 Later milestones:
 
-| Population | Possible Unlock |
-|---:|---|
-| 2,000 | Police and fire |
-| 3,500 | Medium-density residential |
-| 5,000 | Bus system |
-| 7,500 | District policies |
-| 10,000 | High-density zoning |
-| 15,000 | Train/cargo |
-| 25,000 | Landmarks |
+| Population | Possible Unlock            |
+| ---------: | -------------------------- |
+|      2,000 | Police and fire            |
+|      3,500 | Medium-density residential |
+|      5,000 | Bus system                 |
+|      7,500 | District policies          |
+|     10,000 | High-density zoning        |
+|     15,000 | Train/cargo                |
+|     25,000 | Landmarks                  |
 
 ## Alternative Progression Models
 

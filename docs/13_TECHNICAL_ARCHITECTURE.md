@@ -16,9 +16,9 @@ Initial proposal:
 - Vite;
 - Three.js;
 - React for UI;
-- Zustand or similar for UI/game state orchestration;
+- Zustand for UI/game state orchestration;
 - Vitest for unit tests;
-- Playwright later for E2E;
+- Playwright for E2E;
 - IndexedDB/localStorage for saves.
 
 ## High-Level Architecture

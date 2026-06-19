@@ -1,0 +1,9 @@
+export const MONTHLY_UPKEEP = {
+  DIRT_ROAD_PER_TILE: 1,
+  PAVED_ROAD_PER_TILE: 2,
+  POWER_PLANT: 500,
+  WATER_TOWER: 250,
+  PARK: 100,
+  CLINIC: 400,
+  SCHOOL: 600,
+} as const;

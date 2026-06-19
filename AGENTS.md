@@ -164,20 +164,67 @@ Examples:
 
 Do not rely only on visual testing for simulation behavior.
 
+## Quality Gates (Enforced Automatically)
+
+### Pre-commit (husky + lint-staged)
+
+Every commit runs:
+
+1. `eslint --fix` on staged `.ts`/`.js` files
+2. `prettier --write` on all staged files
+3. `tsc --noEmit` via `npm run build`
+
+Rejected commits must be fixed before they land.
+
+### Commit Messages
+
+Must follow [Conventional Commits](https://www.conventionalcommits.org/):
+`type(scope): description`
+
+Examples:
+
+- `feat(simulation): add economy tick`
+- `fix(rendering): correct tile highlight z-fighting`
+- `test(demand): add demand calculation tests`
+
+Enforced by `commitlint`.
+
+### Import Restrictions (ESLint)
+
+- `src/simulation/` — cannot import `three`, `@types/three`, or `three/*`
+- `src/data/` — cannot import `../simulation`, `../rendering`, or `../ui`
+- `src/shared/` — cannot import `../simulation`, `../rendering`, or `../ui`
+
+These are lint errors, not warnings. CI fails if violated.
+
+### Code Complexity (ESLint)
+
+- Cyclomatic complexity capped at **10** per function
+- Nesting depth capped at **4** levels
+- Max **60 lines** per function (warning)
+- Max **5 parameters** per function
+- Max **3 nested callbacks**
+
+Functions exceeding these limits must be refactored or split.
+
+### Formatting
+
+Prettier is the single source of truth. Run `npm run format` before commits (automatic with lint-staged).
+
 ## Suggested Commands
 
-These commands should be updated after the project is initialized.
-
 ```bash
-npm install
-npm run dev
-npm run test
-npm run lint
-npm run typecheck
-npm run build
+npm install              # install dependencies + initialize husky
+npm run dev              # start Vite dev server
+npm run test             # run vitest
+npm run test:watch       # run vitest in watch mode
+npm run lint             # ESLint check
+npm run lint:fix         # ESLint check + auto-fix
+npm run format           # Prettier format all files
+npm run format:check     # Prettier check only
+npm run typecheck        # tsc --noEmit
+npm run build            # typecheck + vite build
 ```
-
-If commands do not exist yet, add them when project scaffolding is created.
 
 ## Data-Driven Design
 
@@ -194,8 +241,8 @@ const buildingDefinition = {
   size: [2, 2],
   effects: {
     healthCoverageRadius: 8,
-    happiness: 3
-  }
+    happiness: 3,
+  },
 };
 ```
 
