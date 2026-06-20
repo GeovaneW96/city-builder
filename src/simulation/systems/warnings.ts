@@ -1,4 +1,9 @@
-import { GOODS_BALANCE, POLLUTION_BALANCE, TRAFFIC_BALANCE } from "../../data/balance";
+import {
+  GOODS_BALANCE,
+  LOAN_BALANCE,
+  POLLUTION_BALANCE,
+  TRAFFIC_BALANCE,
+} from "../../data/balance";
 import { getBuildingById } from "../../data/buildings";
 import type {
   BuildingDefinition,
@@ -191,6 +196,7 @@ function getCityWarnings(state: CityState): Warning[] {
     });
   }
   warnings.push(...getGoodsWarnings(state));
+  warnings.push(...getLoanWarnings(state));
   return warnings;
 }
 
@@ -217,6 +223,45 @@ function getGoodsWarnings(state: CityState): Warning[] {
     ];
   }
   return [];
+}
+
+function getLoanWarnings(state: CityState): Warning[] {
+  const loans = state.economy.loans;
+  const highestMissedPayments = Math.max(0, ...loans.map((loan) => loan.missedPayments));
+  if (highestMissedPayments >= 2) return [createLoanWarning("critical")];
+  if (highestMissedPayments >= 1) return [createLoanWarning("high")];
+  if (loans.length > 0) return [createLoanWarning("low")];
+  if (isEligibleForLoan(state)) {
+    return [
+      {
+        id: "city:low-funds",
+        severity: "medium",
+        message: "City funds are running low.",
+        suggestedFix: "Take a loan or reduce expenses.",
+      },
+    ];
+  }
+  return [];
+}
+
+function createLoanWarning(severity: Warning["severity"]): Warning {
+  const missedLabel =
+    severity === "critical" ? "Loan default imminent." : "Loan payment due.";
+  return {
+    id: severity === "low" ? "city:outstanding-loans" : "city:loan-payment-due",
+    severity,
+    message:
+      severity === "low" ? "Outstanding loans require monthly payments." : missedLabel,
+    suggestedFix: "Raise funds before the next economy tick.",
+  };
+}
+
+function isEligibleForLoan(state: CityState): boolean {
+  return (
+    state.economy.money < LOAN_BALANCE.ELIGIBILITY_THRESHOLD &&
+    state.economy.loans.length < LOAN_BALANCE.MAX_LOANS &&
+    state.time.tick - state.economy.lastLoanTick >= LOAN_BALANCE.COOLDOWN_TICKS
+  );
 }
 
 function createWarning(

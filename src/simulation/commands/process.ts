@@ -22,6 +22,7 @@ import {
   refreshAllRoadConnections,
 } from "../grid/map";
 import { advanceCommandObjectives } from "../systems/progression";
+import { takeLoan } from "../systems/loans";
 
 interface CommandApplication {
   state: CityState;
@@ -53,6 +54,7 @@ const COMMAND_HANDLERS = {
   PLACE_BUILDING: placeBuilding,
   DEMOLISH: demolish,
   SET_TAX_RATE: setTaxRate,
+  TAKE_LOAN: takeLoanCommand,
   SET_SPEED: setSpeed,
 } satisfies {
   [K in GameCommand["type"]]: CommandHandler<Extract<GameCommand, { type: K }>>;
@@ -205,6 +207,15 @@ function setSpeed(
   const state = cloneCityState(current);
   state.time.speed = command.speed;
   return success(state, []);
+}
+
+function takeLoanCommand(
+  current: CityState,
+  command: Extract<GameCommand, { type: "TAKE_LOAN" }>,
+): CommandApplication {
+  const state = cloneCityState(current);
+  const error = takeLoan(state, command.loanType);
+  return error ? failure(current, error) : success(state, []);
 }
 
 function demolishBuilding(current: CityState, buildingId: string): CommandApplication {

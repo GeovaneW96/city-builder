@@ -7,6 +7,7 @@ import {
 import { getBuildingById } from "../../data/buildings";
 import type { CityState } from "../../shared/types";
 import type { CityMetrics } from "./metrics";
+import { processLoanPayments } from "./loans";
 
 export function runEconomy(state: CityState, metrics: CityMetrics): void {
   const income = calculateMonthlyIncome(state, metrics);
@@ -14,6 +15,8 @@ export function runEconomy(state: CityState, metrics: CityMetrics): void {
   state.economy.monthlyIncome = income;
   state.economy.monthlyExpenses = expenses;
   state.economy.money += income - expenses;
+  state.economy.monthlyExpenses += processLoanPayments(state);
+  if (state.progression.scenarioStatus === "lost") return;
   updateBankruptcyState(state);
 }
 

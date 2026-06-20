@@ -169,6 +169,17 @@ LOAN_COOLDOWN_TICKS            = 6
 | UI         | Loan dialog, loan status panel, take-loan button          |
 | Warnings   | Loan-related warnings for missed and approaching payments |
 
+## Current Implementation
+
+Loans are issued through the `TAKE_LOAN` command after eligibility, count, and cooldown
+validation. The simulation persists fixed-payment schedules, charges them in the monthly economy
+step, and marks the scenario lost after the third consecutive missed payment for a loan. City
+warnings report outstanding loans and escalate missed payments to critical severity.
+
+The current economy panel uses inline borrowing controls rather than a modal dialog. It shows
+active loan payment and remaining-term details, disables borrowing while ineligible, and reports
+the command result in the inspector status area.
+
 ## Tests
 
 1. Taking a Small loan adds $5,000 to money.

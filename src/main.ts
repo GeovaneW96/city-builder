@@ -1,5 +1,5 @@
 import { Vector2 } from "three";
-import { CONSTRUCTION_COSTS } from "./data/balance";
+import { CONSTRUCTION_COSTS, LOAN_BALANCE } from "./data/balance";
 import { getBuildingById, getManualBuildings } from "./data/buildings";
 import { FIRST_SETTLEMENT } from "./data/scenarios/first_settlement";
 import {
@@ -308,15 +308,21 @@ function bindInterface(): void {
 
 function handleToolbarClick(target: HTMLElement): void {
   const action = target.dataset.action;
+  if (handleGlobalAction(action, target)) return;
   if (action === "road") useUIStore.getState().setRoadTool("dirt");
   if (action === "zone") setZoneTool(target.dataset.zone);
   if (action === "building") setBuildingTool(target.dataset.building);
   if (action === "demolish") useUIStore.getState().setBuildMode("demolish");
+}
+
+function handleGlobalAction(action: string | undefined, target: HTMLElement): boolean {
   if (action === "overlay") setOverlay(target.dataset.overlay);
   if (action === "speed") setSpeed(Number(target.dataset.speed) as 0 | 1 | 2 | 3);
   if (action === "sound") toggleSound();
+  if (action === "loan") takeLoan(target.dataset.loan);
   if (action === "save") saveGame();
   if (action === "load") loadGame();
+  return ["overlay", "speed", "sound", "loan", "save", "load"].includes(action ?? "");
 }
 
 function setZoneTool(zone: string | undefined): void {
@@ -339,6 +345,17 @@ function setTaxRate(taxType: string, rate: number): void {
   if (taxType !== "residential" && taxType !== "commercial" && taxType !== "industrial")
     return;
   useSimulationStore.getState().processCommand({ type: "SET_TAX_RATE", taxType, rate });
+}
+
+function takeLoan(loanType: string | undefined): void {
+  if (loanType !== "small" && loanType !== "medium" && loanType !== "large") return;
+  const result = useSimulationStore.getState().processCommand({
+    type: "TAKE_LOAN",
+    loanType,
+  });
+  ui.status.textContent = result.success
+    ? "Loan approved."
+    : (result.error ?? "Loan declined.");
 }
 
 function saveGame(): void {
@@ -365,6 +382,7 @@ function renderInterface(state: CityState, uiState: UIState): void {
   ui.date.textContent = `Y${state.time.year} M${state.time.month}`;
   ui.objective.textContent = getCurrentObjectiveLabel(state);
   ui.demand.innerHTML = renderDemandBars(state);
+  ui.loans.innerHTML = renderLoanStatus(state);
   ui.warnings.innerHTML = renderWarnings(state);
   ui.selection.textContent = renderSelection(state, uiState.selectedTile);
   ui.preview.textContent = renderPreview(uiState.placementPreview);
@@ -389,6 +407,24 @@ function renderWarnings(state: CityState): string {
     .slice(0, 4)
     .map((warning) => `<li>${warning.message} ${warning.suggestedFix}</li>`)
     .join("");
+}
+
+function renderLoanStatus(state: CityState): string {
+  const details = state.economy.loans.length
+    ? state.economy.loans
+        .map(
+          (loan) =>
+            `${capitalize(loan.type)}: ${loan.remainingMonths}mo · ${formatMoney(loan.monthlyPayment)}/mo`,
+        )
+        .join("<br>")
+    : "No active loans";
+  return `
+    <p><strong>Loans</strong><br>${details}</p>
+    <div class="loan-row">
+      <button data-action="loan" data-loan="small">Borrow $5k</button>
+      <button data-action="loan" data-loan="medium">Borrow $10k</button>
+      <button data-action="loan" data-loan="large">Borrow $20k</button>
+    </div>`;
 }
 
 function renderSelection(
@@ -451,9 +487,18 @@ function isButtonLocked(button: HTMLButtonElement, state: CityState): boolean {
   const zone = button.dataset.zone as ZoneType | undefined;
   const buildingId = button.dataset.building;
   if (zone) return !state.progression.unlockedFeatures.includes(`${zone}_zoning`);
+  if (button.dataset.action === "loan") return !canTakeLoan(state);
   if (!buildingId) return false;
   const definition = getBuildingById(buildingId);
   return Boolean(definition && state.population.total < definition.unlockPopulation);
+}
+
+function canTakeLoan(state: CityState): boolean {
+  return (
+    state.economy.money < LOAN_BALANCE.ELIGIBILITY_THRESHOLD &&
+    state.economy.loans.length < LOAN_BALANCE.MAX_LOANS &&
+    state.time.tick - state.economy.lastLoanTick >= LOAN_BALANCE.COOLDOWN_TICKS
+  );
 }
 
 function createInterface(container: HTMLElement) {
@@ -471,6 +516,7 @@ function createInterface(container: HTMLElement) {
     date: getElement(root, "date"),
     objective: getElement(root, "objective"),
     demand: getElement(root, "demand"),
+    loans: getElement(root, "loans"),
     warnings: getElement(root, "warnings"),
     selection: getElement(root, "selection"),
     preview: getElement(root, "preview"),
@@ -495,6 +541,7 @@ function getInterfaceMarkup(): string {
       <p data-ui="objective"></p>
       <div data-ui="demand" class="demand"></div>
       <div class="taxes">${taxControls()}</div>
+      <div data-ui="loans" class="loans"></div>
       <ol data-ui="warnings" class="warnings"></ol>
     </aside>
     <aside class="panel right">

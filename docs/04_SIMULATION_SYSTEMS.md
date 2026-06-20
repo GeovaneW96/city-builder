@@ -255,7 +255,7 @@ When paused (`speed = 0`):
 
 Within a single simulation tick, the following runs **in order**:
 
-1. **Economy** — compute income, expenses, update money, check bankruptcy.
+1. **Economy** — compute income and expenses, process loan payments, update money, and check bankruptcy.
 2. **Demand** — recompute RCI demand from current city conditions.
 3. **Building Growth and Upgrades** — activate completed construction, upgrade eligible buildings, then spawn new buildings on valid zoned tiles.
 4. **Population** — update totals from residential capacity and demand.

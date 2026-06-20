@@ -462,14 +462,14 @@ This document lists every feature across all four implementation phases. Under e
 
 | #     | Testable Logic                                       | Status |
 | ----- | ---------------------------------------------------- | ------ |
-| 2.7.1 | Player can take a loan when money is below threshold |        |
-| 2.7.2 | Loan has fixed principal, interest rate, term        |        |
-| 2.7.3 | Loan amount added to money instantly                 |        |
-| 2.7.4 | Monthly interest deducted from money                 |        |
-| 2.7.5 | Loan default occurs if payment missed for N months   |        |
-| 2.7.6 | Loan default triggers bankruptcy                     |        |
-| 2.7.7 | Max outstanding loans enforced                       |        |
-| 2.7.8 | Loan repaid after term ends                          |        |
+| 2.7.1 | Player can take a loan when money is below threshold | done   |
+| 2.7.2 | Loan has fixed principal, interest rate, term        | done   |
+| 2.7.3 | Loan amount added to money instantly                 | done   |
+| 2.7.4 | Monthly interest deducted from money                 | done   |
+| 2.7.5 | Loan default occurs if payment missed for N months   | done   |
+| 2.7.6 | Loan default triggers bankruptcy                     | done   |
+| 2.7.7 | Max outstanding loans enforced                       | done   |
+| 2.7.8 | Loan repaid after term ends                          | done   |
 
 ### 2.8 Police and Fire Services
 

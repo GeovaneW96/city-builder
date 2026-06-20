@@ -191,3 +191,10 @@ Consider:
 
 The top bar includes a text-labelled sound toggle with an `aria-pressed` state. It disables
 all generated action, warning, and milestone sound effects without changing simulation state.
+
+## Economy Loan Controls
+
+The economy panel lists active loans with remaining months and fixed payment, and exposes
+small, medium, and large borrowing controls when the city meets simulation eligibility. The
+controls dispatch `TAKE_LOAN` commands; they never mutate economy state directly. Ineligible
+options are disabled, and the inspector reports approval or validation feedback.

@@ -197,6 +197,13 @@ the shortage-to-happiness weight, and the capped commercial income reduction. In
 is first scaled by traffic productivity, so congestion can cause a downstream commercial
 shortage without adding a separate rendering or agent dependency.
 
+## Debt and Loans
+
+Loan principals, repayment terms, eligibility threshold, cooldown, and default limit are
+defined in `src/data/balance/loans.ts`. A loan payment is charged as part of the monthly
+economy tick after normal income and upkeep. Three consecutive missed payments on the same loan
+immediately fail the scenario.
+
 ## Bankruptcy
 
 If money is below 0:

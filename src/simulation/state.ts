@@ -1,4 +1,9 @@
-import { DEFAULT_TAX_RATE, HAPPINESS_DEFAULTS, STARTING_MONEY } from "../data/balance";
+import {
+  DEFAULT_TAX_RATE,
+  HAPPINESS_DEFAULTS,
+  LOAN_BALANCE,
+  STARTING_MONEY,
+} from "../data/balance";
 import { FIRST_SETTLEMENT } from "../data/scenarios/first_settlement";
 import type { CityState } from "../shared/types";
 import { createMap } from "./grid/map";
@@ -19,6 +24,8 @@ export function createInitialCityState(): CityState {
       },
       isBankrupt: false,
       monthsBelowZero: 0,
+      loans: [],
+      lastLoanTick: -LOAN_BALANCE.COOLDOWN_TICKS,
     },
     population: {
       total: 0,

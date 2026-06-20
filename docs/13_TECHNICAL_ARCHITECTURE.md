@@ -124,6 +124,10 @@ Responsible for:
 
 Player actions should be represented as commands.
 
+Economy actions such as `TAKE_LOAN` follow the same command path as construction: validate
+against the authoritative `CityState`, clone and update simulation state, then return a
+`CommandResult` without UI-side mutation.
+
 Examples:
 
 - `PLACE_ROAD` — place road at (x, y) with a road type;

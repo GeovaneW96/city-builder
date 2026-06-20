@@ -86,6 +86,19 @@ export interface EconomyState {
   };
   isBankrupt: boolean;
   monthsBelowZero: number;
+  loans: Loan[];
+  lastLoanTick: number;
+}
+
+export type LoanType = "small" | "medium" | "large";
+
+export interface Loan {
+  id: string;
+  type: LoanType;
+  principal: number;
+  monthlyPayment: number;
+  remainingMonths: number;
+  missedPayments: number;
 }
 
 export interface PopulationState {
@@ -182,7 +195,7 @@ export interface ProgressionState {
 
 export interface Warning {
   id: string;
-  severity: "low" | "medium" | "high";
+  severity: "low" | "medium" | "high" | "critical";
   message: string;
   targetTile?: [number, number];
   targetBuilding?: string;
@@ -232,6 +245,7 @@ export type GameCommand =
       taxType: "residential" | "commercial" | "industrial";
       rate: number;
     }
+  | { type: "TAKE_LOAN"; loanType: LoanType }
   | { type: "SET_SPEED"; speed: 0 | 1 | 2 | 3 };
 
 export interface CommandResult {

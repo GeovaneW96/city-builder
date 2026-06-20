@@ -6,6 +6,7 @@ import type {
   Tile,
   TrafficState,
 } from "../../shared/types";
+import { LOAN_BALANCE } from "../../data/balance";
 import { GRID_SIZE } from "../constants";
 
 export interface FootprintCell {
@@ -51,6 +52,8 @@ export function cloneCityState(state: CityState): CityState {
     economy: {
       ...state.economy,
       taxRates: { ...state.economy.taxRates },
+      loans: (state.economy.loans ?? []).map((loan) => ({ ...loan })),
+      lastLoanTick: state.economy.lastLoanTick ?? -LOAN_BALANCE.COOLDOWN_TICKS,
     },
     population: { ...state.population },
     demand: { ...state.demand },

@@ -96,4 +96,8 @@ Goods save data records citywide supply, demand, balance, shortage percentage, a
 happiness and commercial-income effects. Missing legacy data defaults to a neutral zero-demand
 state and is rebuilt on the next tick.
 
+Economy save data includes active loans and the last-loan tick. Each loan stores its principal,
+fixed monthly payment, remaining term, and missed-payment count so repayment and default state
+round-trip exactly.
+
 Cloud saves are not in scope for the initial version.
