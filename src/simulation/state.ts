@@ -37,19 +37,8 @@ export function createInitialCityState(): CityState {
       educationCoverage: 0,
     },
     traffic: createInitialTrafficState(),
-    happiness: {
-      value: HAPPINESS_DEFAULTS.BASE,
-      components: {
-        base: HAPPINESS_DEFAULTS.BASE,
-        tax: 0,
-        unemployment: 0,
-        services: 0,
-        pollution: 0,
-        parks: 0,
-        utility: 0,
-        traffic: 0,
-      },
-    },
+    goods: createInitialGoodsState(),
+    happiness: createInitialHappinessState(),
     neighborhoods: [],
     neighborhoodMode: "auto",
     progression: {
@@ -71,5 +60,33 @@ function createInitialTrafficState() {
     commercialMultiplier: 1,
     industrialMultiplier: 1,
     segments: [],
+  };
+}
+
+function createInitialGoodsState() {
+  return {
+    demand: 0,
+    supply: 0,
+    balance: 0,
+    shortagePercentage: 0,
+    happinessPenalty: 0,
+    commercialMultiplier: 1,
+  };
+}
+
+function createInitialHappinessState() {
+  return {
+    value: HAPPINESS_DEFAULTS.BASE,
+    components: {
+      base: HAPPINESS_DEFAULTS.BASE,
+      tax: 0,
+      unemployment: 0,
+      services: 0,
+      pollution: 0,
+      parks: 0,
+      utility: 0,
+      traffic: 0,
+      goods: 0,
+    },
   };
 }

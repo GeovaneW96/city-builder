@@ -127,6 +127,15 @@ export interface TrafficState {
   segments: TrafficSegment[];
 }
 
+export interface GoodsState {
+  demand: number;
+  supply: number;
+  balance: number;
+  shortagePercentage: number;
+  happinessPenalty: number;
+  commercialMultiplier: number;
+}
+
 export interface HappinessState {
   value: number;
   components: {
@@ -138,6 +147,7 @@ export interface HappinessState {
     parks: number;
     utility: number;
     traffic: number;
+    goods: number;
   };
 }
 
@@ -195,6 +205,7 @@ export interface CityState {
   demand: DemandState;
   services: ServicesState;
   traffic: TrafficState;
+  goods: GoodsState;
   happiness: HappinessState;
   neighborhoods: Neighborhood[];
   neighborhoodMode: "auto" | "manual";

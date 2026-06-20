@@ -56,6 +56,7 @@ export function cloneCityState(state: CityState): CityState {
     demand: { ...state.demand },
     services: { ...state.services },
     traffic: cloneTrafficState(state.traffic),
+    goods: cloneGoodsState(state.goods),
     happiness: {
       value: state.happiness.value,
       components: { ...state.happiness.components },
@@ -168,4 +169,18 @@ function cloneTrafficState(traffic: TrafficState | undefined): TrafficState {
     };
   }
   return { ...traffic, segments: traffic.segments.map((segment) => ({ ...segment })) };
+}
+
+function cloneGoodsState(goods: CityState["goods"] | undefined): CityState["goods"] {
+  if (!goods) {
+    return {
+      demand: 0,
+      supply: 0,
+      balance: 0,
+      shortagePercentage: 0,
+      happinessPenalty: 0,
+      commercialMultiplier: 1,
+    };
+  }
+  return { ...goods };
 }

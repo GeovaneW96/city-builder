@@ -450,11 +450,11 @@ This document lists every feature across all four implementation phases. Under e
 
 | #     | Testable Logic                                            | Status |
 | ----- | --------------------------------------------------------- | ------ |
-| 2.6.1 | Commercial buildings require goods supply from industrial |        |
-| 2.6.2 | Goods shortage reduces commercial happiness/productivity  |        |
-| 2.6.3 | Goods demand proportional to commercial capacity          |        |
-| 2.6.4 | Goods supply proportional to industrial capacity          |        |
-| 2.6.5 | Warning shown when goods supply insufficient              |        |
+| 2.6.1 | Commercial buildings require goods supply from industrial | done   |
+| 2.6.2 | Goods shortage reduces commercial happiness/productivity  | done   |
+| 2.6.3 | Goods demand proportional to commercial capacity          | done   |
+| 2.6.4 | Goods supply proportional to industrial capacity          | done   |
+| 2.6.5 | Warning shown when goods supply insufficient              | done   |
 
 ### 2.7 Debt and Loans
 

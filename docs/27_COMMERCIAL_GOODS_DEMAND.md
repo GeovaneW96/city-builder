@@ -103,13 +103,10 @@ This creates a feedback loop: traffic congestion reduces goods supply, which hur
 
 ### Tick Order
 
-The goods balance computation must happen after both the economy tick (which applies traffic penalties) and the happiness recalculation. The recommended tick pipeline order is:
-
-1. Economy (tax income, expenses)
-2. Traffic (congestion, penalties)
-3. Goods balance (supply, demand, shortage %)
-4. Happiness (includes goods shortage penalty)
-5. Warnings
+Traffic and goods are calculated from the current active buildings before the economy step so
+their multipliers apply to that month's income. After construction, population, and services are
+updated, both are recalculated before happiness and warnings so the visible derived state matches
+the city at the end of the tick.
 
 ## Data Parameters
 
@@ -132,6 +129,13 @@ GOODS_INCOME_PENALTY         = 0.5    // 50% max reduction
 | Traffic   | Traffic congestion reduces effective industrial output → goods supply |
 | Warnings  | Warning triggered when goodsShortagePct > 25                          |
 | UI        | Goods balance in economy panel, shortage warning                      |
+
+## Current Implementation
+
+The simulation derives goods demand from active commercial job capacity and supply from active
+industrial capacity scaled by the traffic industrial multiplier. It persists the derived balance
+in `CityState`, applies the shortage to commercial tax income and happiness, and emits medium or
+high city warnings at the documented thresholds.
 
 ## Warnings
 

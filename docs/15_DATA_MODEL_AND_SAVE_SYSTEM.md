@@ -92,4 +92,8 @@ Traffic save data includes city congestion, assigned-trip totals, productivity m
 per-road-segment congestion. Older saves initialize an empty traffic state with neutral
 multipliers, then rebuild it on the next simulation tick.
 
+Goods save data records citywide supply, demand, balance, shortage percentage, and its derived
+happiness and commercial-income effects. Missing legacy data defaults to a neutral zero-demand
+state and is rebuilt on the next tick.
+
 Cloud saves are not in scope for the initial version.

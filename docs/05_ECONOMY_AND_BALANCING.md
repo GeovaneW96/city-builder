@@ -190,6 +190,13 @@ Traffic capacity, trip factors, thresholds, and productivity multipliers are def
 income; the effects are capped by their configured minimum multipliers. The same derived state
 supplies the traffic happiness penalty and warnings.
 
+## Commercial Goods Balance
+
+`src/data/balance/goods.ts` defines commercial goods demand per job, industrial output per job,
+the shortage-to-happiness weight, and the capped commercial income reduction. Industrial output
+is first scaled by traffic productivity, so congestion can cause a downstream commercial
+shortage without adding a separate rendering or agent dependency.
+
 ## Bankruptcy
 
 If money is below 0:

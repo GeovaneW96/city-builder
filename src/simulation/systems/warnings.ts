@@ -1,4 +1,4 @@
-import { POLLUTION_BALANCE, TRAFFIC_BALANCE } from "../../data/balance";
+import { GOODS_BALANCE, POLLUTION_BALANCE, TRAFFIC_BALANCE } from "../../data/balance";
 import { getBuildingById } from "../../data/buildings";
 import type {
   BuildingDefinition,
@@ -190,7 +190,33 @@ function getCityWarnings(state: CityState): Warning[] {
       suggestedFix: "Upgrade the saturated road or distribute traffic.",
     });
   }
+  warnings.push(...getGoodsWarnings(state));
   return warnings;
+}
+
+function getGoodsWarnings(state: CityState): Warning[] {
+  const shortage = state.goods.shortagePercentage;
+  if (shortage > GOODS_BALANCE.SEVERE_WARNING_THRESHOLD) {
+    return [
+      {
+        id: "city:severe-goods-shortage",
+        severity: "high",
+        message: `Severe goods shortage: ${shortage}%.`,
+        suggestedFix: "Zone more industry or improve industrial traffic.",
+      },
+    ];
+  }
+  if (shortage > GOODS_BALANCE.WARNING_THRESHOLD) {
+    return [
+      {
+        id: "city:goods-shortage",
+        severity: "medium",
+        message: `Goods shortage: ${shortage}%.`,
+        suggestedFix: "Zone more industry or improve industrial traffic.",
+      },
+    ];
+  }
+  return [];
 }
 
 function createWarning(

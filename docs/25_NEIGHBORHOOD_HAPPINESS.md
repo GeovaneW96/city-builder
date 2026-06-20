@@ -48,7 +48,9 @@ interface HappinessComponents {
   services: number;
   pollution: number;
   parks: number;
-  traffic: number; // Phase 3 placeholder
+  utility: number;
+  traffic: number; // abstract congestion penalty
+  goods: number;
 }
 ```
 
@@ -113,6 +115,11 @@ Capped at `MAX_PARK_BONUS`.
 
 The citywide abstract traffic penalty is applied to each neighborhood. This preserves the
 population-weighted aggregation while congestion has no rendering or agent-simulation coupling.
+
+### Goods Modifier
+
+The citywide goods-shortage penalty is applied to each neighborhood. This reflects the shared
+commercial availability constraint while leaving supply and demand in the economy simulation.
 
 ### Final Formula
 

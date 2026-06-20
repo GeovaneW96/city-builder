@@ -28,7 +28,9 @@ export function calculateMonthlyIncome(state: CityState, metrics: CityMetrics): 
   return Math.round(
     calculateTaxIncome(residentialBase, state.economy.taxRates.residential) +
       calculateTaxIncome(
-        commercialBase * state.traffic.commercialMultiplier,
+        commercialBase *
+          state.traffic.commercialMultiplier *
+          state.goods.commercialMultiplier,
         state.economy.taxRates.commercial,
       ) +
       calculateTaxIncome(

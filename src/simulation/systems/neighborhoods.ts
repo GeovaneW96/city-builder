@@ -93,6 +93,7 @@ function calculateComponents(
     parks: getParkComponent(buildings),
     utility: getUtilityComponent(state),
     traffic: -state.traffic.happinessPenalty,
+    goods: -state.goods.happinessPenalty,
   };
 }
 
@@ -218,7 +219,8 @@ function sumComponents(components: NeighborhoodHappinessComponents): number {
     components.pollution +
     components.parks +
     components.utility +
-    components.traffic
+    components.traffic +
+    components.goods
   );
 }
 
