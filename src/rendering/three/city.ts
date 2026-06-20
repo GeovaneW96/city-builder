@@ -96,27 +96,12 @@ function renderZones(group: THREE.Group, state: CityState): void {
 }
 
 function renderBuildings(group: THREE.Group, state: CityState): void {
-  state.buildings.forEach((building) => {
-    const definition = getBuildingById(building.definitionId);
+  getBuildingGroups(state).forEach((buildings) => {
+    const first = buildings[0];
+    if (!first) return;
+    const definition = getBuildingById(first.definitionId);
     if (!definition) return;
-    const height = getBuildingHeight(
-      definition.category,
-      building.status === "constructing",
-    );
-    const mesh = new THREE.Mesh(
-      new THREE.BoxGeometry(definition.size[0] * 0.82, height, definition.size[1] * 0.82),
-      new THREE.MeshStandardMaterial({
-        color: getBuildingColor(definition.category, building.status),
-        roughness: 0.7,
-      }),
-    );
-    mesh.position.set(
-      building.position[0] + definition.size[0] / 2,
-      height / 2,
-      building.position[1] + definition.size[1] / 2,
-    );
-    mesh.castShadow = true;
-    group.add(mesh);
+    group.add(createBuildingInstances(definition, first.status, buildings));
   });
 }
 
@@ -125,12 +110,61 @@ function renderOverlay(
   state: CityState,
   activeOverlay: UIState["activeOverlay"],
 ): void {
+  if (activeOverlay === "zoning") renderZoningOverlay(group, state);
   if (activeOverlay === "pollution") renderPollutionOverlay(group, state);
   if (activeOverlay === "health")
     renderRadiusOverlay(group, state, "healthRadius", COLORS.health);
   if (activeOverlay === "education") {
     renderRadiusOverlay(group, state, "educationRadius", COLORS.education);
   }
+}
+
+function renderZoningOverlay(group: THREE.Group, state: CityState): void {
+  state.map.flat().forEach((tile) => {
+    if (!tile.zone) return;
+    const mesh = createPlane(getZoneColor(tile.zone), 0.5, 0.055);
+    mesh.position.set(tile.x + 0.5, 0.055, tile.y + 0.5);
+    group.add(mesh);
+  });
+}
+
+function getBuildingGroups(state: CityState): Map<string, CityState["buildings"]> {
+  return state.buildings.reduce((groups, building) => {
+    const key = `${building.definitionId}:${building.status}`;
+    const grouped = groups.get(key) ?? [];
+    grouped.push(building);
+    groups.set(key, grouped);
+    return groups;
+  }, new Map<string, CityState["buildings"]>());
+}
+
+function createBuildingInstances(
+  definition: NonNullable<ReturnType<typeof getBuildingById>>,
+  status: string,
+  buildings: CityState["buildings"],
+): THREE.InstancedMesh {
+  const height = getBuildingHeight(definition.category, status === "constructing");
+  const mesh = new THREE.InstancedMesh(
+    new THREE.BoxGeometry(definition.size[0] * 0.82, height, definition.size[1] * 0.82),
+    new THREE.MeshStandardMaterial({
+      color: getBuildingColor(definition.category, status),
+      roughness: 0.7,
+    }),
+    buildings.length,
+  );
+  const matrix = new THREE.Matrix4();
+  buildings.forEach((building, index) => {
+    matrix.makeTranslation(
+      building.position[0] + definition.size[0] / 2,
+      height / 2,
+      building.position[1] + definition.size[1] / 2,
+    );
+    mesh.setMatrixAt(index, matrix);
+  });
+  mesh.name = `building:${definition.id}:${status}`;
+  mesh.instanceMatrix.needsUpdate = true;
+  mesh.castShadow = true;
+  return mesh;
 }
 
 function renderPollutionOverlay(group: THREE.Group, state: CityState): void {

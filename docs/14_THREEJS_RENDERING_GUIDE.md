@@ -79,6 +79,10 @@ Buildings can be:
 
 Use instancing for repeated building types when practical.
 
+The Foundation renderer groups buildings by definition and status, then draws each group
+with a Three.js `InstancedMesh`. This keeps repeated homes and future repeated zone-grown
+buildings efficient while still updating the visual when a building changes status.
+
 ## Placement Preview
 
 Build mode should show:
@@ -100,6 +104,10 @@ Examples:
 - traffic.
 
 Only one or two overlays should be active at once.
+
+The Foundation toolbar provides zoning, pollution, health, and education overlay modes.
+The zoning overlay draws the active zone color over every zoned tile, including tiles that
+already contain a building. The UI keeps the active overlay mutually exclusive.
 
 ## Render State Cache
 
