@@ -1,5 +1,7 @@
 # Mod Support
 
+The data layer validates external building, balance, and scenario payloads before loading them, rejecting malformed or conflicting entries.
+
 ## Purpose
 
 This document defines the modding system, loading pipeline, API surface, and safety constraints.
