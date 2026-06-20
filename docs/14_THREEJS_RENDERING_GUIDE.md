@@ -85,6 +85,18 @@ buildings efficient while still updating the visual when a building changes stat
 Density upgrades replace the instance's definition ID, so the next renderer synchronization
 automatically moves it into the appropriate mesh group and visual dimensions.
 
+### Data Decoupling
+
+Rendering code must not import from `src/data/` or `src/simulation/` directly. To access
+building definition fields needed for rendering (size, category, service radii), the
+`syncCityRenderLayers` function accepts a `BuildingRenderInfoLookup` callback. The
+application layer (`src/main.ts`) provides this callback, bridging data access while
+keeping the renderer agnostic of the data module. The lookup signature is:
+
+```ts
+type BuildingRenderInfoLookup = (definitionId: string) => BuildingRenderInfo | null;
+```
+
 ## Placement Preview
 
 Build mode should show:

@@ -2,7 +2,11 @@ import * as THREE from "three";
 import { describe, expect, it } from "vitest";
 import type { BuildingInstance } from "../../shared/types";
 import { createInitialCityState } from "../../simulation/state";
-import { createCityRenderLayers, syncCityRenderLayers } from "./city";
+import {
+  createCityRenderLayers,
+  syncCityRenderLayers,
+  type BuildingRenderInfoLookup,
+} from "./city";
 
 describe("city render layers", () => {
   it("uses one instanced mesh for repeated building definitions", () => {
@@ -10,7 +14,7 @@ describe("city render layers", () => {
     state.buildings.push(createHouse("house:1", 4, 5), createHouse("house:2", 6, 5));
     const layers = createCityRenderLayers(new THREE.Scene());
 
-    syncCityRenderLayers(layers, state, null);
+    syncCityRenderLayers(layers, state, null, getBuildingRenderInfo);
 
     const buildingMesh = layers.buildings.children[0];
     expect(buildingMesh).toBeInstanceOf(THREE.InstancedMesh);
@@ -30,13 +34,13 @@ describe("city render layers", () => {
     state.buildings.push(createHouse("house:1", 4, 5));
     const layers = createCityRenderLayers(new THREE.Scene());
 
-    syncCityRenderLayers(layers, state, "zoning");
+    syncCityRenderLayers(layers, state, "zoning", getBuildingRenderInfo);
     expect(layers.roads.children).toHaveLength(1);
     expect(layers.overlays.children).toHaveLength(1);
 
     state.roads = [];
     state.buildings[0]!.status = "constructing";
-    syncCityRenderLayers(layers, state, null);
+    syncCityRenderLayers(layers, state, null, getBuildingRenderInfo);
 
     expect(layers.roads.children).toHaveLength(0);
     expect(layers.overlays.children).toHaveLength(0);
@@ -59,3 +63,12 @@ function createHouse(id: string, x: number, y: number): BuildingInstance {
     lastUpgradeTick: 0,
   };
 }
+
+const getBuildingRenderInfo: BuildingRenderInfoLookup = (definitionId) => {
+  if (definitionId !== "small_house") return null;
+  return {
+    size: [1, 1],
+    category: "residential",
+    effects: {},
+  };
+};

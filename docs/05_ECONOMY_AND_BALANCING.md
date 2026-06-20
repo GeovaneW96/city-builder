@@ -63,6 +63,15 @@ taxMultiplier = taxRate / 10
 
 A 10% tax rate means multiplier 1.0.
 
+### Land Value Productivity
+
+Commercial and industrial tax income are further scaled by each building's tile land value:
+
+- **Commercial**: income is multiplied by `buildingLandValue / LAND_VALUE_MAX` (linear scaling from 0 to 1×).
+- **Industrial**: if the building's land value is below `INDUSTRIAL_PRODUCTIVITY_THRESHOLD` (20), jobs, tax income, and goods output are halved (0.5× multiplier). Above the threshold, no penalty is applied.
+
+These multipliers are computed in `src/simulation/systems/land-productivity.ts` and integrated into `calculateMonthlyIncome` and `calculateCityMetrics`. Industrial product counts in the goods system also reflect the reduced output.
+
 ## Tax Happiness Modifier
 
 Suggested initial model:

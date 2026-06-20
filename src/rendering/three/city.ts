@@ -1,6 +1,11 @@
 import * as THREE from "three";
-import { getBuildingById } from "../../data/buildings";
-import type { BuildingCategory, CityState, UIState, ZoneType } from "../../shared/types";
+import type {
+  BuildingCategory,
+  BuildingDefinition,
+  CityState,
+  UIState,
+  ZoneType,
+} from "../../shared/types";
 
 const TILE_SIZE = 1;
 
@@ -31,6 +36,16 @@ export interface CityRenderLayers {
   preview: THREE.Group;
 }
 
+export interface BuildingRenderInfo {
+  size: BuildingDefinition["size"];
+  category: BuildingCategory;
+  effects: Pick<BuildingDefinition["effects"], "healthRadius" | "educationRadius">;
+}
+
+export type BuildingRenderInfoLookup = (
+  definitionId: string,
+) => BuildingRenderInfo | null;
+
 export function createCityRenderLayers(scene: THREE.Scene): CityRenderLayers {
   const layers = {
     roads: new THREE.Group(),
@@ -48,6 +63,7 @@ export function syncCityRenderLayers(
   layers: CityRenderLayers,
   state: CityState,
   activeOverlay: UIState["activeOverlay"],
+  getBuildingRenderInfo: BuildingRenderInfoLookup,
 ): void {
   clearGroup(layers.roads);
   clearGroup(layers.zones);
@@ -56,8 +72,8 @@ export function syncCityRenderLayers(
   clearGroup(layers.warnings);
   renderZones(layers.zones, state);
   renderRoads(layers.roads, state);
-  renderBuildings(layers.buildings, state);
-  renderOverlay(layers.overlays, state, activeOverlay);
+  renderBuildings(layers.buildings, state, getBuildingRenderInfo);
+  renderOverlay(layers.overlays, state, activeOverlay, getBuildingRenderInfo);
   renderWarnings(layers.warnings, state);
 }
 
@@ -96,13 +112,19 @@ function renderZones(group: THREE.Group, state: CityState): void {
   });
 }
 
-function renderBuildings(group: THREE.Group, state: CityState): void {
+function renderBuildings(
+  group: THREE.Group,
+  state: CityState,
+  getBuildingRenderInfo: BuildingRenderInfoLookup,
+): void {
   getBuildingGroups(state).forEach((buildings) => {
     const first = buildings[0];
     if (!first) return;
-    const definition = getBuildingById(first.definitionId);
-    if (!definition) return;
-    group.add(createBuildingInstances(definition, first.status, buildings));
+    const renderInfo = getBuildingRenderInfo(first.definitionId);
+    if (!renderInfo) return;
+    group.add(
+      createBuildingInstances(first.definitionId, renderInfo, first.status, buildings),
+    );
   });
 }
 
@@ -110,13 +132,26 @@ function renderOverlay(
   group: THREE.Group,
   state: CityState,
   activeOverlay: UIState["activeOverlay"],
+  getBuildingRenderInfo: BuildingRenderInfoLookup,
 ): void {
   if (activeOverlay === "zoning") renderZoningOverlay(group, state);
   if (activeOverlay === "pollution") renderPollutionOverlay(group, state);
   if (activeOverlay === "health")
-    renderRadiusOverlay(group, state, "healthRadius", COLORS.health);
+    renderRadiusOverlay(
+      group,
+      state,
+      "healthRadius",
+      COLORS.health,
+      getBuildingRenderInfo,
+    );
   if (activeOverlay === "education") {
-    renderRadiusOverlay(group, state, "educationRadius", COLORS.education);
+    renderRadiusOverlay(
+      group,
+      state,
+      "educationRadius",
+      COLORS.education,
+      getBuildingRenderInfo,
+    );
   }
   if (activeOverlay === "districts") renderDistrictOverlay(group, state);
 }
@@ -156,15 +191,16 @@ function getBuildingGroups(state: CityState): Map<string, CityState["buildings"]
 }
 
 function createBuildingInstances(
-  definition: NonNullable<ReturnType<typeof getBuildingById>>,
+  definitionId: string,
+  renderInfo: BuildingRenderInfo,
   status: string,
   buildings: CityState["buildings"],
 ): THREE.InstancedMesh {
-  const height = getBuildingHeight(definition.category, status === "constructing");
+  const height = getBuildingHeight(renderInfo.category, status === "constructing");
   const mesh = new THREE.InstancedMesh(
-    new THREE.BoxGeometry(definition.size[0] * 0.82, height, definition.size[1] * 0.82),
+    new THREE.BoxGeometry(renderInfo.size[0] * 0.82, height, renderInfo.size[1] * 0.82),
     new THREE.MeshStandardMaterial({
-      color: getBuildingColor(definition.category, status),
+      color: getBuildingColor(renderInfo.category, status),
       roughness: 0.7,
     }),
     buildings.length,
@@ -172,13 +208,13 @@ function createBuildingInstances(
   const matrix = new THREE.Matrix4();
   buildings.forEach((building, index) => {
     matrix.makeTranslation(
-      building.position[0] + definition.size[0] / 2,
+      building.position[0] + renderInfo.size[0] / 2,
       height / 2,
-      building.position[1] + definition.size[1] / 2,
+      building.position[1] + renderInfo.size[1] / 2,
     );
     mesh.setMatrixAt(index, matrix);
   });
-  mesh.name = `building:${definition.id}:${status}`;
+  mesh.name = `building:${definitionId}:${status}`;
   mesh.instanceMatrix.needsUpdate = true;
   mesh.castShadow = true;
   return mesh;
@@ -202,10 +238,10 @@ function renderRadiusOverlay(
   state: CityState,
   effect: "healthRadius" | "educationRadius",
   color: number,
+  getBuildingRenderInfo: BuildingRenderInfoLookup,
 ): void {
   state.buildings.forEach((building) => {
-    const definition = getBuildingById(building.definitionId);
-    const radius = definition?.effects[effect] ?? 0;
+    const radius = getBuildingRenderInfo(building.definitionId)?.effects[effect] ?? 0;
     if (radius <= 0) return;
     const mesh = createPlane(color, 0.12, 0.028, radius * 2 + 1);
     mesh.position.set(building.position[0] + 0.5, 0.028, building.position[1] + 0.5);

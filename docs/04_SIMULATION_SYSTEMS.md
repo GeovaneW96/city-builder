@@ -260,18 +260,19 @@ Within a single simulation tick, the following runs **in order**:
 
 1. **Economy** — compute income and expenses, process loan payments, update money, and check bankruptcy.
 2. **Demand** — recompute RCI demand from current city conditions.
-3. **Building Growth and Upgrades** — activate completed construction, upgrade eligible buildings, then spawn new buildings on valid zoned tiles.
-4. **Population** — update totals from residential capacity and demand.
-5. **Pollution and Land Value** — recompute pollution, then each tile's land value from local modifiers.
-6. **Services** — recompute capacity usage and coverage radii.
-7. **Extended Services** — update police crime, fire risk, garbage collection, and any fire-destruction events.
-8. **Public Transport and Traffic** — update active bus coverage, then assign trips to roads and calculate congestion effects.
-9. **Goods** — calculate industrial supply, commercial demand, shortages, and commercial productivity.
-10. **Happiness** — rebuild road-bounded neighborhoods, calculate their local happiness, then calculate the population-weighted city score.
-11. **Rating and Achievements** — calculate city rating, apply its next-tick immigration modifier, and unlock eligible one-time rewards.
-12. **Warnings** — rebuild active warnings list from current state.
-13. **Progression** — check milestones, apply unlocks and rewards.
-14. **Events** — emit `GameEvent` objects for any changed state (rendering/UI consume these).
+3. **Land Productivity** — compute per-building land value multipliers for commercial tax income and industrial jobs/output.
+4. **Building Growth and Upgrades** — activate completed construction, upgrade eligible buildings, then spawn new buildings on valid zoned tiles.
+5. **Population** — update totals from residential capacity and demand.
+6. **Pollution and Land Value** — recompute pollution, then each tile's land value from local modifiers.
+7. **Services** — recompute capacity usage and coverage radii.
+8. **Extended Services** — update police crime, fire risk, garbage collection, and any fire-destruction events.
+9. **Public Transport and Traffic** — update active bus coverage, then assign trips to roads and calculate congestion effects.
+10. **Goods** — calculate industrial supply, commercial demand, shortages, and commercial productivity.
+11. **Happiness** — rebuild road-bounded neighborhoods, calculate their local happiness, then calculate the population-weighted city score.
+12. **Rating and Achievements** — calculate city rating, apply its next-tick immigration modifier, and unlock eligible one-time rewards.
+13. **Warnings** — rebuild active warnings list from current state.
+14. **Progression** — check milestones, apply unlocks and rewards.
+15. **Events** — emit `GameEvent` objects for any changed state (rendering/UI consume these).
 
 The rating system stores its component breakdown alongside the grade. Presentation derives the
 strongest and weakest categories from that stored snapshot; it never feeds a UI-only value back

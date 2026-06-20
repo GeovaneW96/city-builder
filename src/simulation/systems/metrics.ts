@@ -5,6 +5,7 @@ import type {
   BuildingInstance,
   CityState,
 } from "../../shared/types";
+import { getIndustrialLandValueMultiplier } from "./land-productivity";
 
 export interface CityMetrics {
   activeBuildings: BuildingInstance[];
@@ -27,9 +28,9 @@ export function calculateCityMetrics(state: CityState): CityMetrics {
   const activeBuildings = state.buildings.filter(
     (building) => building.status === "active",
   );
-  const capacity = sumEffect(activeBuildings, "residential", "populationCapacity");
-  const commercialJobs = sumEffect(activeBuildings, "commercial", "jobs");
-  const industrialJobs = sumEffect(activeBuildings, "industrial", "jobs");
+  const capacity = sumEffect(state, activeBuildings, "residential", "populationCapacity");
+  const commercialJobs = sumEffect(state, activeBuildings, "commercial", "jobs");
+  const industrialJobs = sumEffect(state, activeBuildings, "industrial", "jobs");
   const serviceJobs = activeBuildings.reduce(sumServiceJobs, 0);
   const totalJobs = commercialJobs + industrialJobs + serviceJobs;
   const allocations = allocateWorkers(
@@ -62,6 +63,7 @@ export function getAvailableHousing(metrics: CityMetrics, population: number): n
 }
 
 function sumEffect(
+  state: CityState,
   buildings: BuildingInstance[],
   category: BuildingCategory,
   effect: "populationCapacity" | "jobs",
@@ -69,7 +71,12 @@ function sumEffect(
   return buildings.reduce((total, building) => {
     const definition = getDefinition(building);
     if (!definition || definition.category !== category) return total;
-    return total + (definition.effects[effect] ?? 0);
+    const value = definition.effects[effect] ?? 0;
+    const multiplier =
+      category === "industrial" && effect === "jobs"
+        ? getIndustrialLandValueMultiplier(state, building)
+        : 1;
+    return total + value * multiplier;
   }, 0);
 }
 

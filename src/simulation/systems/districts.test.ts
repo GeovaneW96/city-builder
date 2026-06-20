@@ -87,7 +87,7 @@ describe("district policies", () => {
     expect(calculateMonthlyExpenses(applied.state)).toBe(200);
     expect(
       calculateMonthlyIncome(applied.state, calculateCityMetrics(applied.state)),
-    ).toBe(incomeBefore - 15);
+    ).toBe(incomeBefore - 7);
     expect(
       processCityCommand(applied.state, {
         type: "APPLY_DISTRICT_POLICY",

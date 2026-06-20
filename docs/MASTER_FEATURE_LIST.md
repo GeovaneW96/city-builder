@@ -1,8 +1,8 @@
-# Master Feature List
+﻿# Master Feature List
 
 This document lists every feature across all four implementation phases. Under each feature, every piece of logic that must have unit tests is enumerated. Cross-references to design docs are provided.
 
-> **Values and formulas are authoritative in the referenced design docs.** This document summarizes testable logic — if numbers in this list differ from the source doc, the source doc wins.
+> **Values and formulas are authoritative in the referenced design docs.** This document summarizes testable logic â€” if numbers in this list differ from the source doc, the source doc wins.
 
 ---
 
@@ -14,16 +14,16 @@ This document lists every feature across all four implementation phases. Under e
 
 **Docs:** `13_TECHNICAL_ARCHITECTURE.md`, `AGENTS.md`
 
-| #     | Testable Logic                                      | Status |
-| ----- | --------------------------------------------------- | ------ |
-| 1.1.1 | TypeScript compilation succeeds without errors      |        |
-| 1.1.2 | Vite dev server starts and serves the app           |        |
-| 1.1.3 | ESLint passes with no errors                        |        |
-| 1.1.4 | Prettier formatting check passes                    |        |
-| 1.1.5 | Dependency-cruiser detects simulation→three imports |        |
-| 1.1.6 | Vitest runs and discovers all test files            |        |
-| 1.1.7 | Husky commit hook enforces lint-staged              |        |
-| 1.1.8 | Commitlint rejects non-conventional commit messages |        |
+| #     | Testable Logic                                        | Status |
+| ----- | ----------------------------------------------------- | ------ |
+| 1.1.1 | TypeScript compilation succeeds without errors        | done   |
+| 1.1.2 | Vite dev server starts and serves the app             | done   |
+| 1.1.3 | ESLint passes with no errors                          | done   |
+| 1.1.4 | Prettier formatting check passes                      | done   |
+| 1.1.5 | Dependency-cruiser detects simulationâ†’three imports | done   |
+| 1.1.6 | Vitest runs and discovers all test files              | done   |
+| 1.1.7 | Husky commit hook enforces lint-staged                | done   |
+| 1.1.8 | Commitlint rejects non-conventional commit messages   | done   |
 
 ### 1.2 Shared Types and Event Bus
 
@@ -31,25 +31,25 @@ This document lists every feature across all four implementation phases. Under e
 
 | #     | Testable Logic                                                                                      | Status |
 | ----- | --------------------------------------------------------------------------------------------------- | ------ |
-| 1.2.1 | Event bus subscribes and receives emitted events                                                    |        |
-| 1.2.2 | Event bus `unsubscribe` stops receiving events                                                      |        |
-| 1.2.3 | Event bus supports multiple subscribers per event                                                   |        |
-| 1.2.4 | Event bus emits correct event types (TileChanged, RoadPlaced, etc.)                                 |        |
-| 1.2.5 | CityState default values match `05_ECONOMY_AND_BALANCING.md` (starting money, base happiness, etc.) |        |
-| 1.2.6 | Tile default state is grass terrain, no road, no zone, no building                                  |        |
-| 1.2.7 | GameCommand union accepts all command types                                                         |        |
-| 1.2.8 | BuildingDefinition fields serialize as expected                                                     |        |
+| 1.2.1 | Event bus subscribes and receives emitted events                                                    | done   |
+| 1.2.2 | Event bus `unsubscribe` stops receiving events                                                      | done   |
+| 1.2.3 | Event bus supports multiple subscribers per event                                                   | done   |
+| 1.2.4 | Event bus emits correct event types (TileChanged, RoadPlaced, etc.)                                 | done   |
+| 1.2.5 | CityState default values match `05_ECONOMY_AND_BALANCING.md` (starting money, base happiness, etc.) | done   |
+| 1.2.6 | Tile default state is grass terrain, no road, no zone, no building                                  | done   |
+| 1.2.7 | GameCommand union accepts all command types                                                         | done   |
+| 1.2.8 | BuildingDefinition fields serialize as expected                                                     | done   |
 
-### 1.3 64×64 Flat Grid Map
+### 1.3 64Ã—64 Flat Grid Map
 
 **Docs:** `08_MAP_GRID_AND_TERRAIN.md`
 
 | #     | Testable Logic                            | Status |
 | ----- | ----------------------------------------- | ------ |
-| 1.3.1 | Map initializes as 64×64 tiles            |        |
-| 1.3.2 | Every tile starts with terrain = "grass"  |        |
-| 1.3.3 | Tile coordinates are valid (0..63, 0..63) |        |
-| 1.3.4 | Out-of-bounds access returns error        |        |
+| 1.3.1 | Map initializes as 64Ã—64 tiles           | done   |
+| 1.3.2 | Every tile starts with terrain = "grass"  | done   |
+| 1.3.3 | Tile coordinates are valid (0..63, 0..63) | done   |
+| 1.3.4 | Out-of-bounds access returns error        | done   |
 
 ### 1.4 Road Placement with Drag Support and Cost
 
@@ -57,16 +57,16 @@ This document lists every feature across all four implementation phases. Under e
 
 | #      | Testable Logic                                            | Status |
 | ------ | --------------------------------------------------------- | ------ |
-| 1.4.1  | Place road on valid empty tile succeeds                   |        |
-| 1.4.2  | Place road outside map bounds fails                       |        |
-| 1.4.3  | Place road on existing building tile fails                |        |
-| 1.4.4  | Place road deducts correct cost from money                |        |
-| 1.4.5  | Place road with insufficient money fails                  |        |
-| 1.4.6  | Road tile connects orthogonally to neighboring road tiles |        |
-| 1.4.7  | Remove road clears roadId and refunds nothing             |        |
-| 1.4.8  | Drag-placing multiple roads places each tile individually |        |
-| 1.4.9  | Road type (dirt vs paved) stored correctly                |        |
-| 1.4.10 | Road network treated as connected graph                   |        |
+| 1.4.1  | Place road on valid empty tile succeeds                   | done   |
+| 1.4.2  | Place road outside map bounds fails                       | done   |
+| 1.4.3  | Place road on existing building tile fails                | done   |
+| 1.4.4  | Place road deducts correct cost from money                | done   |
+| 1.4.5  | Place road with insufficient money fails                  | done   |
+| 1.4.6  | Road tile connects orthogonally to neighboring road tiles | done   |
+| 1.4.7  | Remove road clears roadId and refunds nothing             | done   |
+| 1.4.8  | Drag-placing multiple roads places each tile individually | done   |
+| 1.4.9  | Road type (dirt vs paved) stored correctly                | done   |
+| 1.4.10 | Road network treated as connected graph                   | done   |
 
 ### 1.5 Zone Painting (Residential, Commercial, Industrial)
 
@@ -74,13 +74,13 @@ This document lists every feature across all four implementation phases. Under e
 
 | #     | Testable Logic                                                 | Status |
 | ----- | -------------------------------------------------------------- | ------ |
-| 1.5.1 | Paint residential zone on empty tile succeeds                  |        |
-| 1.5.2 | Paint zone on existing road tile fails                         |        |
-| 1.5.3 | Paint zone on existing building tile fails                     |        |
-| 1.5.4 | Remove zone clears zone type                                   |        |
-| 1.5.5 | Drag-painting multiple zone tiles sets each tile               |        |
-| 1.5.6 | Zone type (residential/commercial/industrial) stored correctly |        |
-| 1.5.7 | Painting zone does not cost money (cost = 0)                   |        |
+| 1.5.1 | Paint residential zone on empty tile succeeds                  | done   |
+| 1.5.2 | Paint zone on existing road tile fails                         | done   |
+| 1.5.3 | Paint zone on existing building tile fails                     | done   |
+| 1.5.4 | Remove zone clears zone type                                   | done   |
+| 1.5.5 | Drag-painting multiple zone tiles sets each tile               | done   |
+| 1.5.6 | Zone type (residential/commercial/industrial) stored correctly | done   |
+| 1.5.7 | Painting zone does not cost money (cost = 0)                   | done   |
 
 ### 1.6 Zone-Grown Building Spawning
 
@@ -88,16 +88,16 @@ This document lists every feature across all four implementation phases. Under e
 
 | #      | Testable Logic                                                  | Status |
 | ------ | --------------------------------------------------------------- | ------ |
-| 1.6.1  | Building spawns on valid empty zoned tile with road access      |        |
-| 1.6.2  | Building does not spawn without road access                     |        |
-| 1.6.3  | Building does not spawn if demand for that zone type is too low |        |
-| 1.6.4  | Building spawns with status "constructing"                      |        |
-| 1.6.5  | Building transitions to "active" after 1 tick                   |        |
-| 1.6.6  | Max 3 buildings per zone type spawn per tick                    |        |
-| 1.6.7  | Cooldown of 3 ticks before building can be replaced             |        |
-| 1.6.8  | Correct building definition chosen for zone type                |        |
-| 1.6.9  | Building footprint occupies correct tiles                       |        |
-| 1.6.10 | No spawn on first tick (suppressed)                             |        |
+| 1.6.1  | Building spawns on valid empty zoned tile with road access      | done   |
+| 1.6.2  | Building does not spawn without road access                     | done   |
+| 1.6.3  | Building does not spawn if demand for that zone type is too low | done   |
+| 1.6.4  | Building spawns with status "constructing"                      | done   |
+| 1.6.5  | Building transitions to "active" after 1 tick                   | done   |
+| 1.6.6  | Max 3 buildings per zone type spawn per tick                    | done   |
+| 1.6.7  | Cooldown of 3 ticks before building can be replaced             | done   |
+| 1.6.8  | Correct building definition chosen for zone type                | done   |
+| 1.6.9  | Building footprint occupies correct tiles                       | done   |
+| 1.6.10 | No spawn on first tick (suppressed)                             | done   |
 
 ### 1.7 Manual Building Placement
 
@@ -105,17 +105,17 @@ This document lists every feature across all four implementation phases. Under e
 
 | #      | Testable Logic                                           | Status |
 | ------ | -------------------------------------------------------- | ------ |
-| 1.7.1  | Place manual building on valid empty tiles succeeds      |        |
-| 1.7.2  | Place building outside map bounds fails                  |        |
-| 1.7.3  | Place building overlapping another building fails        |        |
-| 1.7.4  | Place building on road tile fails                        |        |
-| 1.7.5  | Deducts correct construction cost from money             |        |
-| 1.7.6  | Insufficient money fails                                 |        |
-| 1.7.7  | Building requiring road access fails if no adjacent road |        |
-| 1.7.8  | Building requiring unlock fails if milestone not reached |        |
-| 1.7.9  | Building rotation (0/90/180/270) stored correctly        |        |
-| 1.7.10 | Demolish building removes it and frees tiles             |        |
-| 1.7.11 | Demolish on empty tile fails                             |        |
+| 1.7.1  | Place manual building on valid empty tiles succeeds      | done   |
+| 1.7.2  | Place building outside map bounds fails                  | done   |
+| 1.7.3  | Place building overlapping another building fails        | done   |
+| 1.7.4  | Place building on road tile fails                        | done   |
+| 1.7.5  | Deducts correct construction cost from money             | done   |
+| 1.7.6  | Insufficient money fails                                 | done   |
+| 1.7.7  | Building requiring road access fails if no adjacent road | done   |
+| 1.7.8  | Building requiring unlock fails if milestone not reached | done   |
+| 1.7.9  | Building rotation (0/90/180/270) stored correctly        | done   |
+| 1.7.10 | Demolish building removes it and frees tiles             | done   |
+| 1.7.11 | Demolish on empty tile fails                             | done   |
 
 ### 1.8 Economy System
 
@@ -123,18 +123,18 @@ This document lists every feature across all four implementation phases. Under e
 
 | #      | Testable Logic                                                            | Status |
 | ------ | ------------------------------------------------------------------------- | ------ |
-| 1.8.1  | Residential tax income computed per `05_ECONOMY_AND_BALANCING.md` formula |        |
-| 1.8.2  | Commercial tax income computed per `05_ECONOMY_AND_BALANCING.md` formula  |        |
-| 1.8.3  | Industrial tax income computed per `05_ECONOMY_AND_BALANCING.md` formula  |        |
-| 1.8.4  | Monthly expenses = sum of all building upkeep + road upkeep               |        |
-| 1.8.5  | Money updates by income − expenses each tick                              |        |
-| 1.8.6  | Bankruptcy warning appears when money below 0                             |        |
-| 1.8.7  | `monthsBelowZero` increments when money below 0                           |        |
-| 1.8.8  | `monthsBelowZero` resets to 0 when money returns to ≥ 0                   |        |
-| 1.8.9  | Bankruptcy declared after 5 consecutive months below zero                 |        |
-| 1.8.10 | Milestone rewards add to money exactly once                               |        |
-| 1.8.11 | Set tax rate updates stored rate for correct category                     |        |
-| 1.8.12 | Tax rate clamped to valid range                                           |        |
+| 1.8.1  | Residential tax income computed per `05_ECONOMY_AND_BALANCING.md` formula | done   |
+| 1.8.2  | Commercial tax income computed per `05_ECONOMY_AND_BALANCING.md` formula  | done   |
+| 1.8.3  | Industrial tax income computed per `05_ECONOMY_AND_BALANCING.md` formula  | done   |
+| 1.8.4  | Monthly expenses = sum of all building upkeep + road upkeep               | done   |
+| 1.8.5  | Money updates by income âˆ’ expenses each tick                            | done   |
+| 1.8.6  | Bankruptcy warning appears when money below 0                             | done   |
+| 1.8.7  | `monthsBelowZero` increments when money below 0                           | done   |
+| 1.8.8  | `monthsBelowZero` resets to 0 when money returns to â‰¥ 0                 | done   |
+| 1.8.9  | Bankruptcy declared after 5 consecutive months below zero                 | done   |
+| 1.8.10 | Milestone rewards add to money exactly once                               | done   |
+| 1.8.11 | Set tax rate updates stored rate for correct category                     | done   |
+| 1.8.12 | Tax rate clamped to valid range                                           | done   |
 
 ### 1.9 RCI Demand System
 
@@ -142,20 +142,20 @@ This document lists every feature across all four implementation phases. Under e
 
 | #      | Testable Logic                                                            | Status |
 | ------ | ------------------------------------------------------------------------- | ------ |
-| 1.9.1  | Residential demand starts at base value per `05_ECONOMY_AND_BALANCING.md` |        |
-| 1.9.2  | Residential demand increases with available jobs                          |        |
-| 1.9.3  | Residential demand decreases with unemployment                            |        |
-| 1.9.4  | Residential demand decreases with excess housing capacity                 |        |
-| 1.9.5  | Commercial demand starts at base value per `05_ECONOMY_AND_BALANCING.md`  |        |
-| 1.9.6  | Commercial demand increases with population                               |        |
-| 1.9.7  | Commercial demand decreases with excess commercial capacity               |        |
-| 1.9.8  | Commercial demand penalized by worker shortage                            |        |
-| 1.9.9  | Industrial demand starts at base value per `05_ECONOMY_AND_BALANCING.md`  |        |
-| 1.9.10 | Industrial demand increases with unemployment                             |        |
-| 1.9.11 | Industrial demand decreases with excess industrial capacity               |        |
-| 1.9.12 | Industrial demand penalized by pollution                                  |        |
-| 1.9.13 | All demand values clamped between 0 and 100                               |        |
-| 1.9.14 | Demand recomputed every tick                                              |        |
+| 1.9.1  | Residential demand starts at base value per `05_ECONOMY_AND_BALANCING.md` | done   |
+| 1.9.2  | Residential demand increases with available jobs                          | done   |
+| 1.9.3  | Residential demand decreases with unemployment                            | done   |
+| 1.9.4  | Residential demand decreases with excess housing capacity                 | done   |
+| 1.9.5  | Commercial demand starts at base value per `05_ECONOMY_AND_BALANCING.md`  | done   |
+| 1.9.6  | Commercial demand increases with population                               | done   |
+| 1.9.7  | Commercial demand decreases with excess commercial capacity               | done   |
+| 1.9.8  | Commercial demand penalized by worker shortage                            | done   |
+| 1.9.9  | Industrial demand starts at base value per `05_ECONOMY_AND_BALANCING.md`  | done   |
+| 1.9.10 | Industrial demand increases with unemployment                             | done   |
+| 1.9.11 | Industrial demand decreases with excess industrial capacity               | done   |
+| 1.9.12 | Industrial demand penalized by pollution                                  | done   |
+| 1.9.13 | All demand values clamped between 0 and 100                               | done   |
+| 1.9.14 | Demand recomputed every tick                                              | done   |
 
 ### 1.10 Population System
 
@@ -163,12 +163,12 @@ This document lists every feature across all four implementation phases. Under e
 
 | #      | Testable Logic                                                           | Status |
 | ------ | ------------------------------------------------------------------------ | ------ |
-| 1.10.1 | Population starts at 0                                                   |        |
-| 1.10.2 | Population = sum of all active residential capacity                      |        |
-| 1.10.3 | Residential capacity = sum of all active residential building capacities |        |
-| 1.10.4 | Employed workers = min(jobs filled, population willing to work)          |        |
-| 1.10.5 | Unemployed = total population − employed workers                         |        |
-| 1.10.6 | Population grows toward capacity based on demand/happiness               |        |
+| 1.10.1 | Population starts at 0                                                   | done   |
+| 1.10.2 | Population = sum of all active residential capacity                      | done   |
+| 1.10.3 | Residential capacity = sum of all active residential building capacities | done   |
+| 1.10.4 | Employed workers = min(jobs filled, population willing to work)          | done   |
+| 1.10.5 | Unemployed = total population âˆ’ employed workers                       | done   |
+| 1.10.6 | Population grows toward capacity based on demand/happiness               | done   |
 
 ### 1.11 Happiness System
 
@@ -176,16 +176,16 @@ This document lists every feature across all four implementation phases. Under e
 
 | #       | Testable Logic                                                   | Status |
 | ------- | ---------------------------------------------------------------- | ------ |
-| 1.11.1  | Happiness starts at base value per `05_ECONOMY_AND_BALANCING.md` |        |
-| 1.11.2  | Tax happiness modifier applied correctly per rate bracket        |        |
-| 1.11.3  | Unemployment happiness penalty applied                           |        |
-| 1.11.4  | Service coverage happiness bonus applied                         |        |
-| 1.11.5  | Pollution happiness penalty applied                              |        |
-| 1.11.6  | Park happiness bonus applied                                     |        |
-| 1.11.7  | Utility (power/water) penalty applied                            |        |
-| 1.11.8  | Final happiness clamped between 0 and 100                        |        |
-| 1.11.9  | Component breakdown stored in state                              |        |
-| 1.11.10 | Happiness recomputed every tick                                  |        |
+| 1.11.1  | Happiness starts at base value per `05_ECONOMY_AND_BALANCING.md` | done   |
+| 1.11.2  | Tax happiness modifier applied correctly per rate bracket        | done   |
+| 1.11.3  | Unemployment happiness penalty applied                           | done   |
+| 1.11.4  | Service coverage happiness bonus applied                         | done   |
+| 1.11.5  | Pollution happiness penalty applied                              | done   |
+| 1.11.6  | Park happiness bonus applied                                     | done   |
+| 1.11.7  | Utility (power/water) penalty applied                            | done   |
+| 1.11.8  | Final happiness clamped between 0 and 100                        | done   |
+| 1.11.9  | Component breakdown stored in state                              | done   |
+| 1.11.10 | Happiness recomputed every tick                                  | done   |
 
 ### 1.12 Services (Power, Water, Health, Education)
 
@@ -193,14 +193,14 @@ This document lists every feature across all four implementation phases. Under e
 
 | #      | Testable Logic                                                 | Status |
 | ------ | -------------------------------------------------------------- | ------ |
-| 1.12.1 | Power plant adds capacity to powerCapacity                     |        |
-| 1.12.2 | Water tower adds capacity to waterCapacity                     |        |
-| 1.12.3 | Power demand = sum of power-requiring buildings                |        |
-| 1.12.4 | Water demand = sum of water-requiring buildings                |        |
-| 1.12.5 | Power shortage warning when demand > capacity                  |        |
-| 1.12.6 | Health coverage radius from clinic affects nearby buildings    |        |
-| 1.12.7 | Education coverage radius from school affects nearby buildings |        |
-| 1.12.8 | Service coverage computed as percentage                        |        |
+| 1.12.1 | Power plant adds capacity to powerCapacity                     | done   |
+| 1.12.2 | Water tower adds capacity to waterCapacity                     | done   |
+| 1.12.3 | Power demand = sum of power-requiring buildings                | done   |
+| 1.12.4 | Water demand = sum of water-requiring buildings                | done   |
+| 1.12.5 | Power shortage warning when demand > capacity                  | done   |
+| 1.12.6 | Health coverage radius from clinic affects nearby buildings    | done   |
+| 1.12.7 | Education coverage radius from school affects nearby buildings | done   |
+| 1.12.8 | Service coverage computed as percentage                        | done   |
 
 ### 1.13 Pollution System
 
@@ -208,11 +208,11 @@ This document lists every feature across all four implementation phases. Under e
 
 | #      | Testable Logic                                              | Status |
 | ------ | ----------------------------------------------------------- | ------ |
-| 1.13.1 | Industrial building adds pollution at its location          |        |
-| 1.13.2 | Pollution decays with distance (radius falloff)             |        |
-| 1.13.3 | Pollution clamped between 0 and 100                         |        |
-| 1.13.4 | Pollution affects happiness of nearby residential buildings |        |
-| 1.13.5 | Pollution reduces land value                                |        |
+| 1.13.1 | Industrial building adds pollution at its location          | done   |
+| 1.13.2 | Pollution decays with distance (radius falloff)             | done   |
+| 1.13.3 | Pollution clamped between 0 and 100                         | done   |
+| 1.13.4 | Pollution affects happiness of nearby residential buildings | done   |
+| 1.13.5 | Pollution reduces land value                                | done   |
 
 ### 1.14 Warnings System
 
@@ -220,16 +220,16 @@ This document lists every feature across all four implementation phases. Under e
 
 | #       | Testable Logic                                                          | Status |
 | ------- | ----------------------------------------------------------------------- | ------ |
-| 1.14.1  | No road access warning on building without adjacent road                |        |
-| 1.14.2  | No power warning when building without power and grid has shortage      |        |
-| 1.14.3  | No workers warning when commercial/industrial building unfilled         |        |
-| 1.14.4  | Low happiness warning when city happiness < threshold                   |        |
-| 1.14.5  | High pollution warning when tile pollution > threshold                  |        |
-| 1.14.6  | Abandoned building warning triggered after 12 ticks of unresolved issue |        |
-| 1.14.7  | City losing money warning when monthly income < expenses                |        |
-| 1.14.8  | Warning has severity, message, target, suggested fix                    |        |
-| 1.14.9  | Warnings cleared when condition resolves                                |        |
-| 1.14.10 | Warnings rebuilt every tick                                             |        |
+| 1.14.1  | No road access warning on building without adjacent road                | done   |
+| 1.14.2  | No power warning when building without power and grid has shortage      | done   |
+| 1.14.3  | No workers warning when commercial/industrial building unfilled         | done   |
+| 1.14.4  | Low happiness warning when city happiness < threshold                   | done   |
+| 1.14.5  | High pollution warning when tile pollution > threshold                  | done   |
+| 1.14.6  | Abandoned building warning triggered after 12 ticks of unresolved issue | done   |
+| 1.14.7  | City losing money warning when monthly income < expenses                | done   |
+| 1.14.8  | Warning has severity, message, target, suggested fix                    | done   |
+| 1.14.9  | Warnings cleared when condition resolves                                | done   |
+| 1.14.10 | Warnings rebuilt every tick                                             | done   |
 
 ### 1.15 Progression Milestones
 
@@ -237,16 +237,16 @@ This document lists every feature across all four implementation phases. Under e
 
 | #       | Testable Logic                                                                                             | Status |
 | ------- | ---------------------------------------------------------------------------------------------------------- | ------ |
-| 1.15.1  | Milestone at population 0 (Settlement Site) grants road + residential + city hall                          |        |
-| 1.15.2  | Milestone at population 50 (Hamlet) grants commercial zoning + bonus per `06_PROGRESSION_AND_UNLOCKS.md`   |        |
-| 1.15.3  | Milestone at population 100 (Village) grants industrial zoning + bonus per `06_PROGRESSION_AND_UNLOCKS.md` |        |
-| 1.15.4  | Milestone at population 250 (Small Town) grants park + bonus per `06_PROGRESSION_AND_UNLOCKS.md`           |        |
-| 1.15.5  | Milestone at population 500 (Growing Town) grants clinic + bonus per `06_PROGRESSION_AND_UNLOCKS.md`       |        |
-| 1.15.6  | Milestone at population 750 (Local Center) grants school + bonus per `06_PROGRESSION_AND_UNLOCKS.md`       |        |
-| 1.15.7  | Milestone at population 1000 (First City) completes scenario                                               |        |
-| 1.15.8  | Milestone reward applied exactly once                                                                      |        |
-| 1.15.9  | Milestone checked every tick                                                                               |        |
-| 1.15.10 | Unlocked features persist in progression state                                                             |        |
+| 1.15.1  | Milestone at population 0 (Settlement Site) grants road + residential + city hall                          | done   |
+| 1.15.2  | Milestone at population 50 (Hamlet) grants commercial zoning + bonus per `06_PROGRESSION_AND_UNLOCKS.md`   | done   |
+| 1.15.3  | Milestone at population 100 (Village) grants industrial zoning + bonus per `06_PROGRESSION_AND_UNLOCKS.md` | done   |
+| 1.15.4  | Milestone at population 250 (Small Town) grants park + bonus per `06_PROGRESSION_AND_UNLOCKS.md`           | done   |
+| 1.15.5  | Milestone at population 500 (Growing Town) grants clinic + bonus per `06_PROGRESSION_AND_UNLOCKS.md`       | done   |
+| 1.15.6  | Milestone at population 750 (Local Center) grants school + bonus per `06_PROGRESSION_AND_UNLOCKS.md`       | done   |
+| 1.15.7  | Milestone at population 1000 (First City) completes scenario                                               | done   |
+| 1.15.8  | Milestone reward applied exactly once                                                                      | done   |
+| 1.15.9  | Milestone checked every tick                                                                               | done   |
+| 1.15.10 | Unlocked features persist in progression state                                                             | done   |
 
 ### 1.16 Save/Load
 
@@ -254,26 +254,26 @@ This document lists every feature across all four implementation phases. Under e
 
 | #      | Testable Logic                                      | Status |
 | ------ | --------------------------------------------------- | ------ |
-| 1.16.1 | CityState serializes to JSON without errors         |        |
-| 1.16.2 | Deserialized state matches original values          |        |
-| 1.16.3 | Simulation tick runs on loaded state without errors |        |
-| 1.16.4 | Save data includes version number                   |        |
-| 1.16.5 | Migration function handles version 1 format         |        |
-| 1.16.6 | Load with missing version rejects gracefully        |        |
-| 1.16.7 | Save excludes rendering state                       |        |
+| 1.16.1 | CityState serializes to JSON without errors         | done   |
+| 1.16.2 | Deserialized state matches original values          | done   |
+| 1.16.3 | Simulation tick runs on loaded state without errors | done   |
+| 1.16.4 | Save data includes version number                   | done   |
+| 1.16.5 | Migration function handles version 1 format         | done   |
+| 1.16.6 | Load with missing version rejects gracefully        | done   |
+| 1.16.7 | Save excludes rendering state                       | done   |
 
 ### 1.17 First Scenario
 
 **Docs:** `22_SCENARIOS.md`
 
-| #      | Testable Logic                                                                                                                                   | Status |
-| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------ | ------ |
-| 1.17.1 | Scenario starts with correct initial state (money per `05_ECONOMY_AND_BALANCING.md`, empty map)                                                  |        |
-| 1.17.2 | Win condition checked: population ≥ 1000 per `06_PROGRESSION_AND_UNLOCKS.md`, money ≥ 0, happiness ≥ threshold per `05_ECONOMY_AND_BALANCING.md` |        |
-| 1.17.3 | Loss condition checked: monthsBelowZero ≥ 5                                                                                                      |        |
-| 1.17.4 | Scenario win triggers SCENARIO_WIN event                                                                                                         |        |
-| 1.17.5 | Scenario loss triggers SCENARIO_LOSE event                                                                                                       |        |
-| 1.17.6 | Objectives update as conditions are met                                                                                                          |        |
+| #      | Testable Logic                                                                                                                                         | Status |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ |
+| 1.17.1 | Scenario starts with correct initial state (money per `05_ECONOMY_AND_BALANCING.md`, empty map)                                                        | done   |
+| 1.17.2 | Win condition checked: population â‰¥ 1000 per `06_PROGRESSION_AND_UNLOCKS.md`, money â‰¥ 0, happiness â‰¥ threshold per `05_ECONOMY_AND_BALANCING.md` | done   |
+| 1.17.3 | Loss condition checked: monthsBelowZero â‰¥ 5                                                                                                          | done   |
+| 1.17.4 | Scenario win triggers SCENARIO_WIN event                                                                                                               | done   |
+| 1.17.5 | Scenario loss triggers SCENARIO_LOSE event                                                                                                             | done   |
+| 1.17.6 | Objectives update as conditions are met                                                                                                                | done   |
 
 ### 1.18 Tutorial Objectives
 
@@ -281,11 +281,11 @@ This document lists every feature across all four implementation phases. Under e
 
 | #      | Testable Logic                                                        | Status |
 | ------ | --------------------------------------------------------------------- | ------ |
-| 1.18.1 | Place road objective completes when road placed                       |        |
-| 1.18.2 | Paint zone objective completes when correct zone type painted         |        |
-| 1.18.3 | Reach population objective completes at threshold                     |        |
-| 1.18.4 | Build building objective completes when building of correct id placed |        |
-| 1.18.5 | Objectives advance linearly through sequence                          |        |
+| 1.18.1 | Place road objective completes when road placed                       | done   |
+| 1.18.2 | Paint zone objective completes when correct zone type painted         | done   |
+| 1.18.3 | Reach population objective completes at threshold                     | done   |
+| 1.18.4 | Build building objective completes when building of correct id placed | done   |
+| 1.18.5 | Objectives advance linearly through sequence                          | done   |
 
 ### 1.19 Camera (Pan, Zoom, Pitch, Bounded)
 
@@ -293,9 +293,9 @@ This document lists every feature across all four implementation phases. Under e
 
 | #      | Testable Logic                    | Status |
 | ------ | --------------------------------- | ------ |
-| 1.19.1 | Camera pan bounded to map extents |        |
-| 1.19.2 | Camera zoom clamped to min/max    |        |
-| 1.19.3 | Camera pitch clamped to min/max   |        |
+| 1.19.1 | Camera pan bounded to map extents | done   |
+| 1.19.2 | Camera zoom clamped to min/max    | done   |
+| 1.19.3 | Camera pitch clamped to min/max   | done   |
 
 ### 1.20 Grid Rendering and Building/Road Visualization
 
@@ -315,11 +315,11 @@ This document lists every feature across all four implementation phases. Under e
 
 | #      | Testable Logic                                   | Status |
 | ------ | ------------------------------------------------ | ------ |
-| 1.21.1 | HUD displays current money from simulation state |        |
-| 1.21.2 | HUD displays current population                  |        |
-| 1.21.3 | HUD displays current in-game date/month/year     |        |
-| 1.21.4 | HUD displays RCI demand bars                     |        |
-| 1.21.5 | HUD updates when simulation state changes        |        |
+| 1.21.1 | HUD displays current money from simulation state | done   |
+| 1.21.2 | HUD displays current population                  | done   |
+| 1.21.3 | HUD displays current in-game date/month/year     | done   |
+| 1.21.4 | HUD displays RCI demand bars                     | done   |
+| 1.21.5 | HUD updates when simulation state changes        | done   |
 
 ### 1.22 Build Mode (Hover, Valid/Invalid Feedback, Cost Preview)
 
@@ -327,11 +327,11 @@ This document lists every feature across all four implementation phases. Under e
 
 | #      | Testable Logic                             | Status |
 | ------ | ------------------------------------------ | ------ |
-| 1.22.1 | Hovered tile updates from mouse position   |        |
-| 1.22.2 | Invalid placement shows visual feedback    |        |
-| 1.22.3 | Valid placement shows visual feedback      |        |
-| 1.22.4 | Cost preview shown in UI during build mode |        |
-| 1.22.5 | Selected tile persists until deselected    |        |
+| 1.22.1 | Hovered tile updates from mouse position   | done   |
+| 1.22.2 | Invalid placement shows visual feedback    | done   |
+| 1.22.3 | Valid placement shows visual feedback      | done   |
+| 1.22.4 | Cost preview shown in UI during build mode | done   |
+| 1.22.5 | Selected tile persists until deselected    | done   |
 
 ### 1.23 Placement Preview Ghost
 
@@ -339,10 +339,10 @@ This document lists every feature across all four implementation phases. Under e
 
 | #      | Testable Logic                                    | Status |
 | ------ | ------------------------------------------------- | ------ |
-| 1.23.1 | Ghost preview appears at cursor during build mode |        |
-| 1.23.2 | Ghost preview shows footprint of building         |        |
-| 1.23.3 | Ghost preview color indicates valid/invalid state |        |
-| 1.23.4 | Ghost preview removed when build mode exits       |        |
+| 1.23.1 | Ghost preview appears at cursor during build mode | done   |
+| 1.23.2 | Ghost preview shows footprint of building         | done   |
+| 1.23.3 | Ghost preview color indicates valid/invalid state | done   |
+| 1.23.4 | Ghost preview removed when build mode exits       | done   |
 
 ### 1.24 Zoning/Pollution/Service Coverage Overlays
 
@@ -386,8 +386,8 @@ This document lists every feature across all four implementation phases. Under e
 | 2.1.5 | Road access increases land value                               | done   |
 | 2.1.6 | Land value decays with distance from positive/negative sources | done   |
 | 2.1.7 | Land value clamped between 0 and 100                           | done   |
-| 2.1.8 | Land value affects building upgrade eligibility                |        |
-| 2.1.9 | Land value affects commercial/industrial productivity          |        |
+| 2.1.8 | Land value affects building upgrade eligibility                | done   |
+| 2.1.9 | Land value affects commercial/industrial productivity          | done   |
 
 ### 2.2 Building Upgrades (Density Tiers)
 
@@ -530,7 +530,7 @@ This document lists every feature across all four implementation phases. Under e
 | #      | Testable Logic                                                              | Status |
 | ------ | --------------------------------------------------------------------------- | ------ |
 | 2.12.1 | City rating computed from economy, happiness, services, environment, growth | done   |
-| 2.12.2 | Rating displayed as letter grade (A–F)                                      | done   |
+| 2.12.2 | Rating displayed as letter grade (Aâ€“F)                                    | done   |
 | 2.12.3 | Rating affects citizen immigration rate                                     | done   |
 | 2.12.4 | Rating breakdown shows strengths/weaknesses                                 | done   |
 
@@ -735,11 +735,11 @@ This document lists every feature across all four implementation phases. Under e
 
 **Docs:** `41_TERRAIN_AND_WATER_SYSTEM.md`
 
-| #     | Testable Logic                           | Status |
-| ----- | ---------------------------------------- | ------ |
-| 4.1.1 | Map size configurable (128×128, 256×256) |        |
-| 4.1.2 | Map size affects performance budget      |        |
-| 4.1.3 | Camera bounds adapt to map size          |        |
+| #     | Testable Logic                             | Status |
+| ----- | ------------------------------------------ | ------ |
+| 4.1.1 | Map size configurable (128Ã—128, 256Ã—256) |        |
+| 4.1.2 | Map size affects performance budget        |        |
+| 4.1.3 | Camera bounds adapt to map size            |        |
 
 ### 4.2 Terrain Editing and Elevation
 

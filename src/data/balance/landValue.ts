@@ -14,3 +14,5 @@ export const NOISE_PENALTY = -5;
 export const NOISE_RADIUS = 3;
 export const LAND_VALUE_MIN = 0;
 export const LAND_VALUE_MAX = 100;
+export const INDUSTRIAL_PRODUCTIVITY_THRESHOLD = 20;
+export const LOW_LAND_VALUE_INDUSTRIAL_PRODUCTIVITY_MULTIPLIER = 0.5;

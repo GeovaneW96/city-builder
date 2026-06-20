@@ -11,6 +11,7 @@ import type { CityState } from "../../shared/types";
 import type { CityMetrics } from "./metrics";
 import { processLoanPayments } from "./loans";
 import { getDistrictPolicyCost, getTaxBreakShare } from "./districts";
+import { getCommercialLandValueMultiplier } from "./land-productivity";
 
 export function runEconomy(state: CityState, metrics: CityMetrics): void {
   const income = calculateMonthlyIncome(state, metrics);
@@ -26,8 +27,7 @@ export function runEconomy(state: CityState, metrics: CityMetrics): void {
 export function calculateMonthlyIncome(state: CityState, metrics: CityMetrics): number {
   const residentialBase =
     state.population.total * TAX_INCOME_FORMULAS.RESIDENTIAL_BASE_PER_PERSON;
-  const commercialBase =
-    metrics.commercialJobsFilled * TAX_INCOME_FORMULAS.COMMERCIAL_BASE_PER_JOB;
+  const commercialBase = calculateCommercialTaxBase(state, metrics);
   const industrialBase =
     metrics.industrialJobsFilled * TAX_INCOME_FORMULAS.INDUSTRIAL_BASE_PER_JOB;
 
@@ -50,6 +50,25 @@ export function calculateMonthlyIncome(state: CityState, metrics: CityMetrics): 
       applyTaxBreak(state, "commercial", commercialIncome) +
       applyTaxBreak(state, "industrial", industrialIncome),
   );
+}
+
+function calculateCommercialTaxBase(state: CityState, metrics: CityMetrics): number {
+  if (metrics.commercialJobs === 0) return 0;
+  const employmentRate = metrics.commercialJobsFilled / metrics.commercialJobs;
+  return state.buildings.reduce((total, building) => {
+    const definition = getBuildingById(building.definitionId);
+    if (building.status !== "active" || definition?.category !== "commercial") {
+      return total;
+    }
+    const jobs = definition.effects.jobs ?? 0;
+    return (
+      total +
+      jobs *
+        employmentRate *
+        TAX_INCOME_FORMULAS.COMMERCIAL_BASE_PER_JOB *
+        getCommercialLandValueMultiplier(state, building)
+    );
+  }, 0);
 }
 
 export function calculateMonthlyExpenses(state: CityState): number {

@@ -7,6 +7,7 @@ import {
   createCityRenderLayers,
   syncCityRenderLayers,
   syncPlacementPreview,
+  type BuildingRenderInfo,
 } from "./rendering/three/city";
 import {
   createGrid,
@@ -131,7 +132,7 @@ function updateFrameRate(now: number): void {
 function syncAll(): void {
   const state = useSimulationStore.getState().state;
   const uiState = useUIStore.getState();
-  syncCityRenderLayers(cityLayers, state, uiState.activeOverlay);
+  syncCityRenderLayers(cityLayers, state, uiState.activeOverlay, getBuildingRenderInfo);
   syncPlacementPreview(cityLayers.preview, uiState.placementPreview);
   renderInterface(state, uiState);
   updateSelectionHighlight(grid.selectionHighlight, uiState.selectedTile);
@@ -813,6 +814,19 @@ function getRoadCost(roadType: "dirt" | "paved"): number {
   return roadType === "dirt"
     ? CONSTRUCTION_COSTS.DIRT_ROAD
     : CONSTRUCTION_COSTS.PAVED_ROAD;
+}
+
+function getBuildingRenderInfo(definitionId: string): BuildingRenderInfo | null {
+  const definition = getBuildingById(definitionId);
+  if (!definition) return null;
+  return {
+    size: definition.size,
+    category: definition.category,
+    effects: {
+      healthRadius: definition.effects.healthRadius,
+      educationRadius: definition.effects.educationRadius,
+    },
+  };
 }
 
 function getModeLabel(uiState: UIState): string {
