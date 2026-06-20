@@ -1,5 +1,7 @@
 # Social and Leaderboard
 
+Current local support includes shareable snapshot serialization and completion-time leaderboard persistence helpers.
+
 ## Purpose
 
 This document defines city snapshot sharing and scenario leaderboard features.

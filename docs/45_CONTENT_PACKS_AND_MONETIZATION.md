@@ -1,5 +1,7 @@
 # Content Packs and Monetization
 
+Current content-pack helpers validate pack identities and building-ID conflicts before merging optional content.
+
 ## Purpose
 
 This document defines the content pack structure, monetization tiers, and feature gating.

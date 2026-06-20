@@ -1,5 +1,7 @@
 # Data Model and Save System
 
+Standalone save helpers also support city snapshots, local leaderboard records, and supporter-entitlement persistence.
+
 ## Purpose
 
 This document defines how game data should be represented and saved.
