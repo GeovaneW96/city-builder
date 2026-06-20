@@ -1,3 +1,4 @@
+# Run all repository quality gates before creating a commit.
 set -e
 npx lint-staged
 node scripts/pre-commit-checks.mjs

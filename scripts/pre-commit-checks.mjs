@@ -87,10 +87,16 @@ function checkNoTestOnly(staged) {
   }
 }
 
-function checkIndexMdDrift(staged) {
-  const newDocFiles = staged.filter(
-    (f) => f.startsWith("docs/") && f.endsWith(".md") && f !== "docs/INDEX.md",
-  );
+function checkIndexMdDrift() {
+  const newDocFiles = execSync("git diff --cached --name-only --diff-filter=A", {
+    encoding: "utf-8",
+  })
+    .split("\n")
+    .map((file) => file.trim())
+    .filter(
+      (file) =>
+        file.startsWith("docs/") && file.endsWith(".md") && file !== "docs/INDEX.md",
+    );
   if (newDocFiles.length === 0) return;
 
   if (!existsSync("docs/INDEX.md")) {
@@ -113,7 +119,7 @@ function main() {
   checkDocs(staged);
   checkTestAccompaniment(staged);
   checkNoTestOnly(staged);
-  checkIndexMdDrift(staged);
+  checkIndexMdDrift();
 
   if (errors.length > 0) {
     for (const err of errors) {
