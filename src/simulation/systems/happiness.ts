@@ -5,9 +5,85 @@ import {
   getTaxHappinessModifier,
 } from "../../data/balance";
 import { getBuildingById } from "../../data/buildings";
-import type { CityState } from "../../shared/types";
+import type { CityState, HappinessState, Neighborhood } from "../../shared/types";
+import { recomputeNeighborhoods } from "./neighborhoods";
 
 export function recomputeHappiness(state: CityState): void {
+  const neighborhoods = recomputeNeighborhoods(state);
+  if (state.population.total === 0) {
+    state.happiness = createBaseHappiness();
+    return;
+  }
+  if (neighborhoods.length > 0) {
+    state.happiness = calculateCityHappiness(neighborhoods);
+    return;
+  }
+  state.happiness = calculateGlobalHappiness(state);
+}
+
+function createBaseHappiness(): HappinessState {
+  return {
+    value: HAPPINESS_DEFAULTS.BASE,
+    components: {
+      base: HAPPINESS_DEFAULTS.BASE,
+      tax: 0,
+      unemployment: 0,
+      services: 0,
+      pollution: 0,
+      parks: 0,
+      utility: 0,
+    },
+  };
+}
+
+function calculateCityHappiness(neighborhoods: Neighborhood[]): HappinessState {
+  const totalPopulation = neighborhoods.reduce(
+    (total, neighborhood) => total + neighborhood.population,
+    0,
+  );
+  if (totalPopulation === 0) return createBaseHappiness();
+  return {
+    value: getWeightedValue(neighborhoods, totalPopulation, "happiness"),
+    components: {
+      base: getWeightedComponent(neighborhoods, totalPopulation, "base"),
+      tax: getWeightedComponent(neighborhoods, totalPopulation, "tax"),
+      unemployment: getWeightedComponent(neighborhoods, totalPopulation, "unemployment"),
+      services: getWeightedComponent(neighborhoods, totalPopulation, "services"),
+      pollution: getWeightedComponent(neighborhoods, totalPopulation, "pollution"),
+      parks: getWeightedComponent(neighborhoods, totalPopulation, "parks"),
+      utility: getWeightedComponent(neighborhoods, totalPopulation, "utility"),
+    },
+  };
+}
+
+function getWeightedValue(
+  neighborhoods: Neighborhood[],
+  totalPopulation: number,
+  field: "happiness",
+): number {
+  return Math.round(
+    neighborhoods.reduce(
+      (total, neighborhood) => total + neighborhood[field] * neighborhood.population,
+      0,
+    ) / totalPopulation,
+  );
+}
+
+function getWeightedComponent(
+  neighborhoods: Neighborhood[],
+  totalPopulation: number,
+  component: keyof HappinessState["components"],
+): number {
+  return Math.round(
+    neighborhoods.reduce(
+      (total, neighborhood) =>
+        total + neighborhood.components[component] * neighborhood.population,
+      0,
+    ) / totalPopulation,
+  );
+}
+
+function calculateGlobalHappiness(state: CityState): HappinessState {
   const tax = calculateTaxComponent(state);
   const unemployment = calculateUnemploymentPenalty(state);
   const services = calculateServicesBonus(state);
@@ -18,7 +94,7 @@ export function recomputeHappiness(state: CityState): void {
     HAPPINESS_DEFAULTS.BASE + tax + unemployment + services + pollution + parks + utility,
   );
 
-  state.happiness = {
+  return {
     value,
     components: {
       base: HAPPINESS_DEFAULTS.BASE,

@@ -175,6 +175,14 @@ Land value modifier constants are defined in `src/data/balance/landValue.ts`; th
 authoritative formulas, radii, and integration rules are documented in
 `docs/23_LAND_VALUE_SYSTEM.md`.
 
+## Neighborhood Happiness Balance
+
+`src/data/balance/happiness.ts` defines the neighborhood-specific weights. Local unemployment
+uses the established citywide cap and rate so a single neighborhood preserves the Phase 1
+growth curve. Health and education each contribute up to 10 points before their combined
+average, pollution is divided by 8, and local park bonuses are capped at 15. These values are
+intentionally data-driven so scenario and balance tuning does not alter the simulation algorithm.
+
 ## Bankruptcy
 
 If money is below 0:

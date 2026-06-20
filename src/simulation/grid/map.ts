@@ -58,6 +58,13 @@ export function cloneCityState(state: CityState): CityState {
       value: state.happiness.value,
       components: { ...state.happiness.components },
     },
+    neighborhoods: (state.neighborhoods ?? []).map((neighborhood) => ({
+      ...neighborhood,
+      bounds: { ...neighborhood.bounds },
+      components: { ...neighborhood.components },
+      buildings: [...neighborhood.buildings],
+    })),
+    neighborhoodMode: state.neighborhoodMode ?? "auto",
     progression: {
       ...state.progression,
       unlockedFeatures: [...state.progression.unlockedFeatures],

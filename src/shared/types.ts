@@ -124,6 +124,21 @@ export interface HappinessState {
   };
 }
 
+export type NeighborhoodHappinessComponents = HappinessState["components"] & {
+  traffic: number;
+};
+
+export interface Neighborhood {
+  id: string;
+  label: string;
+  bounds: { minX: number; minY: number; maxX: number; maxY: number };
+  tileCount: number;
+  population: number;
+  happiness: number;
+  components: NeighborhoodHappinessComponents;
+  buildings: string[];
+}
+
 export interface Milestone {
   population: number;
   name: string;
@@ -163,6 +178,8 @@ export interface CityState {
   demand: DemandState;
   services: ServicesState;
   happiness: HappinessState;
+  neighborhoods: Neighborhood[];
+  neighborhoodMode: "auto" | "manual";
   progression: ProgressionState;
   warnings: Warning[];
   time: TimeState;

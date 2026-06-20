@@ -48,6 +48,8 @@ export function createInitialCityState(): CityState {
         utility: 0,
       },
     },
+    neighborhoods: [],
+    neighborhoodMode: "auto",
     progression: {
       currentMilestone: 0,
       unlockedFeatures: [...FIRST_SETTLEMENT.initialUnlocks],

@@ -183,6 +183,10 @@ MAX_PARK_BONUS             = 15
 NEIGHBORHOOD_MIN_POPULATION = 1
 ```
 
+The Phase 2 implementation reuses the existing citywide unemployment cap and rate for each
+neighborhood. This keeps a city with one auto-detected neighborhood on the established growth
+curve while still deriving the rate from local workers and jobs.
+
 ## Integration Points
 
 | System    | Integration                                                       |
@@ -193,6 +197,13 @@ NEIGHBORHOOD_MIN_POPULATION = 1
 | Parks     | Neighborhood park count affects local happiness                   |
 | UI        | Overlay rendering, tooltip per neighborhood                       |
 | Warnings  | Low neighborhood happiness can trigger neighborhood-level warning |
+
+## Current Implementation
+
+Phase 2 implements automatic road-bounded detection and exposes the derived neighborhoods on
+`CityState`. Each tick rebuilds the list and computes local components from simulation data;
+the city score is population weighted. `neighborhoodMode` is persisted with an `"auto"` default
+so the Phase 3 manual-district implementation can replace only the boundary source.
 
 ## Tests
 

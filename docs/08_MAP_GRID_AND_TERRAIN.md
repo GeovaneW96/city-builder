@@ -112,3 +112,10 @@ Useful debug overlays:
 - service coverage;
 - pollution;
 - land value;
+
+## Road-Bounded Neighborhoods
+
+The happiness simulation treats road tiles as neighborhood boundaries. It flood-fills
+contiguous grass tiles and excludes water, blocked terrain, road tiles, and regions without
+buildings. This map-derived data is recalculated during the simulation tick and is independent
+of rendering state.

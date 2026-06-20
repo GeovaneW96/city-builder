@@ -411,11 +411,11 @@ This document lists every feature across all four implementation phases. Under e
 
 | #     | Testable Logic                                                                                  | Status |
 | ----- | ----------------------------------------------------------------------------------------------- | ------ |
-| 2.3.1 | Map divided into neighborhood regions                                                           |        |
-| 2.3.2 | Each neighborhood has independent happiness value                                               |        |
-| 2.3.3 | Neighborhood happiness calculated from local conditions (local services, local pollution, etc.) |        |
-| 2.3.4 | City-level happiness is weighted average of neighborhoods                                       |        |
-| 2.3.5 | Neighborhood boundaries configurable or auto-assigned                                           |        |
+| 2.3.1 | Map divided into neighborhood regions                                                           | done   |
+| 2.3.2 | Each neighborhood has independent happiness value                                               | done   |
+| 2.3.3 | Neighborhood happiness calculated from local conditions (local services, local pollution, etc.) | done   |
+| 2.3.4 | City-level happiness is weighted average of neighborhoods                                       | done   |
+| 2.3.5 | Neighborhood boundaries configurable or auto-assigned                                           | done   |
 
 ### 2.4 Road Capacity and Congestion
 

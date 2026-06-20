@@ -84,4 +84,8 @@ Every save schema change should include tests:
 Legacy building instances without density fields are normalized to tier 1 with their creation
 tick as the initial upgrade tick when loaded.
 
+`CityState` also saves `neighborhoods` and `neighborhoodMode`. Neighborhood data is derived and
+rebuilt on ticks, while the mode preserves the future manual-district override choice. Older
+saves missing either field default to an empty neighborhood list and `"auto"` mode.
+
 Cloud saves are not in scope for the initial version.

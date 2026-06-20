@@ -261,7 +261,7 @@ Within a single simulation tick, the following runs **in order**:
 4. **Population** — update totals from residential capacity and demand.
 5. **Pollution and Land Value** — recompute pollution, then each tile's land value from local modifiers.
 6. **Services** — recompute capacity usage and coverage radii.
-7. **Happiness** — recompute city happiness from all modifiers.
+7. **Happiness** — rebuild road-bounded neighborhoods, calculate their local happiness, then calculate the population-weighted city score.
 8. **Warnings** — rebuild active warnings list from current state.
 9. **Progression** — check milestones, apply unlocks and rewards.
 10. **Events** — emit `GameEvent` objects for any changed state (rendering/UI consume these).
@@ -292,3 +292,11 @@ If randomness is used:
 - use a seeded RNG;
 - store the seed in save data;
 - make tests predictable.
+
+## Neighborhood Happiness
+
+Happiness is evaluated from deterministic, road-bounded buildable regions. Each region with
+at least one building receives local unemployment, service-coverage, pollution, park, and
+utility components. The city score is the population-weighted average of the resulting region
+scores; an empty city remains at the base score. See `25_NEIGHBORHOOD_HAPPINESS.md` for the
+full rules and data model.
