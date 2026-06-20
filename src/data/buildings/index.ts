@@ -26,3 +26,13 @@ export function getBuildingsByCategory(category: string): BuildingDefinition[] {
 export function getManualBuildings(): BuildingDefinition[] {
   return ALL_BUILDINGS.filter((b) => b.placementType === "manual");
 }
+
+export function getNextDensityBuilding(id: string): BuildingDefinition | undefined {
+  const current = getBuildingById(id);
+  const tier = current?.densityTier;
+  if (!current || !tier) return undefined;
+  return ALL_BUILDINGS.find(
+    (building) =>
+      building.category === current.category && building.densityTier === tier + 1,
+  );
+}

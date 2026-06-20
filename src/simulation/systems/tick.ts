@@ -11,6 +11,7 @@ import { recomputePollution } from "./pollution";
 import { recomputeLandValue } from "./land-value";
 import { rebuildWarnings } from "./warnings";
 import { updateProgression } from "./progression";
+import { updateBuildingUpgrades } from "./upgrades";
 import { advanceTime } from "./time";
 
 export type TickResult = SimulationTickResult;
@@ -26,6 +27,7 @@ export function tickCity(current: CityState): TickResult {
 
   recomputeDemand(state, initialMetrics);
   events.push(...updateConstructionStatuses(state));
+  events.push(...updateBuildingUpgrades(state));
   if (!firstTick) events.push(...growZonedBuildings(state));
 
   recomputePollution(state);

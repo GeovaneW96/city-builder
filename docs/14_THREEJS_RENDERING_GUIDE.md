@@ -82,6 +82,8 @@ Use instancing for repeated building types when practical.
 The Foundation renderer groups buildings by definition and status, then draws each group
 with a Three.js `InstancedMesh`. This keeps repeated homes and future repeated zone-grown
 buildings efficient while still updating the visual when a building changes status.
+Density upgrades replace the instance's definition ID, so the next renderer synchronization
+automatically moves it into the appropriate mesh group and visual dimensions.
 
 ## Placement Preview
 

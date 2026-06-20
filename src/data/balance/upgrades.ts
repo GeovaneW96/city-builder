@@ -1,0 +1,10 @@
+export const UPGRADE_COOLDOWN_T1_T2 = 12;
+export const UPGRADE_COOLDOWN_T2_T3 = 24;
+export const UPGRADE_LAND_VALUE_T1_T2 = 30;
+export const UPGRADE_LAND_VALUE_T2_T3 = 60;
+export const UPGRADE_HAPPINESS_T1_T2 = 50;
+export const UPGRADE_HAPPINESS_T2_T3 = 65;
+export const UPGRADE_POPULATION_T1_T2 = 200;
+export const UPGRADE_POPULATION_T2_T3 = 500;
+export const UPGRADE_REQUIRES_EDUCATION_T1_T2 = false;
+export const UPGRADE_REQUIRES_EDUCATION_T2_T3 = true;

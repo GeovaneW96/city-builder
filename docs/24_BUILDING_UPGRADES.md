@@ -85,6 +85,11 @@ BuildingInstance {
 
 On initial spawn, `upgradeTier = 1` and `lastUpgradeTick = currentTick`.
 
+The Phase 2 implementation stores tiered residential, commercial, and industrial definitions
+in the existing building data files. It upgrades eligible active zone-grown buildings during
+the tick, validates expanded footprints before changing definitions, and then returns the
+building to the normal one-tick construction state.
+
 ## Upgrade Behavior
 
 When upgrade conditions are satisfied during the building growth step:

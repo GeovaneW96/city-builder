@@ -267,6 +267,8 @@ function addActiveBuilding(
     createdAtTick: 0,
     lockedUntilTick: 0,
     unresolvedWarningTicks: 0,
+    upgradeTier: 1,
+    lastUpgradeTick: 0,
   };
   state.buildings.push(building);
   state.map[y]![x]!.buildingId = id;

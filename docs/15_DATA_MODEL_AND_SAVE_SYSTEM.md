@@ -24,6 +24,7 @@ Save:
 - roads;
 - zones;
 - buildings;
+- building upgrade tier and last-upgrade tick;
 - economy;
 - population;
 - demand;
@@ -79,5 +80,8 @@ Every save schema change should include tests:
 4. compare important values (population, money, happiness, achievement states);
 5. run a simulation tick successfully on the deserialized state;
 6. verify save slot metadata is preserved.
+
+Legacy building instances without density fields are normalized to tier 1 with their creation
+tick as the initial upgrade tick when loaded.
 
 Cloud saves are not in scope for the initial version.

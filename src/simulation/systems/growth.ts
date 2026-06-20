@@ -118,6 +118,8 @@ function createZoneBuilding(
     createdAtTick: state.time.tick,
     lockedUntilTick: state.time.tick + BUILDING_LOCK_TICKS,
     unresolvedWarningTicks: 0,
+    upgradeTier: definition.densityTier ?? 1,
+    lastUpgradeTick: state.time.tick,
   };
 }
 

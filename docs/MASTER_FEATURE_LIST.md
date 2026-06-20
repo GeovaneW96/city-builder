@@ -395,15 +395,15 @@ This document lists every feature across all four implementation phases. Under e
 
 | #     | Testable Logic                                                           | Status |
 | ----- | ------------------------------------------------------------------------ | ------ |
-| 2.2.1 | Building upgrades from low to medium density when conditions met         |        |
-| 2.2.2 | Building upgrades from medium to high density when conditions met        |        |
-| 2.2.3 | Upgrade conditions: land value threshold, happiness, services, education |        |
-| 2.2.4 | Upgrade replaces old building definition with new one                    |        |
-| 2.2.5 | Upgrade increases population capacity (residential)                      |        |
-| 2.2.6 | Upgrade increases jobs (commercial/industrial)                           |        |
-| 2.2.7 | Upgrade changes visual asset                                             |        |
-| 2.2.8 | Upgrade has cooldown before next upgrade                                 |        |
-| 2.2.9 | Building cannot upgrade if it has active warnings                        |        |
+| 2.2.1 | Building upgrades from low to medium density when conditions met         | done   |
+| 2.2.2 | Building upgrades from medium to high density when conditions met        | done   |
+| 2.2.3 | Upgrade conditions: land value threshold, happiness, services, education | done   |
+| 2.2.4 | Upgrade replaces old building definition with new one                    | done   |
+| 2.2.5 | Upgrade increases population capacity (residential)                      | done   |
+| 2.2.6 | Upgrade increases jobs (commercial/industrial)                           | done   |
+| 2.2.7 | Upgrade changes visual asset                                             | done   |
+| 2.2.8 | Upgrade has cooldown before next upgrade                                 | done   |
+| 2.2.9 | Building cannot upgrade if it has active warnings                        | done   |
 
 ### 2.3 Neighborhood-Level Happiness Breakdown
 

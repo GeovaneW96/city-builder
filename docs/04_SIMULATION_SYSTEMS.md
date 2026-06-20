@@ -257,7 +257,7 @@ Within a single simulation tick, the following runs **in order**:
 
 1. **Economy** — compute income, expenses, update money, check bankruptcy.
 2. **Demand** — recompute RCI demand from current city conditions.
-3. **Building Growth** — attempt to spawn new buildings on valid zoned tiles.
+3. **Building Growth and Upgrades** — activate completed construction, upgrade eligible buildings, then spawn new buildings on valid zoned tiles.
 4. **Population** — update totals from residential capacity and demand.
 5. **Pollution and Land Value** — recompute pollution, then each tile's land value from local modifiers.
 6. **Services** — recompute capacity usage and coverage radii.

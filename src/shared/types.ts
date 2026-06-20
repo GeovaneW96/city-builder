@@ -44,6 +44,7 @@ export interface BuildingDefinition {
   cost: number;
   upkeep: number;
   unlockPopulation: number;
+  densityTier?: 1 | 2 | 3;
   requirements: {
     roadAccess: boolean;
   };
@@ -70,6 +71,8 @@ export interface BuildingInstance {
   createdAtTick: number;
   lockedUntilTick: number;
   unresolvedWarningTicks: number;
+  upgradeTier: 1 | 2 | 3;
+  lastUpgradeTick: number;
 }
 
 export interface EconomyState {

@@ -55,5 +55,7 @@ function createHouse(id: string, x: number, y: number): BuildingInstance {
     createdAtTick: 0,
     lockedUntilTick: 0,
     unresolvedWarningTicks: 0,
+    upgradeTier: 1,
+    lastUpgradeTick: 0,
   };
 }

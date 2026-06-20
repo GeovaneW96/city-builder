@@ -181,6 +181,7 @@ Tradeoff:
 - `cost` — construction cost;
 - `upkeep` — monthly maintenance;
 - `unlockPopulation` — population milestone required (optional);
+- `densityTier` — optional zone-grown density tier (1, 2, or 3);
 - `requirements` — road access, demand, unlock, service, or worker conditions;
 - `effects` — power/water capacity, health/education radius, happiness, pollution, jobs, population capacity, tax type;
 - `visual` — model id and optional footprint color.
@@ -194,6 +195,8 @@ Tradeoff:
 - `status` — `"constructing"`, `"active"`, `"inactive"`, or `"abandoned"`;
 - `warnings` — list of active warning strings;
 - `createdAtTick` — tick when the building was placed.
+- `upgradeTier` — current density tier for zone-grown buildings;
+- `lastUpgradeTick` — tick when the building last upgraded.
 
 ## Placement Rules
 

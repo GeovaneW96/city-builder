@@ -43,6 +43,8 @@ export function cloneCityState(state: CityState): CityState {
       ...building,
       position: [...building.position],
       warnings: [...building.warnings],
+      upgradeTier: building.upgradeTier ?? 1,
+      lastUpgradeTick: building.lastUpgradeTick ?? building.createdAtTick,
     })),
     roads: state.roads.map(cloneRoad),
     economy: {

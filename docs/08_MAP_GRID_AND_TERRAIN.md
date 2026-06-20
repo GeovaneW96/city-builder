@@ -65,6 +65,10 @@ Tile fields:
 
 Initial terrain is always `grass`.
 
+Land value is a 0..100 number for buildable terrain and `null` for unbuildable terrain.
+Grid cloning also preserves each building's upgrade tier and last-upgrade tick so saved cities
+resume density-transition cooldowns correctly.
+
 ## Placement Rules
 
 ### Roads
