@@ -1,5 +1,7 @@
 # Resources and Biomes
 
+Current simulation support stores deposit richness/depletion and applies deterministic yearly depletion for active extraction sites.
+
 ## Purpose
 
 This document defines resource deposits, extraction buildings, depletion, and biome selection.

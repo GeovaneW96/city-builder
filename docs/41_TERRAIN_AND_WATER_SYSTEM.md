@@ -1,5 +1,7 @@
 # Terrain and Water System
 
+Current simulation support stores per-tile elevation and water conversion, with one-level, costed elevation commands.
+
 ## Purpose
 
 This document defines the elevation, terrain editing, and water system.

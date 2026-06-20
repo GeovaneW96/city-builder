@@ -1,5 +1,7 @@
 # Scenarios
 
+Custom scenarios use the shared simulation schema and are validated before JSON export/import.
+
 ## Purpose
 
 Scenarios provide structured goals and replayability.

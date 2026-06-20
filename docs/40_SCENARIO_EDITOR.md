@@ -1,5 +1,7 @@
 # Scenario Editor
 
+The simulation layer exposes typed scenario creation, validation, and JSON import/export helpers for editor tooling.
+
 ## Purpose
 
 This document defines the in-game scenario editor for Phase 3.
