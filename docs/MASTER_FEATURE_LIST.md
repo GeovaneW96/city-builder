@@ -638,10 +638,10 @@ This document lists every feature across all four implementation phases. Under e
 
 | #     | Testable Logic                                             | Status |
 | ----- | ---------------------------------------------------------- | ------ |
-| 3.4.1 | Education levels: elementary, high school, university      |        |
-| 3.4.2 | Higher education improves workforce quality                |        |
+| 3.4.1 | Education levels: elementary, high school, university      | done   |
+| 3.4.2 | Higher education improves workforce quality                | done   |
 | 3.4.3 | Education level affects building upgrade eligibility       |        |
-| 3.4.4 | Each education building has cost, upkeep, capacity, radius |        |
+| 3.4.4 | Each education building has cost, upkeep, capacity, radius | done   |
 
 ### 3.5 Healthcare Tiers
 
@@ -649,10 +649,10 @@ This document lists every feature across all four implementation phases. Under e
 
 | #     | Testable Logic                                              | Status |
 | ----- | ----------------------------------------------------------- | ------ |
-| 3.5.1 | Healthcare levels: clinic, hospital, medical center         |        |
-| 3.5.2 | Higher healthcare improves citizen health and happiness     |        |
-| 3.5.3 | Healthcare coverage radius increases with tier              |        |
-| 3.5.4 | Each healthcare building has cost, upkeep, capacity, radius |        |
+| 3.5.1 | Healthcare levels: clinic, hospital, medical center         | done   |
+| 3.5.2 | Higher healthcare improves citizen health and happiness     | done   |
+| 3.5.3 | Healthcare coverage radius increases with tier              | done   |
+| 3.5.4 | Each healthcare building has cost, upkeep, capacity, radius | done   |
 
 ### 3.6 Medium-Density and High-Density Zoning
 
@@ -660,10 +660,10 @@ This document lists every feature across all four implementation phases. Under e
 
 | #     | Testable Logic                                            | Status |
 | ----- | --------------------------------------------------------- | ------ |
-| 3.6.1 | Medium-density zone type available at milestone           |        |
-| 3.6.2 | High-density zone type available at milestone             |        |
-| 3.6.3 | Density zones spawn denser buildings                      |        |
-| 3.6.4 | Density zone requirements (land value, services) enforced |        |
+| 3.6.1 | Medium-density zone type available at milestone           | done   |
+| 3.6.2 | High-density zone type available at milestone             | done   |
+| 3.6.3 | Density zones spawn denser buildings                      | done   |
+| 3.6.4 | Density zone requirements (land value, services) enforced | done   |
 
 ### 3.7 Office Zones
 
