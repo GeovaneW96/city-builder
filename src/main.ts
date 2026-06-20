@@ -29,6 +29,7 @@ import {
   isInBounds,
 } from "./simulation/grid/map";
 import { getCurrentObjectiveLabel } from "./simulation/systems/progression";
+import { getRatingFeedback } from "./simulation/systems/rating";
 import { useSimulationStore } from "./simulation/store";
 import type {
   BuildMode,
@@ -61,6 +62,7 @@ let lastTickAt = performance.now();
 let lastAutosaveAt = performance.now();
 let selectedSaveSlot: SaveSlotId = "manual_0";
 let debugVisible = false;
+let ratingBreakdownVisible = false;
 let frameCount = 0;
 let framesPerSecond = 0;
 let frameWindowStartedAt = performance.now();
@@ -76,6 +78,7 @@ const GLOBAL_ACTIONS: Record<string, (target: HTMLElement) => void> = {
   "export-save": () => exportSave(),
   "import-save": () => ui.importFile.click(),
   debug: () => toggleDebug(),
+  rating: () => toggleRatingBreakdown(),
 };
 
 bindInterface();
@@ -339,6 +342,11 @@ function toggleDebug(): void {
   renderInterface(useSimulationStore.getState().state, useUIStore.getState());
 }
 
+function toggleRatingBreakdown(): void {
+  ratingBreakdownVisible = !ratingBreakdownVisible;
+  renderInterface(useSimulationStore.getState().state, useUIStore.getState());
+}
+
 function bindInterface(): void {
   ui.root.addEventListener("click", (event) => {
     const target = event.target;
@@ -478,6 +486,9 @@ function renderInterface(state: CityState, uiState: UIState): void {
   ui.population.textContent = `${state.population.total} / ${FIRST_SETTLEMENT.winCondition.populationMin}`;
   ui.happiness.textContent = `${state.happiness.value}%`;
   ui.rating.textContent = `${state.rating.grade} (${state.rating.score})`;
+  ui.rating.setAttribute("aria-expanded", String(ratingBreakdownVisible));
+  ui.ratingBreakdown.hidden = !ratingBreakdownVisible;
+  ui.ratingBreakdown.innerHTML = renderRatingBreakdown(state);
   ui.income.textContent = `${formatMoney(state.economy.monthlyIncome)} / ${formatMoney(state.economy.monthlyExpenses)}`;
   ui.date.textContent = `Y${state.time.year} M${state.time.month}`;
   ui.objective.textContent = getCurrentObjectiveLabel(state);
@@ -503,6 +514,22 @@ function renderDemandBars(state: CityState): string {
       return `<div class="demand-row"><span>${label}</span><b style="width:${state.demand[zone]}%"></b><em>${state.demand[zone]}</em></div>`;
     })
     .join("");
+}
+
+function renderRatingBreakdown(state: CityState): string {
+  const feedback = getRatingFeedback(state.rating);
+  const components = Object.entries(state.rating.components)
+    .map(
+      ([category, score]) =>
+        `<div class="rating-row"><span>${capitalize(category)}</span><b style="width:${score}%"></b><em>${score}</em></div>`,
+    )
+    .join("");
+  return `
+    <strong>City rating</strong>
+    <div class="rating-components">${components}</div>
+    <p>Immigration ${formatModifier(state.rating.immigrationModifier)}</p>
+    <p>Strengths: ${feedback.strengths.map(capitalize).join(", ")}</p>
+    <p>Improve: ${feedback.weaknesses.map(capitalize).join(", ")}</p>`;
 }
 
 function renderWarnings(state: CityState): string {
@@ -585,6 +612,7 @@ function isActiveButton(button: HTMLButtonElement, uiState: UIState): boolean {
   if (button.dataset.action === "road") return uiState.buildMode === "road";
   if (button.dataset.action === "demolish") return uiState.buildMode === "demolish";
   if (button.dataset.action === "debug") return debugVisible;
+  if (button.dataset.action === "rating") return ratingBreakdownVisible;
   if (button.dataset.zone) return uiState.selectedZoneType === button.dataset.zone;
   if (button.dataset.building)
     return uiState.selectedBuildingId === button.dataset.building;
@@ -627,6 +655,7 @@ function createInterface(container: HTMLElement) {
     population: getElement(root, "population"),
     happiness: getElement(root, "happiness"),
     rating: getElement(root, "rating"),
+    ratingBreakdown: getElement(root, "rating-breakdown"),
     income: getElement(root, "income"),
     date: getElement(root, "date"),
     objective: getElement(root, "objective"),
@@ -650,7 +679,7 @@ function getInterfaceMarkup(): string {
       <span>Money <strong data-ui="money"></strong></span>
       <span>Population <strong data-ui="population"></strong></span>
       <span>Happiness <strong data-ui="happiness"></strong></span>
-      <span>Rating <strong data-ui="rating"></strong></span>
+      <span>Rating <button data-action="rating" data-ui="rating" aria-expanded="false"></button></span>
       <span>Income / upkeep <strong data-ui="income"></strong></span>
       <span>Date <strong data-ui="date"></strong></span>
       <button data-action="sound" data-ui="sound" aria-pressed="true"></button>
@@ -660,6 +689,7 @@ function getInterfaceMarkup(): string {
     <aside class="panel left">
       <h1>First Settlement</h1>
       <p data-ui="objective"></p>
+      <div data-ui="rating-breakdown" class="rating-breakdown" hidden></div>
       <div data-ui="demand" class="demand"></div>
       <div class="taxes">${taxControls()}</div>
       <div data-ui="loans" class="loans"></div>
@@ -737,7 +767,7 @@ function injectStyles(): void {
     .toolbar{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);display:flex;gap:6px;max-width:min(1180px,calc(100vw - 24px));overflow:auto;padding:8px;border:1px solid rgba(255,255,255,.13)}
     button{border:1px solid rgba(255,255,255,.17);background:#344047;color:#f7f8f2;padding:8px 10px;min-height:34px;white-space:nowrap;cursor:pointer}
     button:hover{background:#44535c}button.active{background:#2f7d5b;border-color:#7ee0ab}button:disabled{opacity:.42;cursor:not-allowed}
-    .demand{display:grid;gap:6px;margin:12px 0}.demand-row{display:grid;grid-template-columns:18px 1fr 30px;gap:8px;align-items:center}.demand-row b{height:8px;background:#7ee0ab;display:block}.demand-row em{font-style:normal;color:#cfd8dc;text-align:right}
+    .demand{display:grid;gap:6px;margin:12px 0}.demand-row,.rating-row{display:grid;grid-template-columns:84px 1fr 30px;gap:8px;align-items:center}.demand-row{grid-template-columns:18px 1fr 30px}.demand-row b,.rating-row b{height:8px;background:#7ee0ab;display:block}.demand-row em,.rating-row em{font-style:normal;color:#cfd8dc;text-align:right}.rating-breakdown{margin:12px 0;padding:10px;background:rgba(0,0,0,.18)}.rating-components{display:grid;gap:5px;margin:8px 0}.rating-breakdown p{font-size:12px;margin:5px 0}
     .taxes{display:grid;gap:8px;margin:12px 0}.taxes label{display:grid;grid-template-columns:84px 1fr 36px;gap:8px;align-items:center;color:#cfd8dc}
     input[type=range]{width:100%}.warnings{padding-left:18px;margin:10px 0 0;color:#ffdca8}.save-row{display:flex;gap:8px}
   `;
@@ -784,6 +814,10 @@ function isOverlay(value: string | null | undefined): value is UIState["activeOv
 
 function formatMoney(value: number): string {
   return `$${Math.round(value).toLocaleString("en-US")}`;
+}
+
+function formatModifier(value: number): string {
+  return `${value >= 0 ? "+" : ""}${Math.round(value * 100)}%`;
 }
 
 function capitalize(value: string): string {

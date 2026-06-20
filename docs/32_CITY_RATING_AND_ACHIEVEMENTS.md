@@ -230,9 +230,10 @@ The achievement system runs as part of the simulation tick. After each tick:
 
 The Phase 2 implementation calculates an economy, happiness, services, environment, and growth
 breakdown every tick, assigns an A–F grade, and feeds its immigration modifier into residential
-demand on the following tick. The HUD shows the grade and score. Achievement definitions are
-data-driven and currently include population, happiness, and road-building milestones; unlocked
-IDs and reward ticks persist in `CityState` and rewards are idempotent.
+demand on the following tick. The HUD rating is an interactive control that reveals category
+score bars, its immigration modifier, and the two strongest and weakest components. Achievement
+definitions are data-driven and currently include population, happiness, and road-building
+milestones; unlocked IDs and reward ticks persist in `CityState` and rewards are idempotent.
 
 ## Tests
 

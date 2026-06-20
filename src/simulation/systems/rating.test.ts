@@ -3,7 +3,7 @@ import { createInitialCityState } from "../state";
 import { updateAchievements } from "./achievements";
 import { calculateDemand } from "./demand";
 import { calculateCityMetrics } from "./metrics";
-import { recomputeRating } from "./rating";
+import { getRatingFeedback, recomputeRating } from "./rating";
 
 describe("city rating", () => {
   it("computes an A grade and positive immigration modifier for a healthy city", () => {
@@ -37,6 +37,22 @@ describe("city rating", () => {
     state.rating.immigrationModifier = -0.2;
 
     expect(highDemand).toBeGreaterThan(calculateDemand(state, metrics).residential);
+  });
+
+  it("identifies the strongest and weakest rating components for player feedback", () => {
+    const state = createInitialCityState();
+    state.rating.components = {
+      economy: 95,
+      happiness: 75,
+      services: 60,
+      environment: 20,
+      growth: 10,
+    };
+
+    expect(getRatingFeedback(state.rating)).toEqual({
+      strengths: ["economy", "happiness"],
+      weaknesses: ["growth", "environment"],
+    });
   });
 });
 

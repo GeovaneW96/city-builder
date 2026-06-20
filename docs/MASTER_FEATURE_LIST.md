@@ -530,9 +530,9 @@ This document lists every feature across all four implementation phases. Under e
 | #      | Testable Logic                                                              | Status |
 | ------ | --------------------------------------------------------------------------- | ------ |
 | 2.12.1 | City rating computed from economy, happiness, services, environment, growth | done   |
-| 2.12.2 | Rating displayed as letter grade (A–F)                                      |        |
-| 2.12.3 | Rating affects citizen immigration rate                                     |        |
-| 2.12.4 | Rating breakdown shows strengths/weaknesses                                 |        |
+| 2.12.2 | Rating displayed as letter grade (A–F)                                      | done   |
+| 2.12.3 | Rating affects citizen immigration rate                                     | done   |
+| 2.12.4 | Rating breakdown shows strengths/weaknesses                                 | done   |
 
 ### 2.13 Achievements
 

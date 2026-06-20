@@ -64,6 +64,7 @@ Shows:
 - population;
 - happiness;
 - monthly income;
+- city rating, with an on-demand score breakdown and immigration effect;
 - date/time;
 - speed controls.
 - sound on/off control.

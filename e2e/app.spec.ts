@@ -103,6 +103,23 @@ test("the debug overlay displays performance metrics when toggled", async ({ pag
   await expect(overlay).toContainText("Tick");
 });
 
+test("the rating control reveals strengths, weaknesses, and immigration impact", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await pauseSimulation(page);
+  const rating = page.locator('[data-ui="rating"]');
+  const breakdown = page.locator('[data-ui="rating-breakdown"]');
+
+  await rating.click();
+
+  await expect(rating).toHaveAttribute("aria-expanded", "true");
+  await expect(breakdown).toBeVisible();
+  await expect(breakdown).toContainText("Strengths:");
+  await expect(breakdown).toContainText("Improve:");
+  await expect(breakdown).toContainText("Immigration");
+});
+
 async function pauseSimulation(page: Page): Promise<void> {
   await page.getByRole("button", { name: "0", exact: true }).click();
 }

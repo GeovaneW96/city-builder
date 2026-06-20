@@ -270,6 +270,10 @@ Within a single simulation tick, the following runs **in order**:
 13. **Progression** — check milestones, apply unlocks and rewards.
 14. **Events** — emit `GameEvent` objects for any changed state (rendering/UI consume these).
 
+The rating system stores its component breakdown alongside the grade. Presentation derives the
+strongest and weakest categories from that stored snapshot; it never feeds a UI-only value back
+into simulation state.
+
 ### Building Growth Details
 
 - Growth checks every zoned tile that is empty and road-accessible.

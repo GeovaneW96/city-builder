@@ -1,6 +1,11 @@
 import { RATING_BALANCE } from "../../data/balance";
 import { getBuildingById } from "../../data/buildings";
-import type { CityGrade, CityState } from "../../shared/types";
+import type { CityGrade, CityRatingState, CityState } from "../../shared/types";
+
+export interface RatingFeedback {
+  strengths: string[];
+  weaknesses: string[];
+}
 
 export function recomputeRating(state: CityState): void {
   const components = {
@@ -23,6 +28,19 @@ export function recomputeRating(state: CityState): void {
     grade,
     immigrationModifier: getImmigrationModifier(grade),
     components,
+  };
+}
+
+export function getRatingFeedback(rating: CityRatingState): RatingFeedback {
+  const sorted = Object.entries(rating.components).sort(
+    ([, left], [, right]) => right - left,
+  );
+  return {
+    strengths: sorted.slice(0, 2).map(([category]) => category),
+    weaknesses: sorted
+      .slice(-2)
+      .reverse()
+      .map(([category]) => category),
   };
 }
 
