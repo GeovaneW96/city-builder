@@ -49,9 +49,11 @@ export function createInitialCityState(): CityState {
     publicTransport: createInitialPublicTransportState(),
     rating: createInitialRatingState(),
     achievements: [],
+    achievementProgress: createInitialAchievementProgress(),
     happiness: createInitialHappinessState(),
     neighborhoods: [],
     neighborhoodMode: "auto",
+    districts: [],
     progression: {
       currentMilestone: 0,
       unlockedFeatures: [...FIRST_SETTLEMENT.initialUnlocks],
@@ -71,6 +73,16 @@ function createInitialTrafficState() {
     commercialMultiplier: 1,
     industrialMultiplier: 1,
     segments: [],
+  };
+}
+
+function createInitialAchievementProgress() {
+  return {
+    moneyEverNegative: false,
+    pollutionStayedLow: true,
+    happyTickStreak: 0,
+    positiveIncomeMonthStreak: 0,
+    roadsPlaced: 0,
   };
 }
 
@@ -101,6 +113,7 @@ function createInitialHappinessState() {
       crime: 0,
       garbage: 0,
       transit: 0,
+      policies: 0,
     },
   };
 }

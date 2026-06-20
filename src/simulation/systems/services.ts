@@ -2,6 +2,7 @@ import { SERVICE_DEMAND } from "../../data/balance";
 import { getBuildingById } from "../../data/buildings";
 import type { BuildingInstance, CityState } from "../../shared/types";
 import { getDefinition } from "./metrics";
+import { getServicePriorityBuildings } from "./districts";
 
 export function recomputeServices(state: CityState): void {
   const activeBuildings = state.buildings.filter(
@@ -12,8 +13,8 @@ export function recomputeServices(state: CityState): void {
     powerDemand: sumDemand(activeBuildings, "power"),
     waterCapacity: sumCapacity(activeBuildings, "waterCapacity"),
     waterDemand: sumDemand(activeBuildings, "water"),
-    healthCoverage: calculateCoverage(activeBuildings, "healthRadius"),
-    educationCoverage: calculateCoverage(activeBuildings, "educationRadius"),
+    healthCoverage: calculateCoverage(state, activeBuildings, "healthRadius"),
+    educationCoverage: calculateCoverage(state, activeBuildings, "educationRadius"),
   };
 }
 
@@ -58,6 +59,7 @@ function getDemandValue(
 }
 
 function calculateCoverage(
+  state: CityState,
   buildings: BuildingInstance[],
   radiusEffect: "healthRadius" | "educationRadius",
 ): number {
@@ -67,7 +69,7 @@ function calculateCoverage(
     const definition = getDefinition(building);
     return (definition?.effects[radiusEffect] ?? 0) > 0;
   });
-  const covered = residential.filter((building) =>
+  const covered = getServicePriorityBuildings(state, residential).filter((building) =>
     isCovered(building, providers, radiusEffect),
   );
   return Math.round((covered.length / residential.length) * 100);

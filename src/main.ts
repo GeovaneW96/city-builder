@@ -1,4 +1,5 @@
 import { Vector2 } from "three";
+import { ACHIEVEMENTS } from "./data/achievements";
 import { CONSTRUCTION_COSTS, LOAN_BALANCE } from "./data/balance";
 import { getBuildingById, getManualBuildings } from "./data/buildings";
 import { FIRST_SETTLEMENT } from "./data/scenarios/first_settlement";
@@ -63,6 +64,7 @@ let lastAutosaveAt = performance.now();
 let selectedSaveSlot: SaveSlotId = "manual_0";
 let debugVisible = false;
 let ratingBreakdownVisible = false;
+let achievementsVisible = false;
 let frameCount = 0;
 let framesPerSecond = 0;
 let frameWindowStartedAt = performance.now();
@@ -79,6 +81,7 @@ const GLOBAL_ACTIONS: Record<string, (target: HTMLElement) => void> = {
   "import-save": () => ui.importFile.click(),
   debug: () => toggleDebug(),
   rating: () => toggleRatingBreakdown(),
+  achievements: () => toggleAchievements(),
 };
 
 bindInterface();
@@ -347,6 +350,11 @@ function toggleRatingBreakdown(): void {
   renderInterface(useSimulationStore.getState().state, useUIStore.getState());
 }
 
+function toggleAchievements(): void {
+  achievementsVisible = !achievementsVisible;
+  renderInterface(useSimulationStore.getState().state, useUIStore.getState());
+}
+
 function bindInterface(): void {
   ui.root.addEventListener("click", (event) => {
     const target = event.target;
@@ -489,6 +497,8 @@ function renderInterface(state: CityState, uiState: UIState): void {
   ui.rating.setAttribute("aria-expanded", String(ratingBreakdownVisible));
   ui.ratingBreakdown.hidden = !ratingBreakdownVisible;
   ui.ratingBreakdown.innerHTML = renderRatingBreakdown(state);
+  ui.achievements.hidden = !achievementsVisible;
+  ui.achievements.innerHTML = achievementsVisible ? renderAchievements(state) : "";
   ui.income.textContent = `${formatMoney(state.economy.monthlyIncome)} / ${formatMoney(state.economy.monthlyExpenses)}`;
   ui.date.textContent = `Y${state.time.year} M${state.time.month}`;
   ui.objective.textContent = getCurrentObjectiveLabel(state);
@@ -530,6 +540,14 @@ function renderRatingBreakdown(state: CityState): string {
     <p>Immigration ${formatModifier(state.rating.immigrationModifier)}</p>
     <p>Strengths: ${feedback.strengths.map(capitalize).join(", ")}</p>
     <p>Improve: ${feedback.weaknesses.map(capitalize).join(", ")}</p>`;
+}
+
+function renderAchievements(state: CityState): string {
+  const unlocked = new Set(state.achievements.map((achievement) => achievement.id));
+  return ACHIEVEMENTS.map((achievement) => {
+    const marker = unlocked.has(achievement.id) ? "✓" : "○";
+    return `<li>${marker} <strong>${achievement.name}</strong> — ${achievement.description}</li>`;
+  }).join("");
 }
 
 function renderWarnings(state: CityState): string {
@@ -656,6 +674,7 @@ function createInterface(container: HTMLElement) {
     happiness: getElement(root, "happiness"),
     rating: getElement(root, "rating"),
     ratingBreakdown: getElement(root, "rating-breakdown"),
+    achievements: getElement(root, "achievements"),
     income: getElement(root, "income"),
     date: getElement(root, "date"),
     objective: getElement(root, "objective"),
@@ -680,6 +699,7 @@ function getInterfaceMarkup(): string {
       <span>Population <strong data-ui="population"></strong></span>
       <span>Happiness <strong data-ui="happiness"></strong></span>
       <span>Rating <button data-action="rating" data-ui="rating" aria-expanded="false"></button></span>
+      <button data-action="achievements" data-ui="achievements-toggle">Achievements</button>
       <span>Income / upkeep <strong data-ui="income"></strong></span>
       <span>Date <strong data-ui="date"></strong></span>
       <button data-action="sound" data-ui="sound" aria-pressed="true"></button>
@@ -690,6 +710,7 @@ function getInterfaceMarkup(): string {
       <h1>First Settlement</h1>
       <p data-ui="objective"></p>
       <div data-ui="rating-breakdown" class="rating-breakdown" hidden></div>
+      <ol data-ui="achievements" class="achievements" hidden></ol>
       <div data-ui="demand" class="demand"></div>
       <div class="taxes">${taxControls()}</div>
       <div data-ui="loans" class="loans"></div>
@@ -734,6 +755,7 @@ function toolbarButtons(): string {
     <button data-action="overlay" data-overlay="pollution">Pollution</button>
     <button data-action="overlay" data-overlay="health">Health</button>
     <button data-action="overlay" data-overlay="education">Education</button>
+    <button data-action="overlay" data-overlay="districts">Districts</button>
   `;
 }
 
@@ -768,7 +790,7 @@ function injectStyles(): void {
     button{border:1px solid rgba(255,255,255,.17);background:#344047;color:#f7f8f2;padding:8px 10px;min-height:34px;white-space:nowrap;cursor:pointer}
     button:hover{background:#44535c}button.active{background:#2f7d5b;border-color:#7ee0ab}button:disabled{opacity:.42;cursor:not-allowed}
     .demand{display:grid;gap:6px;margin:12px 0}.demand-row,.rating-row{display:grid;grid-template-columns:84px 1fr 30px;gap:8px;align-items:center}.demand-row{grid-template-columns:18px 1fr 30px}.demand-row b,.rating-row b{height:8px;background:#7ee0ab;display:block}.demand-row em,.rating-row em{font-style:normal;color:#cfd8dc;text-align:right}.rating-breakdown{margin:12px 0;padding:10px;background:rgba(0,0,0,.18)}.rating-components{display:grid;gap:5px;margin:8px 0}.rating-breakdown p{font-size:12px;margin:5px 0}
-    .taxes{display:grid;gap:8px;margin:12px 0}.taxes label{display:grid;grid-template-columns:84px 1fr 36px;gap:8px;align-items:center;color:#cfd8dc}
+    .taxes{display:grid;gap:8px;margin:12px 0}.taxes label{display:grid;grid-template-columns:84px 1fr 36px;gap:8px;align-items:center;color:#cfd8dc}.achievements{padding-left:18px;margin:10px 0;display:grid;gap:6px}
     input[type=range]{width:100%}.warnings{padding-left:18px;margin:10px 0 0;color:#ffdca8}.save-row{display:flex;gap:8px}
   `;
   document.head.appendChild(style);
@@ -808,7 +830,8 @@ function isOverlay(value: string | null | undefined): value is UIState["activeOv
     value === "water" ||
     value === "pollution" ||
     value === "health" ||
-    value === "education"
+    value === "education" ||
+    value === "districts"
   );
 }
 

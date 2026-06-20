@@ -173,3 +173,12 @@ The district overlay is a rendering feature:
 - Policy cost accumulates across multiple districts
 - District overlay data accessible by rendering layer
 - Save/load round-trip for district and policy state
+
+## Current Implementation
+
+Districts are rectangular command-driven areas stored on map tiles and in `CityState`. The
+simulation enforces the 2x2 minimum, non-overlap, policy requirements, duplicate prevention,
+and the three-policy limit. Tax breaks discount the affected share of tax income, policy costs
+are monthly economy expenses, service-priority targets are processed first, and policy effects
+feed demand, happiness, and pollution ticks. The Districts overlay renders the saved district
+color without placing simulation ownership in Three.js.

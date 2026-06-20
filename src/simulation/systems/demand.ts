@@ -2,6 +2,7 @@ import { DEMAND_PARAMS, HAPPINESS_DEFAULTS } from "../../data/balance";
 import type { CityState, DemandState } from "../../shared/types";
 import type { CityMetrics } from "./metrics";
 import { getAvailableHousing, getAvailableJobs } from "./metrics";
+import { getNightlifeDemandBonus } from "./districts";
 
 export function recomputeDemand(state: CityState, metrics: CityMetrics): void {
   state.demand = calculateDemand(state, metrics);
@@ -29,7 +30,8 @@ export function calculateDemand(state: CityState, metrics: CityMetrics): DemandS
       DEMAND_PARAMS.COMMERCIAL_BASE +
         population / DEMAND_PARAMS.COMMERCIAL_POPULATION_DIVISOR +
         metrics.commercialJobs * DEMAND_PARAMS.COMMERCIAL_CAP_WEIGHT -
-        workerShortagePenalty,
+        workerShortagePenalty +
+        getNightlifeDemandBonus(state),
     ),
     industrial: clampDemand(
       DEMAND_PARAMS.INDUSTRIAL_BASE +

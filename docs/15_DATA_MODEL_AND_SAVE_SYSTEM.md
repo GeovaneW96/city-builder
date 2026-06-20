@@ -112,6 +112,11 @@ City rating and achievement state are part of `CityState`. Rating stores its sco
 immigration modifier, and component breakdown; achievements store each unlocked ID and tick so
 one-time rewards cannot repeat after loading a save.
 
+Districts are also part of `CityState`: each district has a stable ID, name, color, tile list,
+and active policies, while each tile stores only its owning district ID. Achievement progress
+stores historical budget and pollution flags plus streak and cumulative-road counters. Legacy
+saves default missing district data to no districts and initialize achievement progress safely.
+
 Save slots add storage-only metadata for the slot ID, display name, scenario ID, simulation
 play time, and save timestamp. The metadata is derived when a slot is written, rather than being
 used as an input to simulation state.

@@ -12,6 +12,7 @@ import type {
   Tile,
 } from "../../shared/types";
 import { getOrthogonalNeighbors, getTile } from "../grid/map";
+import { getBuildingPolicyHappiness } from "./districts";
 
 export function recomputeNeighborhoods(state: CityState): Neighborhood[] {
   const neighborhoods = findRegions(state)
@@ -97,6 +98,7 @@ function calculateComponents(
     crime: state.extendedServices.crimeHappinessPenalty,
     garbage: state.extendedServices.garbageHappinessPenalty,
     transit: state.publicTransport.happinessBonus,
+    policies: getPolicyComponent(state, buildings),
   };
 }
 
@@ -180,6 +182,17 @@ function getUtilityComponent(state: CityState): number {
   return isShort ? SERVICE_HAPPINESS.UTILITY_SHORTAGE_PENALTY : 0;
 }
 
+function getPolicyComponent(state: CityState, buildings: BuildingInstance[]): number {
+  const residential = buildings.filter((building) => getPopulation([building]) > 0);
+  if (residential.length === 0) return 0;
+  return Math.round(
+    residential.reduce(
+      (total, building) => total + getBuildingPolicyHappiness(state, building),
+      0,
+    ) / residential.length,
+  );
+}
+
 function getPopulation(buildings: BuildingInstance[]): number {
   return sumBuildingEffect(buildings, "populationCapacity");
 }
@@ -226,7 +239,8 @@ function sumComponents(components: NeighborhoodHappinessComponents): number {
     components.goods +
     components.crime +
     components.garbage +
-    components.transit
+    components.transit +
+    components.policies
   );
 }
 

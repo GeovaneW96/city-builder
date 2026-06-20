@@ -1,4 +1,9 @@
-import { CONSTRUCTION_COSTS, TRANSPORT_BALANCE } from "../../data/balance";
+import {
+  CONSTRUCTION_COSTS,
+  DISTRICT_BALANCE,
+  getDistrictPolicy,
+  TRANSPORT_BALANCE,
+} from "../../data/balance";
 import { getBuildingById } from "../../data/buildings";
 import type {
   BuildingDefinition,
@@ -8,6 +13,7 @@ import type {
   GameCommand,
   GameEvent,
   Road,
+  DistrictPolicyId,
   Tile,
   ZoneType,
 } from "../../shared/types";
@@ -23,6 +29,7 @@ import {
 } from "../grid/map";
 import { advanceCommandObjectives } from "../systems/progression";
 import { takeLoan } from "../systems/loans";
+import { DISTRICT_COLORS, isPolicyRequirementMet } from "../systems/districts";
 
 interface CommandApplication {
   state: CityState;
@@ -57,6 +64,11 @@ const COMMAND_HANDLERS = {
   TAKE_LOAN: takeLoanCommand,
   PLACE_BUS_STOP: placeBusStop,
   CREATE_BUS_ROUTE: createBusRoute,
+  CREATE_DISTRICT: createDistrict,
+  RENAME_DISTRICT: renameDistrict,
+  DELETE_DISTRICT: deleteDistrict,
+  APPLY_DISTRICT_POLICY: applyDistrictPolicy,
+  REMOVE_DISTRICT_POLICY: removeDistrictPolicy,
   SET_SPEED: setSpeed,
 } satisfies {
   [K in GameCommand["type"]]: CommandHandler<Extract<GameCommand, { type: K }>>;
@@ -80,6 +92,7 @@ function placeRoad(
   tile.roadId = id;
   tile.zone = null;
   state.roads.push(createRoad(id, command));
+  state.achievementProgress.roadsPlaced += 1;
   state.economy.money -= getRoadCost(command.roadType);
   refreshAllRoadConnections(state);
   return success(state, [
@@ -257,6 +270,137 @@ function createBusRoute(
     active: true,
   });
   return success(state, []);
+}
+
+function createDistrict(
+  current: CityState,
+  command: Extract<GameCommand, { type: "CREATE_DISTRICT" }>,
+): CommandApplication {
+  const cells = getDistrictCells(command);
+  const error = validateDistrictCells(current, cells, command.name);
+  if (error) return failure(current, error);
+  const state = cloneCityState(current);
+  const id = `district:${state.districts.length + 1}:${state.time.tick}`;
+  cells.forEach(({ x, y }) => {
+    getRequiredTile(state, x, y).districtId = id;
+  });
+  state.districts.push({
+    id,
+    name: command.name.trim(),
+    color: command.color ?? getDistrictColor(state.districts.length),
+    tiles: cells.map(({ x, y }) => [x, y]),
+    policies: [],
+  });
+  return success(state, [{ type: "DISTRICT_CREATED", districtId: id }]);
+}
+
+function renameDistrict(
+  current: CityState,
+  command: Extract<GameCommand, { type: "RENAME_DISTRICT" }>,
+): CommandApplication {
+  if (!command.name.trim()) return failure(current, "District name is required");
+  const state = cloneCityState(current);
+  const district = state.districts.find((item) => item.id === command.districtId);
+  if (!district) return failure(current, "Unknown district");
+  district.name = command.name.trim();
+  return success(state, []);
+}
+
+function deleteDistrict(
+  current: CityState,
+  command: Extract<GameCommand, { type: "DELETE_DISTRICT" }>,
+): CommandApplication {
+  const district = current.districts.find((item) => item.id === command.districtId);
+  if (!district) return failure(current, "Unknown district");
+  const state = cloneCityState(current);
+  district.tiles.forEach(([x, y]) => {
+    getRequiredTile(state, x, y).districtId = null;
+  });
+  state.districts = state.districts.filter((item) => item.id !== district.id);
+  return success(state, [{ type: "DISTRICT_DELETED", districtId: district.id }]);
+}
+
+function applyDistrictPolicy(
+  current: CityState,
+  command: Extract<GameCommand, { type: "APPLY_DISTRICT_POLICY" }>,
+): CommandApplication {
+  const district = current.districts.find((item) => item.id === command.districtId);
+  const error = validateDistrictPolicy(current, district, command.policyId);
+  if (error) return failure(current, error);
+  const state = cloneCityState(current);
+  state.districts
+    .find((item) => item.id === command.districtId)
+    ?.policies.push(command.policyId);
+  return success(state, [
+    {
+      type: "DISTRICT_POLICY_APPLIED",
+      districtId: command.districtId,
+      policyId: command.policyId,
+    },
+  ]);
+}
+
+function removeDistrictPolicy(
+  current: CityState,
+  command: Extract<GameCommand, { type: "REMOVE_DISTRICT_POLICY" }>,
+): CommandApplication {
+  const district = current.districts.find((item) => item.id === command.districtId);
+  if (!district?.policies.includes(command.policyId))
+    return failure(current, "Policy is not active");
+  const state = cloneCityState(current);
+  const next = state.districts.find((item) => item.id === command.districtId);
+  if (next)
+    next.policies = next.policies.filter((policyId) => policyId !== command.policyId);
+  return success(state, []);
+}
+
+function getDistrictCells(
+  command: Extract<GameCommand, { type: "CREATE_DISTRICT" }>,
+): { x: number; y: number }[] {
+  const minX = Math.min(command.x1, command.x2);
+  const maxX = Math.max(command.x1, command.x2);
+  const minY = Math.min(command.y1, command.y2);
+  const maxY = Math.max(command.y1, command.y2);
+  return Array.from({ length: maxY - minY + 1 }, (_, y) =>
+    Array.from({ length: maxX - minX + 1 }, (_, x) => ({ x: minX + x, y: minY + y })),
+  ).flat();
+}
+
+function validateDistrictCells(
+  state: CityState,
+  cells: { x: number; y: number }[],
+  name: string,
+): string | null {
+  if (!name.trim()) return "District name is required";
+  const width = new Set(cells.map((cell) => cell.x)).size;
+  const height = new Set(cells.map((cell) => cell.y)).size;
+  if (width < DISTRICT_BALANCE.MIN_WIDTH || height < DISTRICT_BALANCE.MIN_HEIGHT) {
+    return "Districts must be at least 2 by 2 tiles";
+  }
+  if (!cells.every((cell) => isInBounds(cell.x, cell.y)))
+    return "District is out of bounds";
+  return cells.some((cell) => getRequiredTile(state, cell.x, cell.y).districtId)
+    ? "District overlaps an existing district"
+    : null;
+}
+
+function validateDistrictPolicy(
+  state: CityState,
+  district: CityState["districts"][number] | undefined,
+  policyId: DistrictPolicyId,
+): string | null {
+  if (!district) return "Unknown district";
+  if (!getDistrictPolicy(policyId)) return "Unknown policy";
+  if (district.policies.includes(policyId)) return "Policy is already active";
+  if (district.policies.length >= DISTRICT_BALANCE.MAX_POLICIES)
+    return "District policy limit reached";
+  return isPolicyRequirementMet(state, district, policyId)
+    ? null
+    : "Policy requirements are not met";
+}
+
+function getDistrictColor(index: number): string {
+  return DISTRICT_COLORS[index % DISTRICT_COLORS.length] ?? "#5bc0eb";
 }
 
 function validateBusRoute(

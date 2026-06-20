@@ -43,6 +43,9 @@ Suggested high-level state fields:
 
 Tile state is defined in `08_MAP_GRID_AND_TERRAIN.md`.
 
+District ownership and active policies are simulation state. Achievement state includes both
+unlocked rewards and the historical counters needed to evaluate streak and history conditions.
+
 ## Road Connectivity
 
 Roads determine access.
@@ -273,6 +276,11 @@ Within a single simulation tick, the following runs **in order**:
 The rating system stores its component breakdown alongside the grade. Presentation derives the
 strongest and weakest categories from that stored snapshot; it never feeds a UI-only value back
 into simulation state.
+
+The implementation applies district policy effects inside the economy, demand, service,
+happiness, and pollution systems. After progression is updated, achievement progress counters
+are advanced and newly eligible rewards are emitted as simulation events. Rendering only reads
+these results.
 
 ### Building Growth Details
 

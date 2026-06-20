@@ -3,12 +3,14 @@ import {
   MONTHLY_UPKEEP,
   TAX_INCOME_FORMULAS,
   TRANSPORT_BALANCE,
+  DISTRICT_BALANCE,
   calculateTaxIncome,
 } from "../../data/balance";
 import { getBuildingById } from "../../data/buildings";
 import type { CityState } from "../../shared/types";
 import type { CityMetrics } from "./metrics";
 import { processLoanPayments } from "./loans";
+import { getDistrictPolicyCost, getTaxBreakShare } from "./districts";
 
 export function runEconomy(state: CityState, metrics: CityMetrics): void {
   const income = calculateMonthlyIncome(state, metrics);
@@ -29,18 +31,24 @@ export function calculateMonthlyIncome(state: CityState, metrics: CityMetrics): 
   const industrialBase =
     metrics.industrialJobsFilled * TAX_INCOME_FORMULAS.INDUSTRIAL_BASE_PER_JOB;
 
+  const residentialIncome = calculateTaxIncome(
+    residentialBase,
+    state.economy.taxRates.residential,
+  );
+  const commercialIncome = calculateTaxIncome(
+    commercialBase *
+      state.traffic.commercialMultiplier *
+      state.goods.commercialMultiplier,
+    state.economy.taxRates.commercial,
+  );
+  const industrialIncome = calculateTaxIncome(
+    industrialBase * state.traffic.industrialMultiplier,
+    state.economy.taxRates.industrial,
+  );
   return Math.round(
-    calculateTaxIncome(residentialBase, state.economy.taxRates.residential) +
-      calculateTaxIncome(
-        commercialBase *
-          state.traffic.commercialMultiplier *
-          state.goods.commercialMultiplier,
-        state.economy.taxRates.commercial,
-      ) +
-      calculateTaxIncome(
-        industrialBase * state.traffic.industrialMultiplier,
-        state.economy.taxRates.industrial,
-      ),
+    applyTaxBreak(state, "residential", residentialIncome) +
+      applyTaxBreak(state, "commercial", commercialIncome) +
+      applyTaxBreak(state, "industrial", industrialIncome),
   );
 }
 
@@ -48,8 +56,18 @@ export function calculateMonthlyExpenses(state: CityState): number {
   return (
     calculateRoadUpkeep(state) +
     calculateBuildingUpkeep(state) +
-    calculateTransportUpkeep(state)
+    calculateTransportUpkeep(state) +
+    getDistrictPolicyCost(state)
   );
+}
+
+function applyTaxBreak(
+  state: CityState,
+  category: "residential" | "commercial" | "industrial",
+  income: number,
+): number {
+  const share = getTaxBreakShare(state, category);
+  return income * (1 - share * DISTRICT_BALANCE.TAX_BREAK_REDUCTION);
 }
 
 function calculateTransportUpkeep(state: CityState): number {

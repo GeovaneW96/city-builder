@@ -516,12 +516,12 @@ This document lists every feature across all four implementation phases. Under e
 
 | #      | Testable Logic                                 | Status |
 | ------ | ---------------------------------------------- | ------ |
-| 2.11.1 | District can be painted on set of tiles        |        |
-| 2.11.2 | Policy applied to entire district              |        |
-| 2.11.3 | Tax rate override per district                 |        |
-| 2.11.4 | Service priority per district                  |        |
-| 2.11.5 | Policy has monthly cost                        |        |
-| 2.11.6 | Multiple policies can be active simultaneously |        |
+| 2.11.1 | District can be painted on set of tiles        | done   |
+| 2.11.2 | Policy applied to entire district              | done   |
+| 2.11.3 | Tax rate override per district                 | done   |
+| 2.11.4 | Service priority per district                  | done   |
+| 2.11.5 | Policy has monthly cost                        | done   |
+| 2.11.6 | Multiple policies can be active simultaneously | done   |
 
 ### 2.12 City Rating
 
@@ -540,10 +540,10 @@ This document lists every feature across all four implementation phases. Under e
 
 | #      | Testable Logic                           | Status |
 | ------ | ---------------------------------------- | ------ |
-| 2.13.1 | Achievement triggered when condition met |        |
-| 2.13.2 | Achievement awarded only once            |        |
-| 2.13.3 | Achievement persists in save data        |        |
-| 2.13.4 | Achievement definitions data-driven      |        |
+| 2.13.1 | Achievement triggered when condition met | done   |
+| 2.13.2 | Achievement awarded only once            | done   |
+| 2.13.3 | Achievement persists in save data        | done   |
+| 2.13.4 | Achievement definitions data-driven      | done   |
 
 ### 2.14 Export/Import Save Files
 

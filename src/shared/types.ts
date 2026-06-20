@@ -10,6 +10,7 @@ export interface Tile {
   buildingId: string | null;
   pollution: number;
   landValue: number | null;
+  districtId: string | null;
 }
 
 export interface Road {
@@ -209,12 +210,32 @@ export interface AchievementDefinition {
   id: string;
   name: string;
   description: string;
+  icon: string;
+  condition: AchievementCondition;
   reward: number;
 }
+
+export type AchievementCondition =
+  | "population_100"
+  | "no_debt_1000"
+  | "green_start_500"
+  | "happy_streak"
+  | "efficient_planner_1000"
+  | "positive_income_streak"
+  | "all_milestones"
+  | "roads_placed";
 
 export interface AchievementState {
   id: string;
   unlockedAt: number | null;
+}
+
+export interface AchievementProgress {
+  moneyEverNegative: boolean;
+  pollutionStayedLow: boolean;
+  happyTickStreak: number;
+  positiveIncomeMonthStreak: number;
+  roadsPlaced: number;
 }
 
 export interface HappinessState {
@@ -232,6 +253,7 @@ export interface HappinessState {
     crime: number;
     garbage: number;
     transit: number;
+    policies: number;
   };
 }
 
@@ -248,6 +270,34 @@ export interface Neighborhood {
   happiness: number;
   components: NeighborhoodHappinessComponents;
   buildings: string[];
+}
+
+export type DistrictPolicyId =
+  | "tax_break"
+  | "service_priority"
+  | "smoking_ban"
+  | "nightlife"
+  | "green_initiative";
+
+export interface District {
+  id: string;
+  name: string;
+  color: string;
+  tiles: [number, number][];
+  policies: DistrictPolicyId[];
+}
+
+export interface DistrictPolicyDefinition {
+  id: DistrictPolicyId;
+  name: string;
+  description: string;
+  monthlyCost: number;
+  requirement:
+    | "businesses_10"
+    | "service_building"
+    | "population_500"
+    | "population_1000"
+    | "industrial_building";
 }
 
 export interface Milestone {
@@ -294,9 +344,11 @@ export interface CityState {
   publicTransport: PublicTransportState;
   rating: CityRatingState;
   achievements: AchievementState[];
+  achievementProgress: AchievementProgress;
   happiness: HappinessState;
   neighborhoods: Neighborhood[];
   neighborhoodMode: "auto" | "manual";
+  districts: District[];
   progression: ProgressionState;
   warnings: Warning[];
   time: TimeState;
@@ -323,6 +375,19 @@ export type GameCommand =
   | { type: "TAKE_LOAN"; loanType: LoanType }
   | { type: "PLACE_BUS_STOP"; x: number; y: number }
   | { type: "CREATE_BUS_ROUTE"; name: string; stopIds: string[]; depotId: string }
+  | {
+      type: "CREATE_DISTRICT";
+      name: string;
+      x1: number;
+      y1: number;
+      x2: number;
+      y2: number;
+      color?: string;
+    }
+  | { type: "RENAME_DISTRICT"; districtId: string; name: string }
+  | { type: "DELETE_DISTRICT"; districtId: string }
+  | { type: "APPLY_DISTRICT_POLICY"; districtId: string; policyId: DistrictPolicyId }
+  | { type: "REMOVE_DISTRICT_POLICY"; districtId: string; policyId: DistrictPolicyId }
   | { type: "SET_SPEED"; speed: 0 | 1 | 2 | 3 };
 
 export interface CommandResult {
@@ -344,6 +409,10 @@ export type GameEvent =
   | { type: "DEMAND_CHANGED"; demand: DemandState }
   | { type: "POPULATION_CHANGED"; total: number }
   | { type: "HAPPINESS_CHANGED"; value: number }
+  | { type: "DISTRICT_CREATED"; districtId: string }
+  | { type: "DISTRICT_DELETED"; districtId: string }
+  | { type: "DISTRICT_POLICY_APPLIED"; districtId: string; policyId: DistrictPolicyId }
+  | { type: "ACHIEVEMENT_UNLOCKED"; achievementId: string; reward: number }
   | { type: "MILESTONE_REACHED"; milestone: string; population: number }
   | { type: "SCENARIO_WIN" }
   | { type: "SCENARIO_LOSE" }
@@ -395,6 +464,7 @@ export interface UIState {
     | "pollution"
     | "health"
     | "education"
+    | "districts"
     | null;
   settings: UISettings;
 }

@@ -19,6 +19,7 @@ const COLORS = {
   pollution: 0xd95f43,
   health: 0x26a69a,
   education: 0x5c6bc0,
+  district: 0x5bc0eb,
 };
 
 export interface CityRenderLayers {
@@ -117,6 +118,7 @@ function renderOverlay(
   if (activeOverlay === "education") {
     renderRadiusOverlay(group, state, "educationRadius", COLORS.education);
   }
+  if (activeOverlay === "districts") renderDistrictOverlay(group, state);
 }
 
 function renderZoningOverlay(group: THREE.Group, state: CityState): void {
@@ -124,6 +126,21 @@ function renderZoningOverlay(group: THREE.Group, state: CityState): void {
     if (!tile.zone) return;
     const mesh = createPlane(getZoneColor(tile.zone), 0.5, 0.055);
     mesh.position.set(tile.x + 0.5, 0.055, tile.y + 0.5);
+    group.add(mesh);
+  });
+}
+
+function renderDistrictOverlay(group: THREE.Group, state: CityState): void {
+  state.map.flat().forEach((tile) => {
+    if (!tile.districtId) return;
+    const district = state.districts.find(
+      (candidate) => candidate.id === tile.districtId,
+    );
+    const color = district
+      ? Number.parseInt(district.color.slice(1), 16)
+      : COLORS.district;
+    const mesh = createPlane(color, 0.32, 0.058);
+    mesh.position.set(tile.x + 0.5, 0.058, tile.y + 0.5);
     group.add(mesh);
   });
 }

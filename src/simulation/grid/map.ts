@@ -25,6 +25,7 @@ export function createMap(): Tile[][] {
       buildingId: null,
       pollution: 0,
       landValue: 50,
+      districtId: null,
     })),
   );
 }
@@ -40,7 +41,7 @@ export function getTile(state: CityState, x: number, y: number): Tile | null {
 
 export function cloneCityState(state: CityState): CityState {
   return {
-    map: state.map.map((row) => row.map((tile) => ({ ...tile }))),
+    map: cloneMap(state.map),
     buildings: state.buildings.map((building) => ({
       ...building,
       position: [...building.position],
@@ -63,18 +64,12 @@ export function cloneCityState(state: CityState): CityState {
     extendedServices: cloneExtendedServicesState(state.extendedServices),
     publicTransport: clonePublicTransportState(state.publicTransport),
     rating: cloneRating(state.rating),
-    achievements: (state.achievements ?? []).map((achievement) => ({ ...achievement })),
-    happiness: {
-      value: state.happiness.value,
-      components: { ...state.happiness.components },
-    },
-    neighborhoods: (state.neighborhoods ?? []).map((neighborhood) => ({
-      ...neighborhood,
-      bounds: { ...neighborhood.bounds },
-      components: { ...neighborhood.components },
-      buildings: [...neighborhood.buildings],
-    })),
+    achievements: cloneAchievements(state),
+    achievementProgress: cloneAchievementProgress(state),
+    happiness: cloneHappiness(state),
+    neighborhoods: cloneNeighborhoods(state),
     neighborhoodMode: state.neighborhoodMode ?? "auto",
+    districts: cloneDistricts(state),
     progression: {
       ...state.progression,
       unlockedFeatures: [...state.progression.unlockedFeatures],
@@ -83,6 +78,63 @@ export function cloneCityState(state: CityState): CityState {
     warnings: state.warnings.map((warning) => ({ ...warning })),
     time: { ...state.time },
   };
+}
+
+function cloneMap(map: CityState["map"]): CityState["map"] {
+  return map.map((row) =>
+    row.map((tile) => ({ ...tile, districtId: tile.districtId ?? null })),
+  );
+}
+
+function cloneAchievements(state: CityState): CityState["achievements"] {
+  return (state.achievements ?? []).map((achievement) => ({ ...achievement }));
+}
+
+function cloneAchievementProgress(state: CityState): CityState["achievementProgress"] {
+  const progress = state.achievementProgress;
+  return {
+    ...DEFAULT_ACHIEVEMENT_PROGRESS,
+    ...progress,
+    roadsPlaced: progress?.roadsPlaced ?? state.roads.length,
+  };
+}
+
+const DEFAULT_ACHIEVEMENT_PROGRESS = {
+  moneyEverNegative: false,
+  pollutionStayedLow: true,
+  happyTickStreak: 0,
+  positiveIncomeMonthStreak: 0,
+  roadsPlaced: 0,
+};
+
+function cloneHappiness(state: CityState): CityState["happiness"] {
+  return {
+    value: state.happiness.value,
+    components: {
+      ...state.happiness.components,
+      policies: state.happiness.components.policies ?? 0,
+    },
+  };
+}
+
+function cloneNeighborhoods(state: CityState): CityState["neighborhoods"] {
+  return (state.neighborhoods ?? []).map((neighborhood) => ({
+    ...neighborhood,
+    bounds: { ...neighborhood.bounds },
+    components: {
+      ...neighborhood.components,
+      policies: neighborhood.components.policies ?? 0,
+    },
+    buildings: [...neighborhood.buildings],
+  }));
+}
+
+function cloneDistricts(state: CityState): CityState["districts"] {
+  return (state.districts ?? []).map((district) => ({
+    ...district,
+    tiles: district.tiles.map((tile) => [...tile] as [number, number]),
+    policies: [...district.policies],
+  }));
 }
 
 export function getFootprint(

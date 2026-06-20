@@ -7,6 +7,7 @@ import {
 import { getBuildingById } from "../../data/buildings";
 import type { CityState, HappinessState, Neighborhood } from "../../shared/types";
 import { recomputeNeighborhoods } from "./neighborhoods";
+import { getBuildingPolicyHappiness } from "./districts";
 
 export function recomputeHappiness(state: CityState): void {
   const neighborhoods = recomputeNeighborhoods(state);
@@ -37,6 +38,7 @@ function createBaseHappiness(): HappinessState {
       crime: 0,
       garbage: 0,
       transit: 0,
+      policies: 0,
     },
   };
 }
@@ -62,6 +64,7 @@ function calculateCityHappiness(neighborhoods: Neighborhood[]): HappinessState {
       crime: getWeightedComponent(neighborhoods, totalPopulation, "crime"),
       garbage: getWeightedComponent(neighborhoods, totalPopulation, "garbage"),
       transit: getWeightedComponent(neighborhoods, totalPopulation, "transit"),
+      policies: getWeightedComponent(neighborhoods, totalPopulation, "policies"),
     },
   };
 }
@@ -105,6 +108,7 @@ function calculateGlobalHappiness(state: CityState): HappinessState {
   const crime = state.extendedServices.crimeHappinessPenalty;
   const garbage = state.extendedServices.garbageHappinessPenalty;
   const transit = state.publicTransport.happinessBonus;
+  const policies = calculatePolicyHappiness(state);
   const value = clamp(
     HAPPINESS_DEFAULTS.BASE +
       tax +
@@ -117,7 +121,8 @@ function calculateGlobalHappiness(state: CityState): HappinessState {
       goods +
       crime +
       garbage +
-      transit,
+      transit +
+      policies,
   );
 
   return {
@@ -135,6 +140,7 @@ function calculateGlobalHappiness(state: CityState): HappinessState {
       crime,
       garbage,
       transit,
+      policies,
     },
   };
 }
@@ -197,6 +203,20 @@ function calculateUtilityPenalty(state: CityState): number {
   const waterShortage = state.services.waterDemand > state.services.waterCapacity;
   if (!powerShortage && !waterShortage) return 0;
   return SERVICE_HAPPINESS.UTILITY_SHORTAGE_PENALTY;
+}
+
+function calculatePolicyHappiness(state: CityState): number {
+  const residential = state.buildings.filter((building) => {
+    const definition = getBuildingById(building.definitionId);
+    return definition?.category === "residential" && building.status === "active";
+  });
+  if (residential.length === 0) return 0;
+  return Math.round(
+    residential.reduce(
+      (total, building) => total + getBuildingPolicyHappiness(state, building),
+      0,
+    ) / residential.length,
+  );
 }
 
 function clamp(value: number): number {

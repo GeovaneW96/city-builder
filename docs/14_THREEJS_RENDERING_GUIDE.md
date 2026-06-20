@@ -107,9 +107,13 @@ Examples:
 
 Only one or two overlays should be active at once.
 
-The Foundation toolbar provides zoning, pollution, health, and education overlay modes.
+The Foundation toolbar provides zoning, pollution, health, education, and district overlay modes.
 The zoning overlay draws the active zone color over every zoned tile, including tiles that
 already contain a building. The UI keeps the active overlay mutually exclusive.
+
+The district overlay renders the saved color for each district-owned tile. It never assigns
+tiles, validates policies, or computes policy effects; those responsibilities remain in the
+simulation layer.
 
 ## Render State Cache
 

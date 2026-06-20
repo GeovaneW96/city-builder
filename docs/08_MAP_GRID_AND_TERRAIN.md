@@ -65,6 +65,9 @@ Tile fields:
 
 Initial terrain is always `grass`.
 
+Each tile also stores `districtId`, which is either the ID of its owning district or `null`.
+District ownership is simulation data and is independent of any visual overlay.
+
 Land value is a 0..100 number for buildable terrain and `null` for unbuildable terrain.
 Grid cloning also preserves each building's upgrade tier and last-upgrade tick so saved cities
 resume density-transition cooldowns correctly.
@@ -135,3 +138,7 @@ progression history.
 
 It also preserves bus-stop and route state. Stops occupy road coordinates without blocking road
 or building placement, while routes reference their stop and depot identifiers.
+
+District definitions persist their name, color, rectangular tile list, and active policies.
+Deleting a district clears only `districtId` and policies; it does not change terrain, roads,
+zones, or buildings.
