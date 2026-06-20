@@ -477,13 +477,13 @@ This document lists every feature across all four implementation phases. Under e
 
 | #     | Testable Logic                                        | Status |
 | ----- | ----------------------------------------------------- | ------ |
-| 2.8.1 | Police station reduces crime in radius                |        |
-| 2.8.2 | Low police coverage increases crime happiness penalty |        |
-| 2.8.3 | Fire station reduces fire risk in radius              |        |
-| 2.8.4 | Building with high fire risk can catch fire (event)   |        |
-| 2.8.5 | Fire destroys building if not covered                 |        |
-| 2.8.6 | Police and fire buildings have upkeep costs           |        |
-| 2.8.7 | Police and fire buildings provide jobs                |        |
+| 2.8.1 | Police station reduces crime in radius                | done   |
+| 2.8.2 | Low police coverage increases crime happiness penalty | done   |
+| 2.8.3 | Fire station reduces fire risk in radius              | done   |
+| 2.8.4 | Building with high fire risk can catch fire (event)   | done   |
+| 2.8.5 | Fire destroys building if not covered                 | done   |
+| 2.8.6 | Police and fire buildings have upkeep costs           | done   |
+| 2.8.7 | Police and fire buildings provide jobs                | done   |
 
 ### 2.9 Garbage Service
 
@@ -491,11 +491,11 @@ This document lists every feature across all four implementation phases. Under e
 
 | #     | Testable Logic                                            | Status |
 | ----- | --------------------------------------------------------- | ------ |
-| 2.9.1 | Buildings produce garbage proportional to population/jobs |        |
-| 2.9.2 | Garbage trucks collect from buildings within radius       |        |
-| 2.9.3 | Uncollected garbage reduces happiness                     |        |
-| 2.9.4 | Landfill/disposal building required for garbage capacity  |        |
-| 2.9.5 | Garbage building has upkeep cost                          |        |
+| 2.9.1 | Buildings produce garbage proportional to population/jobs | done   |
+| 2.9.2 | Garbage trucks collect from buildings within radius       | done   |
+| 2.9.3 | Uncollected garbage reduces happiness                     | done   |
+| 2.9.4 | Landfill/disposal building required for garbage capacity  | done   |
+| 2.9.5 | Garbage building has upkeep cost                          | done   |
 
 ### 2.10 Public Transport (Bus System)
 

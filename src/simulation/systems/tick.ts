@@ -15,6 +15,7 @@ import { updateBuildingUpgrades } from "./upgrades";
 import { advanceTime } from "./time";
 import { recomputeTraffic } from "./traffic";
 import { recomputeGoods } from "./goods";
+import { recomputeExtendedServices } from "./extended-services";
 
 export type TickResult = SimulationTickResult;
 
@@ -39,8 +40,12 @@ export function tickCity(current: CityState): TickResult {
   const grownMetrics = calculateCityMetrics(state);
   recomputePopulation(state, grownMetrics);
   recomputeServices(state);
+  events.push(...recomputeExtendedServices(state));
+  const finalMetrics = calculateCityMetrics(state);
+  recomputePopulation(state, finalMetrics);
+  recomputeServices(state);
   recomputeTraffic(state);
-  recomputeGoods(state, grownMetrics);
+  recomputeGoods(state, finalMetrics);
   recomputeHappiness(state);
   events.push(...rebuildWarnings(state));
   events.push(...updateProgression(state));

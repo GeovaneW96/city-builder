@@ -1,4 +1,5 @@
 import {
+  EXTENDED_SERVICE_BALANCE,
   GOODS_BALANCE,
   LOAN_BALANCE,
   POLLUTION_BALANCE,
@@ -197,7 +198,54 @@ function getCityWarnings(state: CityState): Warning[] {
   }
   warnings.push(...getGoodsWarnings(state));
   warnings.push(...getLoanWarnings(state));
+  warnings.push(...getExtendedServiceWarnings(state));
   return warnings;
+}
+
+function getExtendedServiceWarnings(state: CityState): Warning[] {
+  const warnings: Warning[] = [];
+  if (hasPoliceTargets(state) && state.extendedServices.policeCoverage < 50) {
+    warnings.push({
+      id: "city:high-crime",
+      severity: "medium",
+      message: "Police coverage is low.",
+      suggestedFix: "Build a police station near homes and shops.",
+    });
+  }
+  if (hasFireTargets(state) && state.extendedServices.fireCoverage < 50) {
+    warnings.push({
+      id: "city:fire-risk",
+      severity: "medium",
+      message: "Fire coverage is low.",
+      suggestedFix: "Build a fire station near homes and industry.",
+    });
+  }
+  if (
+    state.extendedServices.totalUncollectedGarbage >
+    EXTENDED_SERVICE_BALANCE.GARBAGE_WARNING_THRESHOLD
+  ) {
+    warnings.push({
+      id: "city:garbage-buildup",
+      severity: "medium",
+      message: "Uncollected garbage is building up.",
+      suggestedFix: "Build a landfill near garbage-producing buildings.",
+    });
+  }
+  return warnings;
+}
+
+function hasPoliceTargets(state: CityState): boolean {
+  return state.buildings.some((building) => {
+    const category = getBuildingById(building.definitionId)?.category;
+    return category === "residential" || category === "commercial";
+  });
+}
+
+function hasFireTargets(state: CityState): boolean {
+  return state.buildings.some((building) => {
+    const category = getBuildingById(building.definitionId)?.category;
+    return category === "residential" || category === "industrial";
+  });
 }
 
 function getGoodsWarnings(state: CityState): Warning[] {

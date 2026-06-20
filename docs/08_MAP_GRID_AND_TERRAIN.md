@@ -126,5 +126,5 @@ Every placed road also contributes one abstract traffic segment. Dirt segments h
 capacity than paved segments; congestion is derived from trips assigned to the nearest road and
 does not depend on Three.js geometry. See `26_TRAFFIC_MODEL.md` for capacity and routing rules.
 
-Map-state cloning also preserves derived traffic, goods, and loan snapshots so save/load and
-tick updates remain isolated from the previous city-state object.
+Map-state cloning also preserves derived traffic, goods, loan, and extended-service snapshots so
+save/load and tick updates remain isolated from the previous city-state object.

@@ -60,6 +60,7 @@ export function cloneCityState(state: CityState): CityState {
     services: { ...state.services },
     traffic: cloneTrafficState(state.traffic),
     goods: cloneGoodsState(state.goods),
+    extendedServices: cloneExtendedServicesState(state.extendedServices),
     happiness: {
       value: state.happiness.value,
       components: { ...state.happiness.components },
@@ -186,4 +187,24 @@ function cloneGoodsState(goods: CityState["goods"] | undefined): CityState["good
     };
   }
   return { ...goods };
+}
+
+function cloneExtendedServicesState(
+  extendedServices: CityState["extendedServices"] | undefined,
+): CityState["extendedServices"] {
+  if (!extendedServices) return createEmptyExtendedServicesState();
+  return { ...extendedServices };
+}
+
+function createEmptyExtendedServicesState(): CityState["extendedServices"] {
+  return {
+    policeCoverage: 0,
+    fireCoverage: 0,
+    crimeRate: 0,
+    crimeHappinessPenalty: 0,
+    totalUncollectedGarbage: 0,
+    monthlyGarbageProduction: 0,
+    monthlyGarbageCollected: 0,
+    garbageHappinessPenalty: 0,
+  };
 }

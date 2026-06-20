@@ -261,12 +261,13 @@ Within a single simulation tick, the following runs **in order**:
 4. **Population** — update totals from residential capacity and demand.
 5. **Pollution and Land Value** — recompute pollution, then each tile's land value from local modifiers.
 6. **Services** — recompute capacity usage and coverage radii.
-7. **Traffic** — assign active-building trips to nearby roads, calculate congestion, and derive productivity effects.
-8. **Goods** — calculate industrial supply, commercial demand, shortages, and commercial productivity.
-9. **Happiness** — rebuild road-bounded neighborhoods, calculate their local happiness, then calculate the population-weighted city score.
-10. **Warnings** — rebuild active warnings list from current state.
-11. **Progression** — check milestones, apply unlocks and rewards.
-12. **Events** — emit `GameEvent` objects for any changed state (rendering/UI consume these).
+7. **Extended Services** — update police crime, fire risk, garbage collection, and any fire-destruction events.
+8. **Traffic** — assign active-building trips to nearby roads, calculate congestion, and derive productivity effects.
+9. **Goods** — calculate industrial supply, commercial demand, shortages, and commercial productivity.
+10. **Happiness** — rebuild road-bounded neighborhoods, calculate their local happiness, then calculate the population-weighted city score.
+11. **Warnings** — rebuild active warnings list from current state.
+12. **Progression** — check milestones, apply unlocks and rewards.
+13. **Events** — emit `GameEvent` objects for any changed state (rendering/UI consume these).
 
 ### Building Growth Details
 

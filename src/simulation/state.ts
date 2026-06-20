@@ -45,6 +45,7 @@ export function createInitialCityState(): CityState {
     },
     traffic: createInitialTrafficState(),
     goods: createInitialGoodsState(),
+    extendedServices: createInitialExtendedServicesState(),
     happiness: createInitialHappinessState(),
     neighborhoods: [],
     neighborhoodMode: "auto",
@@ -94,6 +95,21 @@ function createInitialHappinessState() {
       utility: 0,
       traffic: 0,
       goods: 0,
+      crime: 0,
+      garbage: 0,
     },
+  };
+}
+
+function createInitialExtendedServicesState() {
+  return {
+    policeCoverage: 0,
+    fireCoverage: 0,
+    crimeRate: 0,
+    crimeHappinessPenalty: 0,
+    totalUncollectedGarbage: 0,
+    monthlyGarbageProduction: 0,
+    monthlyGarbageCollected: 0,
+    garbageHappinessPenalty: 0,
   };
 }

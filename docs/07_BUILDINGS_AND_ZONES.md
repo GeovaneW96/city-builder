@@ -202,6 +202,12 @@ Tradeoff:
 
 General placement rules for roads, zones, and buildings are defined in `08_MAP_GRID_AND_TERRAIN.md` (Placement Rules section). Building-specific rules additionally require sufficient money and the building being unlocked.
 
+## Extended Service Buildings
+
+Police stations, fire stations, and landfills are data-driven manual buildings. Their coverage
+and collection radii live in building effects and are consumed exclusively by the simulation;
+their listed costs, upkeep, and jobs participate in the regular construction and economy rules.
+
 ## Visual Rules
 
 Buildings should be:

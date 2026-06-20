@@ -204,6 +204,12 @@ defined in `src/data/balance/loans.ts`. A loan payment is charged as part of the
 economy tick after normal income and upkeep. Three consecutive missed payments on the same loan
 immediately fail the scenario.
 
+## Extended Service Balance
+
+Police, fire, and garbage rates are defined in `src/data/balance/extendedServices.ts`.
+Coverage reduces existing crime and fire risk, while uncovered targets accumulate risk. Landfill
+collection and passive garbage decay determine the residual happiness penalty.
+
 ## Bankruptcy
 
 If money is below 0:

@@ -32,6 +32,7 @@ export type BuildingCategory =
   | "industrial"
   | "utility"
   | "service"
+  | "security"
   | "civic"
   | "decoration";
 
@@ -56,6 +57,10 @@ export interface BuildingDefinition {
     waterCapacity?: number;
     healthRadius?: number;
     educationRadius?: number;
+    policeRadius?: number;
+    fireRadius?: number;
+    garbageCollectionRadius?: number;
+    garbageCapacity?: number;
     happiness?: number;
     pollution?: number;
   };
@@ -73,6 +78,8 @@ export interface BuildingInstance {
   unresolvedWarningTicks: number;
   upgradeTier: 1 | 2 | 3;
   lastUpgradeTick: number;
+  crime?: number;
+  fireRisk?: number;
 }
 
 export interface EconomyState {
@@ -149,6 +156,17 @@ export interface GoodsState {
   commercialMultiplier: number;
 }
 
+export interface ExtendedServicesState {
+  policeCoverage: number;
+  fireCoverage: number;
+  crimeRate: number;
+  crimeHappinessPenalty: number;
+  totalUncollectedGarbage: number;
+  monthlyGarbageProduction: number;
+  monthlyGarbageCollected: number;
+  garbageHappinessPenalty: number;
+}
+
 export interface HappinessState {
   value: number;
   components: {
@@ -161,6 +179,8 @@ export interface HappinessState {
     utility: number;
     traffic: number;
     goods: number;
+    crime: number;
+    garbage: number;
   };
 }
 
@@ -219,6 +239,7 @@ export interface CityState {
   services: ServicesState;
   traffic: TrafficState;
   goods: GoodsState;
+  extendedServices: ExtendedServicesState;
   happiness: HappinessState;
   neighborhoods: Neighborhood[];
   neighborhoodMode: "auto" | "manual";

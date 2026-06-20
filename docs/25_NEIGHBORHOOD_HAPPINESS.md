@@ -51,6 +51,8 @@ interface HappinessComponents {
   utility: number;
   traffic: number; // abstract congestion penalty
   goods: number;
+  crime: number;
+  garbage: number;
 }
 ```
 
@@ -120,6 +122,11 @@ population-weighted aggregation while congestion has no rendering or agent-simul
 
 The citywide goods-shortage penalty is applied to each neighborhood. This reflects the shared
 commercial availability constraint while leaving supply and demand in the economy simulation.
+
+### Crime and Garbage Modifiers
+
+Citywide crime and garbage penalties from extended services are applied to each neighborhood.
+Their underlying coverage and accumulation remain deterministic simulation state.
 
 ### Final Formula
 

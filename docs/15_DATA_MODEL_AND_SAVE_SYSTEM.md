@@ -100,4 +100,8 @@ Economy save data includes active loans and the last-loan tick. Each loan stores
 fixed monthly payment, remaining term, and missed-payment count so repayment and default state
 round-trip exactly.
 
+Extended-service save data stores citywide coverage, crime, garbage, and derived happiness
+effects. Building instances retain crime and fire-risk values so their per-tick progression also
+survives a save/load round trip.
+
 Cloud saves are not in scope for the initial version.

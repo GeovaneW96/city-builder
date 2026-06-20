@@ -34,6 +34,8 @@ function createBaseHappiness(): HappinessState {
       utility: 0,
       traffic: 0,
       goods: 0,
+      crime: 0,
+      garbage: 0,
     },
   };
 }
@@ -56,6 +58,8 @@ function calculateCityHappiness(neighborhoods: Neighborhood[]): HappinessState {
       utility: getWeightedComponent(neighborhoods, totalPopulation, "utility"),
       traffic: getWeightedComponent(neighborhoods, totalPopulation, "traffic"),
       goods: getWeightedComponent(neighborhoods, totalPopulation, "goods"),
+      crime: getWeightedComponent(neighborhoods, totalPopulation, "crime"),
+      garbage: getWeightedComponent(neighborhoods, totalPopulation, "garbage"),
     },
   };
 }
@@ -96,6 +100,8 @@ function calculateGlobalHappiness(state: CityState): HappinessState {
   const utility = calculateUtilityPenalty(state);
   const traffic = -state.traffic.happinessPenalty;
   const goods = -state.goods.happinessPenalty;
+  const crime = state.extendedServices.crimeHappinessPenalty;
+  const garbage = state.extendedServices.garbageHappinessPenalty;
   const value = clamp(
     HAPPINESS_DEFAULTS.BASE +
       tax +
@@ -105,7 +111,9 @@ function calculateGlobalHappiness(state: CityState): HappinessState {
       parks +
       utility +
       traffic +
-      goods,
+      goods +
+      crime +
+      garbage,
   );
 
   return {
@@ -120,6 +128,8 @@ function calculateGlobalHappiness(state: CityState): HappinessState {
       utility,
       traffic,
       goods,
+      crime,
+      garbage,
     },
   };
 }

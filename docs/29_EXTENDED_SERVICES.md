@@ -224,3 +224,11 @@ garbageState: {
 - Multiple landfills share collection load
 - Building removal on fire destroys warning state
 - Save/load round-trip for garbage state
+
+## Current Implementation
+
+The simulation supplies police and fire coverage from active stations, updates per-building
+crime and fire-risk values, and emits normal building-removal events when an uncovered building
+burns. Landfills collect covered producer output against their data-defined capacity; leftover
+waste decays each tick and contributes to happiness and warnings. The `extendedServices` save
+state exposes coverage, crime, and garbage totals without depending on rendering.

@@ -94,6 +94,8 @@ function calculateComponents(
     utility: getUtilityComponent(state),
     traffic: -state.traffic.happinessPenalty,
     goods: -state.goods.happinessPenalty,
+    crime: state.extendedServices.crimeHappinessPenalty,
+    garbage: state.extendedServices.garbageHappinessPenalty,
   };
 }
 
@@ -220,7 +222,9 @@ function sumComponents(components: NeighborhoodHappinessComponents): number {
     components.parks +
     components.utility +
     components.traffic +
-    components.goods
+    components.goods +
+    components.crime +
+    components.garbage
   );
 }
 
