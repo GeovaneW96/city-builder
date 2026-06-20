@@ -205,14 +205,14 @@ The application uses two independent Zustand stores to enforce the simulation/re
 - Holds the single `CityState` object.
 - Written to only by:
   - `processCommand(command)` — validates and applies a player command.
-  - `tick()` — advances the simulation by one tick.
+  - `tick()` — advances the simulation by one tick and returns state/events.
 - Never imported by Three.js code.
 - UI reads from it via selectors (described below).
 
 ```
 SimulationStore:
   - state: CityState
-  - tick() — advance simulation one step
+  - tick() — advance simulation one step and return the resulting state/events
   - processCommand(cmd) — validate and apply a command, return events or error
   - loadSave(save) — restore state from save data
   - getSaveData() — serialize current state
@@ -260,6 +260,10 @@ UI Toolbar Click
   → If rendering is subscribed to events, it updates meshes
   → If UI is subscribed to state, it re-renders affected panels
 ```
+
+`tick()` follows the same explicit-output pattern as commands: it returns
+`SimulationTickResult` with the next state and its `GameEvent` list. UI-only feedback can
+consume those events without embedding audio or rendering behavior in the simulation layer.
 
 ## Event Bus
 

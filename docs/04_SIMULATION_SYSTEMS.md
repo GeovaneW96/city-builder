@@ -185,6 +185,10 @@ Warnings should include:
 - target building/tile;
 - suggested fix.
 
+When the warning list is rebuilt, the simulation emits `WARNING_ADDED` only for warnings
+that were not active on the preceding tick, and `WARNING_REMOVED` when a warning resolves.
+This lets UI feedback react once without affecting deterministic warning state.
+
 ## Progression System
 
 Progression is based on population milestones.

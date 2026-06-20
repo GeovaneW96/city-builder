@@ -1,4 +1,4 @@
-import type { CityState, GameEvent } from "../../shared/types";
+import type { CityState, GameEvent, SimulationTickResult } from "../../shared/types";
 import { cloneCityState } from "../grid/map";
 import { runEconomy } from "./economy";
 import { recomputeDemand } from "./demand";
@@ -12,10 +12,7 @@ import { rebuildWarnings } from "./warnings";
 import { updateProgression } from "./progression";
 import { advanceTime } from "./time";
 
-export interface TickResult {
-  state: CityState;
-  events: GameEvent[];
-}
+export type TickResult = SimulationTickResult;
 
 export function tickCity(current: CityState): TickResult {
   if (current.time.speed === 0) return { state: current, events: [] };
@@ -35,7 +32,7 @@ export function tickCity(current: CityState): TickResult {
   recomputePopulation(state, grownMetrics);
   recomputeServices(state);
   recomputeHappiness(state);
-  rebuildWarnings(state);
+  events.push(...rebuildWarnings(state));
   events.push(...updateProgression(state));
   emitSummaryEvents(state, events);
   advanceTime(state);

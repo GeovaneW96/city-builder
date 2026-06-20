@@ -3,6 +3,7 @@ import type {
   CityState,
   GameCommand,
   CommandResult,
+  SimulationTickResult,
   SimulationStore,
 } from "../shared/types";
 import { processCityCommand } from "./commands/process";
@@ -15,10 +16,10 @@ export { createInitialCityState };
 export const useSimulationStore = create<SimulationStore>()((set, get) => ({
   state: createInitialCityState(),
 
-  tick(): CityState {
+  tick(): SimulationTickResult {
     const result = tickCity(get().state);
     if (result.state !== get().state) set({ state: result.state });
-    return result.state;
+    return result;
   },
 
   processCommand(command: GameCommand): CommandResult {

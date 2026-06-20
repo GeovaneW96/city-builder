@@ -71,3 +71,11 @@ Audio settings:
 - SFX volume;
 - mute;
 - reduced alert sounds.
+
+## Foundation Implementation
+
+The Foundation slice uses short Web Audio oscillator tones, so no external sound assets are
+required. Successful road, zone, and building placements share a confirmation tone; newly
+added warnings, milestone events, and insufficient-funds placement failures each have a
+distinct tone. Audio is dispatched from simulation command/tick events by the UI layer and
+is disabled by the top-bar sound toggle.

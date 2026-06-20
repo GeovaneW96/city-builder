@@ -199,6 +199,22 @@ describe("Simulation economy", () => {
   });
 });
 
+describe("Simulation warning events", () => {
+  beforeEach(resetStore);
+
+  it("emits warning events only when a warning first appears", () => {
+    const state = createInitialCityState();
+    addActiveBuilding(state, "small_house", 8, 9);
+    useSimulationStore.getState().loadSave(state);
+
+    const firstTick = useSimulationStore.getState().tick();
+    expect(firstTick.events.some((event) => event.type === "WARNING_ADDED")).toBe(true);
+
+    const secondTick = useSimulationStore.getState().tick();
+    expect(secondTick.events.some((event) => event.type === "WARNING_ADDED")).toBe(false);
+  });
+});
+
 describe("Simulation progression", () => {
   beforeEach(resetStore);
 

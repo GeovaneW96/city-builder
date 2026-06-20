@@ -4,12 +4,14 @@ import type {
   BuildingDefinition,
   BuildingInstance,
   CityState,
+  GameEvent,
   Warning,
 } from "../../shared/types";
 import { ABANDONED_WARNING_TICKS } from "../constants";
 import { getBuildingFootprint, getTile, hasAdjacentRoad } from "../grid/map";
 
-export function rebuildWarnings(state: CityState): void {
+export function rebuildWarnings(state: CityState): GameEvent[] {
+  const previousWarnings = state.warnings;
   const warnings: Warning[] = [];
   state.buildings.forEach((building) => {
     const buildingWarnings = getBuildingWarnings(state, building);
@@ -18,6 +20,20 @@ export function rebuildWarnings(state: CityState): void {
   });
   warnings.push(...getCityWarnings(state));
   state.warnings = warnings;
+  return getWarningEvents(previousWarnings, warnings);
+}
+
+function getWarningEvents(previous: Warning[], next: Warning[]): GameEvent[] {
+  const previousIds = new Set(previous.map((warning) => warning.id));
+  const nextIds = new Set(next.map((warning) => warning.id));
+  return [
+    ...next
+      .filter((warning) => !previousIds.has(warning.id))
+      .map((warning) => ({ type: "WARNING_ADDED" as const, warning })),
+    ...previous
+      .filter((warning) => !nextIds.has(warning.id))
+      .map((warning) => ({ type: "WARNING_REMOVED" as const, warningId: warning.id })),
+  ];
 }
 
 function getBuildingWarnings(state: CityState, building: BuildingInstance): Warning[] {

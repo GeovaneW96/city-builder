@@ -210,6 +210,11 @@ export type GameEvent =
   | { type: "WARNING_ADDED"; warning: Warning }
   | { type: "WARNING_REMOVED"; warningId: string };
 
+export interface SimulationTickResult {
+  state: CityState;
+  events: GameEvent[];
+}
+
 export type BuildMode = "road" | "zone" | "building" | "demolish" | null;
 
 export interface PlacementPreview {
@@ -256,7 +261,7 @@ export interface UIState {
 
 export interface SimulationStore {
   state: CityState;
-  tick: () => CityState;
+  tick: () => SimulationTickResult;
   processCommand: (command: GameCommand) => CommandResult;
   loadSave: (save: CityState) => void;
   getSaveData: () => CityState;

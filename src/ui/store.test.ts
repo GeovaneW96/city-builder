@@ -50,4 +50,9 @@ describe("UIStore", () => {
     expect(useUIStore.getState().camera.zoom).toBe(2);
     expect(useUIStore.getState().camera.position).toEqual([32, 40, 32]);
   });
+
+  it("updates the sound setting used by audio feedback", () => {
+    useUIStore.getState().updateSettings({ soundEnabled: false });
+    expect(useUIStore.getState().settings.soundEnabled).toBe(false);
+  });
 });

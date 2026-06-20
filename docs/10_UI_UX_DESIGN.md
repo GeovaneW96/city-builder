@@ -66,6 +66,7 @@ Shows:
 - monthly income;
 - date/time;
 - speed controls.
+- sound on/off control.
 
 ### Bottom Toolbar
 
@@ -185,3 +186,8 @@ Consider:
 - keyboard shortcuts;
 - reduced motion setting;
 - scalable UI.
+
+## Foundation Audio Control
+
+The top bar includes a text-labelled sound toggle with an `aria-pressed` state. It disables
+all generated action, warning, and milestone sound effects without changing simulation state.

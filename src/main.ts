@@ -31,6 +31,7 @@ import type {
   UIState,
   ZoneType,
 } from "./shared/types";
+import { createAudioFeedback } from "./ui/audio";
 import { useUIStore } from "./ui/store";
 
 const SAVE_KEY = "cities:first_settlement:manual";
@@ -44,6 +45,9 @@ const grid = createGrid(scene.scene);
 const cityLayers = createCityRenderLayers(scene.scene);
 const mouse = new Vector2();
 const ui = createInterface(app);
+const audioFeedback = createAudioFeedback(
+  () => useUIStore.getState().settings.soundEnabled,
+);
 let isDragging = false;
 let placedDuringDrag = new Set<string>();
 let lastTickAt = performance.now();
@@ -70,7 +74,8 @@ function runSimulationClock(now: number): void {
   }
   const interval = TICK_INTERVALS[speed];
   while (now - lastTickAt >= interval) {
-    useSimulationStore.getState().tick();
+    const result = useSimulationStore.getState().tick();
+    audioFeedback.playEvents(result.events);
     lastTickAt += interval;
   }
 }
@@ -142,6 +147,8 @@ function applyToolAt(position: [number, number]): void {
   if (placedDuringDrag.has(key)) return;
   placedDuringDrag.add(key);
   const result = useSimulationStore.getState().processCommand(command);
+  audioFeedback.playEvents(result.events);
+  audioFeedback.playFailure(result.error);
   ui.status.textContent = result.success ? "Built." : (result.error ?? "Command failed.");
 }
 
@@ -280,6 +287,11 @@ function setSpeed(speed: 0 | 1 | 2 | 3): void {
   useSimulationStore.getState().processCommand({ type: "SET_SPEED", speed });
 }
 
+function toggleSound(): void {
+  const settings = useUIStore.getState().settings;
+  useUIStore.getState().updateSettings({ soundEnabled: !settings.soundEnabled });
+}
+
 function bindInterface(): void {
   ui.root.addEventListener("click", (event) => {
     const target = event.target;
@@ -302,6 +314,7 @@ function handleToolbarClick(target: HTMLElement): void {
   if (action === "demolish") useUIStore.getState().setBuildMode("demolish");
   if (action === "overlay") setOverlay(target.dataset.overlay);
   if (action === "speed") setSpeed(Number(target.dataset.speed) as 0 | 1 | 2 | 3);
+  if (action === "sound") toggleSound();
   if (action === "save") saveGame();
   if (action === "load") loadGame();
 }
@@ -355,6 +368,8 @@ function renderInterface(state: CityState, uiState: UIState): void {
   ui.warnings.innerHTML = renderWarnings(state);
   ui.selection.textContent = renderSelection(state, uiState.selectedTile);
   ui.preview.textContent = renderPreview(uiState.placementPreview);
+  ui.sound.textContent = `Sound: ${uiState.settings.soundEnabled ? "On" : "Off"}`;
+  ui.sound.setAttribute("aria-pressed", String(uiState.settings.soundEnabled));
   updateToolButtons(state, uiState);
   updateTaxControls(state);
 }
@@ -460,6 +475,7 @@ function createInterface(container: HTMLElement) {
     selection: getElement(root, "selection"),
     preview: getElement(root, "preview"),
     status: getElement(root, "status"),
+    sound: getElement(root, "sound"),
   };
 }
 
@@ -471,6 +487,7 @@ function getInterfaceMarkup(): string {
       <span>Happiness <strong data-ui="happiness"></strong></span>
       <span>Income / upkeep <strong data-ui="income"></strong></span>
       <span>Date <strong data-ui="date"></strong></span>
+      <button data-action="sound" data-ui="sound" aria-pressed="true"></button>
       <div class="speed">${speedButtons()}</div>
     </div>
     <aside class="panel left">
@@ -509,6 +526,7 @@ function toolbarButtons(): string {
     <button data-action="zone" data-zone="industrial">Industrial</button>
     ${buildings}
     <button data-action="demolish">Demolish</button>
+    <button data-action="overlay" data-overlay="zoning">Zoning</button>
     <button data-action="overlay" data-overlay="pollution">Pollution</button>
     <button data-action="overlay" data-overlay="health">Health</button>
     <button data-action="overlay" data-overlay="education">Education</button>
