@@ -90,6 +90,13 @@ Useful integration tests:
 
 Use Playwright for full-browser scenario tests:
 
+### Foundation Browser Suite
+
+`npm run test:e2e` starts the Vite app and runs the Chromium suite in `e2e/`. The suite runs
+serially because each scenario renders a WebGL city, avoiding GPU contention between browser
+workers. It covers app loading without page errors, road placement, drag zoning, HUD growth,
+manual save/load, the sound setting, and mutually exclusive overlay controls.
+
 ### App Load
 
 - App loads without console errors

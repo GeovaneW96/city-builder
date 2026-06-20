@@ -25,6 +25,12 @@ The game should make players feel:
 
 See `AGENTS.md` for development rules, tech stack, and commands.
 
+## Verification
+
+Install dependencies with `npm install`, then install Playwright Chromium once with
+`npx playwright install chromium`. Run unit tests with `npm test` and browser scenarios
+with `npm run test:e2e`.
+
 ## Documentation Index
 
 Start here:

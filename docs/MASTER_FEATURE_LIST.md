@@ -303,11 +303,11 @@ This document lists every feature across all four implementation phases. Under e
 
 | #      | Testable Logic                                             | Status |
 | ------ | ---------------------------------------------------------- | ------ |
-| 1.20.1 | Grid rendered with correct dimensions                      |        |
-| 1.20.2 | Road mesh created/removed when road placed/removed         |        |
-| 1.20.3 | Building mesh created/removed when building placed/removed |        |
-| 1.20.4 | Mesh update on building status change                      |        |
-| 1.20.5 | Instanced meshes used for repeated building types          |        |
+| 1.20.1 | Grid rendered with correct dimensions                      | done   |
+| 1.20.2 | Road mesh created/removed when road placed/removed         | done   |
+| 1.20.3 | Building mesh created/removed when building placed/removed | done   |
+| 1.20.4 | Mesh update on building status change                      | done   |
+| 1.20.5 | Instanced meshes used for repeated building types          | done   |
 
 ### 1.21 HUD (Money, Population, Date, Demand Bars)
 
@@ -350,10 +350,10 @@ This document lists every feature across all four implementation phases. Under e
 
 | #      | Testable Logic                                         | Status |
 | ------ | ------------------------------------------------------ | ------ |
-| 1.24.1 | Zoning overlay colors tiles by zone type               |        |
-| 1.24.2 | Pollution overlay shows pollution levels               |        |
-| 1.24.3 | Service coverage overlay shows health/education radius |        |
-| 1.24.4 | Only one overlay active at a time                      |        |
+| 1.24.1 | Zoning overlay colors tiles by zone type               | done   |
+| 1.24.2 | Pollution overlay shows pollution levels               | done   |
+| 1.24.3 | Service coverage overlay shows health/education radius | done   |
+| 1.24.4 | Only one overlay active at a time                      | done   |
 
 ### 1.25 Audio Feedback
 
@@ -361,11 +361,11 @@ This document lists every feature across all four implementation phases. Under e
 
 | #      | Testable Logic                               | Status |
 | ------ | -------------------------------------------- | ------ |
-| 1.25.1 | Placement sound plays on successful build    |        |
-| 1.25.2 | Warning sound plays on new warning           |        |
-| 1.25.3 | Milestone sound plays on milestone reached   |        |
-| 1.25.4 | Insufficient funds sound on failed placement |        |
-| 1.25.5 | Audio can be muted in settings               |        |
+| 1.25.1 | Placement sound plays on successful build    | done   |
+| 1.25.2 | Warning sound plays on new warning           | done   |
+| 1.25.3 | Milestone sound plays on milestone reached   | done   |
+| 1.25.4 | Insufficient funds sound on failed placement | done   |
+| 1.25.5 | Audio can be muted in settings               | done   |
 
 ---
 
@@ -586,11 +586,11 @@ This document lists every feature across all four implementation phases. Under e
 
 | #      | Testable Logic                         | Status |
 | ------ | -------------------------------------- | ------ |
-| 2.17.1 | App loads without errors               |        |
-| 2.17.2 | Player can place a road tile via click |        |
-| 2.17.3 | Player can paint a zone via drag       |        |
-| 2.17.4 | HUD updates after simulation tick      |        |
-| 2.17.5 | Save/load works end-to-end             |        |
+| 2.17.1 | App loads without errors               | done   |
+| 2.17.2 | Player can place a road tile via click | done   |
+| 2.17.3 | Player can paint a zone via drag       | done   |
+| 2.17.4 | HUD updates after simulation tick      | done   |
+| 2.17.5 | Save/load works end-to-end             | done   |
 
 ---
 
