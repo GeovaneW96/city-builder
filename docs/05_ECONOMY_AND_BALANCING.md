@@ -183,6 +183,13 @@ growth curve. Health and education each contribute up to 10 points before their 
 average, pollution is divided by 8, and local park bonuses are capped at 15. These values are
 intentionally data-driven so scenario and balance tuning does not alter the simulation algorithm.
 
+## Traffic Productivity Balance
+
+Traffic capacity, trip factors, thresholds, and productivity multipliers are defined in
+`src/data/balance/traffic.ts`. Congestion above 50% reduces commercial and industrial taxable
+income; the effects are capped by their configured minimum multipliers. The same derived state
+supplies the traffic happiness penalty and warnings.
+
 ## Bankruptcy
 
 If money is below 0:

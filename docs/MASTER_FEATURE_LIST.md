@@ -423,13 +423,13 @@ This document lists every feature across all four implementation phases. Under e
 
 | #     | Testable Logic                                         | Status |
 | ----- | ------------------------------------------------------ | ------ |
-| 2.4.1 | Each road tile has a capacity value                    |        |
-| 2.4.2 | Dirt road has lower capacity than paved road           |        |
-| 2.4.3 | Traffic demand calculated from population, jobs, trips |        |
-| 2.4.4 | Congestion = traffic demand / total road capacity      |        |
-| 2.4.5 | Congestion affects happiness                           |        |
-| 2.4.6 | Congestion affects commercial/industrial productivity  |        |
-| 2.4.7 | Warning shown when congestion exceeds threshold        |        |
+| 2.4.1 | Each road tile has a capacity value                    | done   |
+| 2.4.2 | Dirt road has lower capacity than paved road           | done   |
+| 2.4.3 | Traffic demand calculated from population, jobs, trips | done   |
+| 2.4.4 | Congestion = traffic demand / total road capacity      | done   |
+| 2.4.5 | Congestion affects happiness                           | done   |
+| 2.4.6 | Congestion affects commercial/industrial productivity  | done   |
+| 2.4.7 | Warning shown when congestion exceeds threshold        | done   |
 
 ### 2.5 Abstract Traffic Model
 
@@ -437,12 +437,12 @@ This document lists every feature across all four implementation phases. Under e
 
 | #     | Testable Logic                                    | Status |
 | ----- | ------------------------------------------------- | ------ |
-| 2.5.1 | Traffic demand sources computed per building type |        |
-| 2.5.2 | Commute trips from residential buildings          |        |
-| 2.5.3 | Customer trips to commercial buildings            |        |
-| 2.5.4 | Cargo trips from industrial buildings             |        |
-| 2.5.5 | Service trips from service buildings              |        |
-| 2.5.6 | Disconnected buildings produce zero trips         |        |
+| 2.5.1 | Traffic demand sources computed per building type | done   |
+| 2.5.2 | Commute trips from residential buildings          | done   |
+| 2.5.3 | Customer trips to commercial buildings            | done   |
+| 2.5.4 | Cargo trips from industrial buildings             | done   |
+| 2.5.5 | Service trips from service buildings              | done   |
+| 2.5.6 | Disconnected buildings produce zero trips         | done   |
 
 ### 2.6 Commercial Goods Demand
 

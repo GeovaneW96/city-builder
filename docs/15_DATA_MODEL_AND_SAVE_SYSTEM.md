@@ -88,4 +88,8 @@ tick as the initial upgrade tick when loaded.
 rebuilt on ticks, while the mode preserves the future manual-district override choice. Older
 saves missing either field default to an empty neighborhood list and `"auto"` mode.
 
+Traffic save data includes city congestion, assigned-trip totals, productivity multipliers, and
+per-road-segment congestion. Older saves initialize an empty traffic state with neutral
+multipliers, then rebuild it on the next simulation tick.
+
 Cloud saves are not in scope for the initial version.

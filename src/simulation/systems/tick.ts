@@ -13,6 +13,7 @@ import { rebuildWarnings } from "./warnings";
 import { updateProgression } from "./progression";
 import { updateBuildingUpgrades } from "./upgrades";
 import { advanceTime } from "./time";
+import { recomputeTraffic } from "./traffic";
 
 export type TickResult = SimulationTickResult;
 
@@ -23,6 +24,7 @@ export function tickCity(current: CityState): TickResult {
   const events: GameEvent[] = [];
   const firstTick = state.time.tick === 0;
   const initialMetrics = calculateCityMetrics(state);
+  recomputeTraffic(state);
   if (!firstTick) runEconomy(state, initialMetrics);
 
   recomputeDemand(state, initialMetrics);
@@ -35,6 +37,7 @@ export function tickCity(current: CityState): TickResult {
   const grownMetrics = calculateCityMetrics(state);
   recomputePopulation(state, grownMetrics);
   recomputeServices(state);
+  recomputeTraffic(state);
   recomputeHappiness(state);
   events.push(...rebuildWarnings(state));
   events.push(...updateProgression(state));

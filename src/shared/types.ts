@@ -111,6 +111,22 @@ export interface ServicesState {
   educationCoverage: number;
 }
 
+export interface TrafficSegment {
+  roadId: string;
+  capacity: number;
+  trips: number;
+  congestion: number;
+}
+
+export interface TrafficState {
+  cityCongestion: number;
+  totalTrips: number;
+  happinessPenalty: number;
+  commercialMultiplier: number;
+  industrialMultiplier: number;
+  segments: TrafficSegment[];
+}
+
 export interface HappinessState {
   value: number;
   components: {
@@ -121,6 +137,7 @@ export interface HappinessState {
     pollution: number;
     parks: number;
     utility: number;
+    traffic: number;
   };
 }
 
@@ -177,6 +194,7 @@ export interface CityState {
   population: PopulationState;
   demand: DemandState;
   services: ServicesState;
+  traffic: TrafficState;
   happiness: HappinessState;
   neighborhoods: Neighborhood[];
   neighborhoodMode: "auto" | "manual";

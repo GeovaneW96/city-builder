@@ -119,3 +119,9 @@ The happiness simulation treats road tiles as neighborhood boundaries. It flood-
 contiguous grass tiles and excludes water, blocked terrain, road tiles, and regions without
 buildings. This map-derived data is recalculated during the simulation tick and is independent
 of rendering state.
+
+## Road Capacity
+
+Every placed road also contributes one abstract traffic segment. Dirt segments have lower trip
+capacity than paved segments; congestion is derived from trips assigned to the nearest road and
+does not depend on Three.js geometry. See `26_TRAFFIC_MODEL.md` for capacity and routing rules.

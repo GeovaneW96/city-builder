@@ -111,7 +111,8 @@ Capped at `MAX_PARK_BONUS`.
 
 ### Traffic Modifier
 
-Placeholder for Phase 3. Always 0 in Phase 2.
+The citywide abstract traffic penalty is applied to each neighborhood. This preserves the
+population-weighted aggregation while congestion has no rendering or agent-simulation coupling.
 
 ### Final Formula
 

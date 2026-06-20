@@ -4,6 +4,7 @@ import type {
   CityState,
   Road,
   Tile,
+  TrafficState,
 } from "../../shared/types";
 import { GRID_SIZE } from "../constants";
 
@@ -54,6 +55,7 @@ export function cloneCityState(state: CityState): CityState {
     population: { ...state.population },
     demand: { ...state.demand },
     services: { ...state.services },
+    traffic: cloneTrafficState(state.traffic),
     happiness: {
       value: state.happiness.value,
       components: { ...state.happiness.components },
@@ -152,4 +154,18 @@ function cloneRoad(road: Road): Road {
     position: [...road.position],
     connections: { ...road.connections },
   };
+}
+
+function cloneTrafficState(traffic: TrafficState | undefined): TrafficState {
+  if (!traffic) {
+    return {
+      cityCongestion: 0,
+      totalTrips: 0,
+      happinessPenalty: 0,
+      commercialMultiplier: 1,
+      industrialMultiplier: 1,
+      segments: [],
+    };
+  }
+  return { ...traffic, segments: traffic.segments.map((segment) => ({ ...segment })) };
 }

@@ -135,6 +135,13 @@ SEGMENT_WARNING_THRESHOLD          = 1.0
 | UI        | Congestion overlay, per-segment tooltip, city congestion stat     |
 | Roads     | Per-road-type capacity read from road definition                  |
 
+## Current Implementation
+
+`recomputeTraffic` rebuilds the road-segment list every tick from active buildings and roads.
+Trips are conserved when equidistant roads share a building's demand, disconnected buildings
+produce none, and only segments with trips contribute to the city-congestion average. The
+derived traffic state drives happiness, commercial and industrial tax income, and city warnings.
+
 ## Tests
 
 1. Dirt road tile has capacity of 10.

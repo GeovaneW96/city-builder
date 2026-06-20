@@ -1,4 +1,4 @@
-import { POLLUTION_BALANCE } from "../../data/balance";
+import { POLLUTION_BALANCE, TRAFFIC_BALANCE } from "../../data/balance";
 import { getBuildingById } from "../../data/buildings";
 import type {
   BuildingDefinition,
@@ -168,6 +168,26 @@ function getCityWarnings(state: CityState): Warning[] {
       severity: "medium",
       message: "Happiness is low.",
       suggestedFix: "Lower taxes, add services, or reduce pollution.",
+    });
+  }
+  if (state.traffic.cityCongestion > TRAFFIC_BALANCE.WARNING_THRESHOLD) {
+    warnings.push({
+      id: "city:traffic-congestion",
+      severity: "high",
+      message: `Traffic congestion is ${state.traffic.cityCongestion}%.`,
+      suggestedFix: "Upgrade roads or add alternative routes.",
+    });
+  }
+  if (
+    state.traffic.segments.some(
+      (segment) => segment.congestion >= TRAFFIC_BALANCE.SEGMENT_WARNING_THRESHOLD,
+    )
+  ) {
+    warnings.push({
+      id: "city:road-segment-capacity",
+      severity: "medium",
+      message: "A road segment is at capacity.",
+      suggestedFix: "Upgrade the saturated road or distribute traffic.",
     });
   }
   return warnings;

@@ -36,6 +36,7 @@ export function createInitialCityState(): CityState {
       healthCoverage: 0,
       educationCoverage: 0,
     },
+    traffic: createInitialTrafficState(),
     happiness: {
       value: HAPPINESS_DEFAULTS.BASE,
       components: {
@@ -46,6 +47,7 @@ export function createInitialCityState(): CityState {
         pollution: 0,
         parks: 0,
         utility: 0,
+        traffic: 0,
       },
     },
     neighborhoods: [],
@@ -58,5 +60,16 @@ export function createInitialCityState(): CityState {
     },
     warnings: [],
     time: { tick: 0, month: 1, year: 1, speed: 1 },
+  };
+}
+
+function createInitialTrafficState() {
+  return {
+    cityCongestion: 0,
+    totalTrips: 0,
+    happinessPenalty: 0,
+    commercialMultiplier: 1,
+    industrialMultiplier: 1,
+    segments: [],
   };
 }

@@ -6,6 +6,7 @@ export { HAPPINESS_DEFAULTS, STARTING_MONEY, BANKRUPTCY_GRACE_MONTHS } from "./h
 export { DEMAND_PARAMS } from "./demand";
 export { SERVICE_DEMAND, SERVICE_HAPPINESS } from "./services";
 export { POLLUTION_BALANCE } from "./pollution";
+export { TRAFFIC_BALANCE } from "./traffic";
 export {
   BASE_LAND_VALUE,
   PARK_BONUS,

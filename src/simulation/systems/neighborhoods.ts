@@ -92,7 +92,7 @@ function calculateComponents(
     pollution: getPollutionComponent(tiles),
     parks: getParkComponent(buildings),
     utility: getUtilityComponent(state),
-    traffic: 0,
+    traffic: -state.traffic.happinessPenalty,
   };
 }
 
