@@ -1,6 +1,7 @@
 # Terrain and Water System
 
 Current simulation support stores per-tile elevation and water conversion, with one-level, costed elevation commands.
+Roads reject water, elevations above five, and adjacent slopes above one level; buildings reject elevations above three.
 
 ## Purpose
 

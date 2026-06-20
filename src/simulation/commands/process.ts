@@ -23,6 +23,7 @@ import {
   cloneCityState,
   getBuildingFootprint,
   getFootprint,
+  getOrthogonalNeighbors,
   getTile,
   hasAdjacentRoad,
   isInBounds,
@@ -552,6 +553,8 @@ function validateRoadPlacement(
   const tile = getTile(state, x, y);
   if (!tile) return "Out of bounds";
   if (tile.terrain !== "grass") return "Road requires buildable terrain";
+  if (tile.elevation > 5) return "Road elevation is too high";
+  if (!hasValidRoadSlope(state, x, y, tile.elevation)) return "Road slope is too steep";
   if (tile.buildingId) return "Cannot place road on a building";
   if (tile.roadId) return "Road already exists";
   if (state.economy.money < getRoadCost(roadType)) return "Insufficient money";
@@ -673,7 +676,21 @@ function isBuildingUnlocked(state: CityState, definition: BuildingDefinition): b
 }
 
 function isBuildableTile(tile: Tile): boolean {
-  return tile.terrain === "grass" && !tile.roadId && !tile.buildingId;
+  return (
+    tile.terrain === "grass" && tile.elevation <= 3 && !tile.roadId && !tile.buildingId
+  );
+}
+
+function hasValidRoadSlope(
+  state: CityState,
+  x: number,
+  y: number,
+  elevation: number,
+): boolean {
+  return getOrthogonalNeighbors(x, y).every((neighbor) => {
+    const tile = getTile(state, neighbor.x, neighbor.y);
+    return !tile?.roadId || Math.abs(tile.elevation - elevation) <= 1;
+  });
 }
 
 function getRoadCost(roadType: Road["type"]): number {

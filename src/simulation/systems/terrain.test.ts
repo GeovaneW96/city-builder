@@ -30,4 +30,26 @@ describe("terrain elevation", () => {
         .result.success,
     ).toBe(false);
   });
+
+  it("prevents roads on water and excessive slopes", () => {
+    const state = createInitialCityState();
+    state.map[2]![2]!.terrain = "water";
+    state.map[2]![2]!.elevation = 0;
+    expect(
+      processCityCommand(state, { type: "PLACE_ROAD", x: 2, y: 2, roadType: "dirt" })
+        .result.success,
+    ).toBe(false);
+    state.map[3]![2]!.elevation = 4;
+    const withRoad = processCityCommand(state, {
+      type: "PLACE_ROAD",
+      x: 2,
+      y: 3,
+      roadType: "dirt",
+    }).state;
+    withRoad.map[3]![3]!.elevation = 6;
+    expect(
+      processCityCommand(withRoad, { type: "PLACE_ROAD", x: 3, y: 3, roadType: "dirt" })
+        .result.success,
+    ).toBe(false);
+  });
 });

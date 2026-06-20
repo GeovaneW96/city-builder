@@ -5,6 +5,7 @@
 Simulation now includes deterministic agent traffic, tiered services, density and office demand, tourism, specialization, and time-bound city events. These systems remain data/state driven and run without rendering dependencies.
 
 Scenario validation, events, resource depletion, and terrain editing are also simulation-side systems.
+Terrain placement validation enforces water, elevation, and slope constraints before state changes.
 
 ## Purpose
 
