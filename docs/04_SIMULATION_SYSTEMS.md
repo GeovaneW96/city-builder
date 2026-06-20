@@ -262,7 +262,7 @@ Within a single simulation tick, the following runs **in order**:
 5. **Pollution and Land Value** — recompute pollution, then each tile's land value from local modifiers.
 6. **Services** — recompute capacity usage and coverage radii.
 7. **Extended Services** — update police crime, fire risk, garbage collection, and any fire-destruction events.
-8. **Traffic** — assign active-building trips to nearby roads, calculate congestion, and derive productivity effects.
+8. **Public Transport and Traffic** — update active bus coverage, then assign trips to roads and calculate congestion effects.
 9. **Goods** — calculate industrial supply, commercial demand, shortages, and commercial productivity.
 10. **Happiness** — rebuild road-bounded neighborhoods, calculate their local happiness, then calculate the population-weighted city score.
 11. **Warnings** — rebuild active warnings list from current state.

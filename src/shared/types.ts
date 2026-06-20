@@ -33,6 +33,7 @@ export type BuildingCategory =
   | "utility"
   | "service"
   | "security"
+  | "transit"
   | "civic"
   | "decoration";
 
@@ -167,6 +168,28 @@ export interface ExtendedServicesState {
   garbageHappinessPenalty: number;
 }
 
+export interface BusStop {
+  id: string;
+  position: [number, number];
+}
+
+export interface BusRoute {
+  id: string;
+  name: string;
+  stops: string[];
+  depotId: string;
+  active: boolean;
+}
+
+export interface PublicTransportState {
+  stops: BusStop[];
+  routes: BusRoute[];
+  coveredBuildingIds: string[];
+  ridership: number;
+  activeRouteCount: number;
+  happinessBonus: number;
+}
+
 export interface HappinessState {
   value: number;
   components: {
@@ -181,6 +204,7 @@ export interface HappinessState {
     goods: number;
     crime: number;
     garbage: number;
+    transit: number;
   };
 }
 
@@ -240,6 +264,7 @@ export interface CityState {
   traffic: TrafficState;
   goods: GoodsState;
   extendedServices: ExtendedServicesState;
+  publicTransport: PublicTransportState;
   happiness: HappinessState;
   neighborhoods: Neighborhood[];
   neighborhoodMode: "auto" | "manual";
@@ -267,6 +292,8 @@ export type GameCommand =
       rate: number;
     }
   | { type: "TAKE_LOAN"; loanType: LoanType }
+  | { type: "PLACE_BUS_STOP"; x: number; y: number }
+  | { type: "CREATE_BUS_ROUTE"; name: string; stopIds: string[]; depotId: string }
   | { type: "SET_SPEED"; speed: 0 | 1 | 2 | 3 };
 
 export interface CommandResult {

@@ -61,4 +61,16 @@ export const SERVICE_BUILDINGS: BuildingDefinition[] = [
     requirements: { roadAccess: true },
     effects: { jobs: 4, garbageCollectionRadius: 12, garbageCapacity: 500 },
   },
+  {
+    id: "bus_depot",
+    name: "Bus Depot",
+    category: "transit",
+    placementType: "manual",
+    size: [3, 3],
+    cost: 15000,
+    upkeep: 800,
+    unlockPopulation: 2500,
+    requirements: { roadAccess: true },
+    effects: { jobs: 15 },
+  },
 ];

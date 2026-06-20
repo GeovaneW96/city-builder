@@ -208,6 +208,9 @@ Police stations, fire stations, and landfills are data-driven manual buildings. 
 and collection radii live in building effects and are consumed exclusively by the simulation;
 their listed costs, upkeep, and jobs participate in the regular construction and economy rules.
 
+Bus depots are also manual data-driven buildings. They must remain active for associated bus
+routes to operate; bus stops themselves are lightweight road-tile transit markers.
+
 ## Visual Rules
 
 Buildings should be:

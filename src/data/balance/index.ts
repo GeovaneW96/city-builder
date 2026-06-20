@@ -10,6 +10,7 @@ export { TRAFFIC_BALANCE } from "./traffic";
 export { GOODS_BALANCE } from "./goods";
 export { LOAN_BALANCE, LOAN_PRINCIPALS } from "./loans";
 export { EXTENDED_SERVICE_BALANCE } from "./extendedServices";
+export { TRANSPORT_BALANCE } from "./transport";
 export {
   BASE_LAND_VALUE,
   PARK_BONUS,

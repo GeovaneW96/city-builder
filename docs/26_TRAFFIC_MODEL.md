@@ -142,6 +142,9 @@ Trips are conserved when equidistant roads share a building's demand, disconnect
 produce none, and only segments with trips contribute to the city-congestion average. The
 derived traffic state drives happiness, commercial and industrial tax income, and city warnings.
 
+Active bus-route coverage reduces residential, commercial, and industrial building trip demand
+before road assignment. See `30_PUBLIC_TRANSPORT.md` for the route and coverage rules.
+
 ## Tests
 
 1. Dirt road tile has capacity of 10.

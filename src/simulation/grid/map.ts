@@ -61,6 +61,7 @@ export function cloneCityState(state: CityState): CityState {
     traffic: cloneTrafficState(state.traffic),
     goods: cloneGoodsState(state.goods),
     extendedServices: cloneExtendedServicesState(state.extendedServices),
+    publicTransport: clonePublicTransportState(state.publicTransport),
     happiness: {
       value: state.happiness.value,
       components: { ...state.happiness.components },
@@ -206,5 +207,32 @@ function createEmptyExtendedServicesState(): CityState["extendedServices"] {
     monthlyGarbageProduction: 0,
     monthlyGarbageCollected: 0,
     garbageHappinessPenalty: 0,
+  };
+}
+
+function clonePublicTransportState(
+  publicTransport: CityState["publicTransport"] | undefined,
+): CityState["publicTransport"] {
+  if (!publicTransport) {
+    return {
+      stops: [],
+      routes: [],
+      coveredBuildingIds: [],
+      ridership: 0,
+      activeRouteCount: 0,
+      happinessBonus: 0,
+    };
+  }
+  return {
+    ...publicTransport,
+    stops: publicTransport.stops.map((stop) => ({
+      ...stop,
+      position: [...stop.position],
+    })),
+    routes: publicTransport.routes.map((route) => ({
+      ...route,
+      stops: [...route.stops],
+    })),
+    coveredBuildingIds: [...publicTransport.coveredBuildingIds],
   };
 }

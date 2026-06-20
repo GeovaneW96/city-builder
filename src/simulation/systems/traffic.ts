@@ -1,4 +1,4 @@
-import { TRAFFIC_BALANCE } from "../../data/balance";
+import { TRAFFIC_BALANCE, TRANSPORT_BALANCE } from "../../data/balance";
 import { getBuildingById } from "../../data/buildings";
 import type {
   BuildingInstance,
@@ -7,13 +7,13 @@ import type {
   TrafficSegment,
   TrafficState,
 } from "../../shared/types";
+import { isTransitCovered } from "./public-transport";
 
 export function recomputeTraffic(state: CityState): void {
   const segments = state.roads.map(createSegment);
   const segmentByRoad = new Map(segments.map((segment) => [segment.roadId, segment]));
   const totalTrips = state.buildings.reduce(
-    (total, building) =>
-      total + assignBuildingTrips(building, state.roads, segmentByRoad),
+    (total, building) => total + assignBuildingTrips(building, state, segmentByRoad),
     0,
   );
   state.traffic = createTrafficState(segments, totalTrips);
@@ -58,17 +58,26 @@ function createSegment(road: Road): TrafficSegment {
 
 function assignBuildingTrips(
   building: BuildingInstance,
-  roads: Road[],
+  state: CityState,
   segmentByRoad: Map<string, TrafficSegment>,
 ): number {
-  const trips = getBuildingTrips(building);
-  const nearestRoads = getNearestRoads(building, roads);
+  const trips = getAdjustedBuildingTrips(building, state);
+  const nearestRoads = getNearestRoads(building, state.roads);
   if (trips === 0 || nearestRoads.length === 0) return 0;
   nearestRoads.forEach((road, index) => {
     const segment = segmentByRoad.get(road.id);
     if (segment) segment.trips += getTripShare(trips, nearestRoads.length, index);
   });
   return trips;
+}
+
+function getAdjustedBuildingTrips(building: BuildingInstance, state: CityState): number {
+  const trips = getBuildingTrips(building);
+  const category = getBuildingById(building.definitionId)?.category;
+  const isTrafficSource =
+    category === "residential" || category === "commercial" || category === "industrial";
+  if (!isTrafficSource || !isTransitCovered(state, building.id)) return trips;
+  return Math.ceil(trips * (1 - TRANSPORT_BALANCE.TRAFFIC_REDUCTION));
 }
 
 function getNearestRoads(building: BuildingInstance, roads: Road[]): Road[] {

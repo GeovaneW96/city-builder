@@ -1,4 +1,4 @@
-import { CONSTRUCTION_COSTS } from "../../data/balance";
+import { CONSTRUCTION_COSTS, TRANSPORT_BALANCE } from "../../data/balance";
 import { getBuildingById } from "../../data/buildings";
 import type {
   BuildingDefinition,
@@ -55,6 +55,8 @@ const COMMAND_HANDLERS = {
   DEMOLISH: demolish,
   SET_TAX_RATE: setTaxRate,
   TAKE_LOAN: takeLoanCommand,
+  PLACE_BUS_STOP: placeBusStop,
+  CREATE_BUS_ROUTE: createBusRoute,
   SET_SPEED: setSpeed,
 } satisfies {
   [K in GameCommand["type"]]: CommandHandler<Extract<GameCommand, { type: K }>>;
@@ -216,6 +218,64 @@ function takeLoanCommand(
   const state = cloneCityState(current);
   const error = takeLoan(state, command.loanType);
   return error ? failure(current, error) : success(state, []);
+}
+
+function placeBusStop(
+  current: CityState,
+  command: Extract<GameCommand, { type: "PLACE_BUS_STOP" }>,
+): CommandApplication {
+  const tile = getTile(current, command.x, command.y);
+  if (!tile) return failure(current, "Out of bounds");
+  if (current.population.total < TRANSPORT_BALANCE.UNLOCK_POPULATION) {
+    return failure(current, "Bus stops are locked");
+  }
+  if (!tile.roadId) return failure(current, "Bus stops require a road tile");
+  if (current.economy.money < TRANSPORT_BALANCE.BUS_STOP_COST) {
+    return failure(current, "Insufficient money");
+  }
+  const state = cloneCityState(current);
+  state.publicTransport.stops.push({
+    id: `bus-stop:${command.x},${command.y}:${state.time.tick}`,
+    position: [command.x, command.y],
+  });
+  state.economy.money -= TRANSPORT_BALANCE.BUS_STOP_COST;
+  return success(state, []);
+}
+
+function createBusRoute(
+  current: CityState,
+  command: Extract<GameCommand, { type: "CREATE_BUS_ROUTE" }>,
+): CommandApplication {
+  const validation = validateBusRoute(current, command);
+  if (validation) return failure(current, validation);
+  const state = cloneCityState(current);
+  state.publicTransport.routes.push({
+    id: `bus-route:${state.publicTransport.routes.length + 1}`,
+    name: command.name,
+    stops: [...command.stopIds],
+    depotId: command.depotId,
+    active: true,
+  });
+  return success(state, []);
+}
+
+function validateBusRoute(
+  state: CityState,
+  command: Extract<GameCommand, { type: "CREATE_BUS_ROUTE" }>,
+): string | null {
+  if (command.stopIds.length < TRANSPORT_BALANCE.MIN_STOPS_PER_ROUTE) {
+    return "Bus routes require at least two stops";
+  }
+  if (
+    !command.stopIds.every((stopId) =>
+      state.publicTransport.stops.some((stop) => stop.id === stopId),
+    )
+  ) {
+    return "Bus route contains an unknown stop";
+  }
+  const depot = state.buildings.find((building) => building.id === command.depotId);
+  if (depot?.definitionId !== "bus_depot") return "Bus route requires a bus depot";
+  return null;
 }
 
 function demolishBuilding(current: CityState, buildingId: string): CommandApplication {

@@ -210,6 +210,12 @@ Police, fire, and garbage rates are defined in `src/data/balance/extendedService
 Coverage reduces existing crime and fire risk, while uncovered targets accumulate risk. Landfill
 collection and passive garbage decay determine the residual happiness penalty.
 
+## Public Transport Balance
+
+Bus-stop, route, depot, coverage, and ridership values live in `src/data/balance/transport.ts`.
+Active routes add monthly upkeep, lower covered-building trip demand before traffic congestion is
+computed, and add their derived happiness benefit.
+
 ## Bankruptcy
 
 If money is below 0:

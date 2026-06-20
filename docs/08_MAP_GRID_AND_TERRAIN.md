@@ -128,3 +128,6 @@ does not depend on Three.js geometry. See `26_TRAFFIC_MODEL.md` for capacity and
 
 Map-state cloning also preserves derived traffic, goods, loan, and extended-service snapshots so
 save/load and tick updates remain isolated from the previous city-state object.
+
+It also preserves bus-stop and route state. Stops occupy road coordinates without blocking road
+or building placement, while routes reference their stop and depot identifiers.

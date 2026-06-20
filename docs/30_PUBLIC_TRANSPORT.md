@@ -156,3 +156,10 @@ publicTransportState: {
 - Multiple routes share coverage correctly
 - Stops on same road tile coexist without conflict
 - Save/load round-trip for transport state
+
+## Current Implementation
+
+Bus stops are road-tile markers placed through explicit commands, and routes validate at least
+two known stops plus an active bus depot. Each tick derives active routes, coverage, ridership,
+and transit happiness; covered trip sources reduce their abstract traffic demand before
+congestion. Stop and route upkeep is part of the monthly economy expense.

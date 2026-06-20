@@ -503,12 +503,12 @@ This document lists every feature across all four implementation phases. Under e
 
 | #      | Testable Logic                                          | Status |
 | ------ | ------------------------------------------------------- | ------ |
-| 2.10.1 | Bus stops placed on road tiles                          |        |
-| 2.10.2 | Bus route created by connecting stops                   |        |
-| 2.10.3 | Bus route reduces traffic congestion along its path     |        |
-| 2.10.4 | Bus route improves happiness for nearby buildings       |        |
-| 2.10.5 | Bus depot required for maintenance, has upkeep          |        |
-| 2.10.6 | Coverage computed as percentage of buildings near stops |        |
+| 2.10.1 | Bus stops placed on road tiles                          | done   |
+| 2.10.2 | Bus route created by connecting stops                   | done   |
+| 2.10.3 | Bus route reduces traffic congestion along its path     | done   |
+| 2.10.4 | Bus route improves happiness for nearby buildings       | done   |
+| 2.10.5 | Bus depot required for maintenance, has upkeep          | done   |
+| 2.10.6 | Coverage computed as percentage of buildings near stops | done   |
 
 ### 2.11 District Policies
 

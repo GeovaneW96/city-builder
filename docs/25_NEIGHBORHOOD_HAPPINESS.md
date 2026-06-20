@@ -53,6 +53,7 @@ interface HappinessComponents {
   goods: number;
   crime: number;
   garbage: number;
+  transit: number;
 }
 ```
 
@@ -127,6 +128,11 @@ commercial availability constraint while leaving supply and demand in the econom
 
 Citywide crime and garbage penalties from extended services are applied to each neighborhood.
 Their underlying coverage and accumulation remain deterministic simulation state.
+
+### Transit Modifier
+
+The active bus network's derived coverage benefit is included in neighborhood happiness. Route
+validation, coverage, and ridership remain in the public-transport simulation system.
 
 ### Final Formula
 

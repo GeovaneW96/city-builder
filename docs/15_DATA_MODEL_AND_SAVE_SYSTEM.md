@@ -104,4 +104,8 @@ Extended-service save data stores citywide coverage, crime, garbage, and derived
 effects. Building instances retain crime and fire-risk values so their per-tick progression also
 survives a save/load round trip.
 
+Public-transport save data includes stop positions, routes, covered-building identifiers,
+ridership, and active-route derived values. It is cloned as plain JSON-safe arrays and rebuilt
+on each tick.
+
 Cloud saves are not in scope for the initial version.

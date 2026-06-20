@@ -2,6 +2,7 @@ import {
   BANKRUPTCY_GRACE_MONTHS,
   MONTHLY_UPKEEP,
   TAX_INCOME_FORMULAS,
+  TRANSPORT_BALANCE,
   calculateTaxIncome,
 } from "../../data/balance";
 import { getBuildingById } from "../../data/buildings";
@@ -44,7 +45,18 @@ export function calculateMonthlyIncome(state: CityState, metrics: CityMetrics): 
 }
 
 export function calculateMonthlyExpenses(state: CityState): number {
-  return calculateRoadUpkeep(state) + calculateBuildingUpkeep(state);
+  return (
+    calculateRoadUpkeep(state) +
+    calculateBuildingUpkeep(state) +
+    calculateTransportUpkeep(state)
+  );
+}
+
+function calculateTransportUpkeep(state: CityState): number {
+  return (
+    state.publicTransport.stops.length * TRANSPORT_BALANCE.BUS_STOP_UPKEEP +
+    state.publicTransport.routes.length * TRANSPORT_BALANCE.BUS_ROUTE_UPKEEP
+  );
 }
 
 function calculateRoadUpkeep(state: CityState): number {
