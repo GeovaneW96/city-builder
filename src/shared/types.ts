@@ -9,7 +9,7 @@ export interface Tile {
   zone: ZoneType | null;
   buildingId: string | null;
   pollution: number;
-  landValue: number;
+  landValue: number | null;
 }
 
 export interface Road {

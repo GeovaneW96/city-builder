@@ -379,13 +379,13 @@ This document lists every feature across all four implementation phases. Under e
 
 | #     | Testable Logic                                                 | Status |
 | ----- | -------------------------------------------------------------- | ------ |
-| 2.1.1 | Land value initialized to 50 (default) per tile                |        |
-| 2.1.2 | Park presence increases nearby land value                      |        |
-| 2.1.3 | Pollution decreases nearby land value                          |        |
-| 2.1.4 | Service coverage (health, education) increases land value      |        |
-| 2.1.5 | Road access increases land value                               |        |
-| 2.1.6 | Land value decays with distance from positive/negative sources |        |
-| 2.1.7 | Land value clamped between 0 and 100                           |        |
+| 2.1.1 | Land value initialized to 50 (default) per tile                | done   |
+| 2.1.2 | Park presence increases nearby land value                      | done   |
+| 2.1.3 | Pollution decreases nearby land value                          | done   |
+| 2.1.4 | Service coverage (health, education) increases land value      | done   |
+| 2.1.5 | Road access increases land value                               | done   |
+| 2.1.6 | Land value decays with distance from positive/negative sources | done   |
+| 2.1.7 | Land value clamped between 0 and 100                           | done   |
 | 2.1.8 | Land value affects building upgrade eligibility                |        |
 | 2.1.9 | Land value affects commercial/industrial productivity          |        |
 

@@ -19,7 +19,6 @@ export function recomputePollution(state: CityState): void {
 function resetTileEnvironment(state: CityState): void {
   state.map.flat().forEach((tile) => {
     tile.pollution = 0;
-    tile.landValue = 50;
   });
 }
 
@@ -60,9 +59,6 @@ function applyTilePollution(
   const falloff = 1 - distance / (radius + 1);
   const added = source.amount * falloff;
   tile.pollution = clamp(tile.pollution + added);
-  tile.landValue = clamp(
-    tile.landValue - added * POLLUTION_BALANCE.LAND_VALUE_PENALTY_MULTIPLIER,
-  );
 }
 
 function clamp(value: number): number {

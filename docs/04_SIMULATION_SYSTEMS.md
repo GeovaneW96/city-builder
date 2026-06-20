@@ -259,11 +259,12 @@ Within a single simulation tick, the following runs **in order**:
 2. **Demand** — recompute RCI demand from current city conditions.
 3. **Building Growth** — attempt to spawn new buildings on valid zoned tiles.
 4. **Population** — update totals from residential capacity and demand.
-5. **Services** — recompute capacity usage and coverage radii.
-6. **Happiness** — recompute city happiness from all modifiers.
-7. **Warnings** — rebuild active warnings list from current state.
-8. **Progression** — check milestones, apply unlocks and rewards.
-9. **Events** — emit `GameEvent` objects for any changed state (rendering/UI consume these).
+5. **Pollution and Land Value** — recompute pollution, then each tile's land value from local modifiers.
+6. **Services** — recompute capacity usage and coverage radii.
+7. **Happiness** — recompute city happiness from all modifiers.
+8. **Warnings** — rebuild active warnings list from current state.
+9. **Progression** — check milestones, apply unlocks and rewards.
+10. **Events** — emit `GameEvent` objects for any changed state (rendering/UI consume these).
 
 ### Building Growth Details
 

@@ -1,0 +1,16 @@
+export const BASE_LAND_VALUE = 50;
+export const PARK_BONUS = 5;
+export const PARK_RADIUS = 4;
+export const HEALTH_BONUS = 3;
+export const HEALTH_RADIUS = 6;
+export const EDUCATION_BONUS = 3;
+export const EDUCATION_RADIUS = 6;
+export const ROAD_ACCESS_BONUS = 10;
+export const WATERFRONT_BONUS = 15;
+export const WATERFRONT_RADIUS = 2;
+export const INDUSTRIAL_PENALTY = -8;
+export const INDUSTRIAL_RADIUS = 5;
+export const NOISE_PENALTY = -5;
+export const NOISE_RADIUS = 3;
+export const LAND_VALUE_MIN = 0;
+export const LAND_VALUE_MAX = 100;

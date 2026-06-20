@@ -8,6 +8,7 @@ import { recomputePopulation } from "./population";
 import { recomputeServices } from "./services";
 import { recomputeHappiness } from "./happiness";
 import { recomputePollution } from "./pollution";
+import { recomputeLandValue } from "./land-value";
 import { rebuildWarnings } from "./warnings";
 import { updateProgression } from "./progression";
 import { advanceTime } from "./time";
@@ -28,6 +29,7 @@ export function tickCity(current: CityState): TickResult {
   if (!firstTick) events.push(...growZonedBuildings(state));
 
   recomputePollution(state);
+  recomputeLandValue(state);
   const grownMetrics = calculateCityMetrics(state);
   recomputePopulation(state, grownMetrics);
   recomputeServices(state);

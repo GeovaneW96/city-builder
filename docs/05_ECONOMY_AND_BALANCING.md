@@ -167,7 +167,13 @@ Initial pollution values are data-driven in `src/data/balance/pollution.ts`.
 - Pollution decays by Manhattan distance from the source.
 - High pollution warning threshold: 45.
 - Residential pollution happiness penalty uses average residential tile pollution divided by 8.
-- Pollution reduces land value by 70% of the pollution added to a tile.
+- Land value applies its own industrial pollution penalty and falloff; see `docs/23_LAND_VALUE_SYSTEM.md`.
+
+## Land Value Balance
+
+Land value modifier constants are defined in `src/data/balance/landValue.ts`; their
+authoritative formulas, radii, and integration rules are documented in
+`docs/23_LAND_VALUE_SYSTEM.md`.
 
 ## Bankruptcy
 

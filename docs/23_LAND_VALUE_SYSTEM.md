@@ -130,6 +130,10 @@ Pollution: -4
 
 Land value is recomputed every simulation tick for every tile. This is an O(tiles \* sources) operation. Optimization (dirty regions, spatial hashing) is deferred until performance measurement shows it is needed.
 
+The Phase 2 implementation prepares active modifier sources and water tiles once per tick,
+then applies Chebyshev-distance falloff to each buildable tile. Water and blocked tiles do
+not receive a computed land value.
+
 ## Tests
 
 1. Base land value starts at 50 for a fresh tile.
