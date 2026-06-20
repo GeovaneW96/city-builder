@@ -19,6 +19,9 @@ import { recomputeExtendedServices } from "./extended-services";
 import { recomputePublicTransport } from "./public-transport";
 import { recomputeRating } from "./rating";
 import { updateAchievementProgress, updateAchievements } from "./achievements";
+import { recomputeTourism } from "./tourism";
+import { updateEvents } from "./events";
+import { depleteResources } from "./resources";
 
 export type TickResult = SimulationTickResult;
 
@@ -29,6 +32,7 @@ export function tickCity(current: CityState): TickResult {
   const events: GameEvent[] = [];
   const firstTick = state.time.tick === 0;
   const initialMetrics = calculateCityMetrics(state);
+  recomputeTourism(state);
   recomputePublicTransport(state);
   recomputeTraffic(state);
   recomputeGoods(state, initialMetrics);
@@ -57,6 +61,8 @@ export function tickCity(current: CityState): TickResult {
   events.push(...updateProgression(state));
   updateAchievementProgress(state);
   events.push(...updateAchievements(state));
+  updateEvents(state);
+  depleteResources(state);
   emitSummaryEvents(state, events);
   advanceTime(state);
   return { state, events };

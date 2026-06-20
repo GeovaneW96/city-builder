@@ -3,8 +3,15 @@ import { createInitialCityState } from "../state";
 import type { BuildingInstance, CityState, Road } from "../../shared/types";
 import { calculateMonthlyIncome } from "./economy";
 import { calculateCityMetrics } from "./metrics";
-import { getBuildingTrips, getRoadCapacity, recomputeTraffic } from "./traffic";
+import {
+  findRoadPath,
+  getBuildingTrips,
+  getRoadCapacity,
+  getRoadSpeed,
+  recomputeTraffic,
+} from "./traffic";
 import { rebuildWarnings } from "./warnings";
+import { processCityCommand } from "../commands/process";
 
 describe("traffic capacity and trip demand", () => {
   it("uses higher capacity for paved roads", () => {
@@ -94,6 +101,91 @@ describe("traffic effects", () => {
     expect(state.warnings.map((warning) => warning.id)).toEqual(
       expect.arrayContaining(["city:traffic-congestion", "city:road-segment-capacity"]),
     );
+  });
+});
+
+describe("road hierarchy", () => {
+  it("uses distinct capacity and speed values for all road tiers", () => {
+    expect(getRoadCapacity(createRoad("local", 1, 1))).toBe(25);
+    expect(getRoadCapacity(createRoad("collector", 1, 1))).toBe(50);
+    expect(getRoadCapacity(createRoad("arterial", 1, 1))).toBe(100);
+    expect(getRoadSpeed(createRoad("arterial", 1, 1))).toBeGreaterThan(
+      getRoadSpeed(createRoad("local", 1, 1)),
+    );
+  });
+
+  it("finds a connected road route and returns no route for disconnected roads", () => {
+    const state = createInitialCityState();
+    state.roads = [
+      createRoad("local", 1, 1),
+      createRoad("arterial", 2, 1),
+      createRoad("arterial", 3, 1),
+      createRoad("local", 8, 8),
+    ];
+
+    expect(findRoadPath(state, "local:1,1", "arterial:3,1")).toEqual([
+      "local:1,1",
+      "arterial:2,1",
+      "arterial:3,1",
+    ]);
+    expect(findRoadPath(state, "local:1,1", "local:8,8")).toEqual([]);
+  });
+
+  it("charges road tier upgrades, refunds downgrades, and places intersection lights", () => {
+    const state = createInitialCityState();
+    state.roads = [
+      createRoad("local", 1, 1),
+      createRoad("local", 2, 1),
+      createRoad("local", 1, 2),
+    ];
+    state.traffic.intersections = ["local:1,1"];
+    const startingMoney = state.economy.money;
+    const upgraded = processCityCommand(state, {
+      type: "SET_ROAD_TIER",
+      x: 1,
+      y: 1,
+      roadType: "collector",
+    }).state;
+    const downgraded = processCityCommand(upgraded, {
+      type: "SET_ROAD_TIER",
+      x: 1,
+      y: 1,
+      roadType: "local",
+    }).state;
+    const lit = processCityCommand(downgraded, {
+      type: "PLACE_TRAFFIC_LIGHT",
+      x: 1,
+      y: 1,
+    }).state;
+
+    expect(upgraded.economy.money).toBe(startingMoney - 100);
+    expect(downgraded.economy.money).toBe(startingMoney - 50);
+    expect(lit.traffic.trafficLights).toHaveLength(1);
+    expect(lit.economy.money).toBe(startingMoney - 1050);
+  });
+});
+
+describe("agent traffic", () => {
+  it("spawns travel agents on the four-tick schedule and detects intersections", () => {
+    const state = createInitialCityState();
+    state.roads = [
+      createRoad("local", 1, 1),
+      createRoad("local", 2, 1),
+      createRoad("local", 3, 1),
+      createRoad("local", 2, 0),
+    ];
+    addBuilding(state, "small_house", 1, 2);
+    addBuilding(state, "small_shop", 3, 2);
+    state.time.tick = 4;
+
+    recomputeTraffic(state);
+
+    expect(state.traffic.agents.some((agent) => agent.type === "commuter")).toBe(true);
+    expect(state.traffic.agents.some((agent) => agent.type === "customer")).toBe(true);
+    expect(state.traffic.intersections).toContain("local:2,1");
+    const agents = state.traffic.agents.length;
+    recomputeTraffic(state);
+    expect(state.traffic.agents).toHaveLength(agents);
   });
 });
 

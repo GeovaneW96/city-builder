@@ -2,6 +2,7 @@ import {
   CONSTRUCTION_COSTS,
   DISTRICT_BALANCE,
   getDistrictPolicy,
+  TRAFFIC_BALANCE,
   TRANSPORT_BALANCE,
 } from "../../data/balance";
 import { getBuildingById } from "../../data/buildings";
@@ -30,6 +31,7 @@ import {
 import { advanceCommandObjectives } from "../systems/progression";
 import { takeLoan } from "../systems/loans";
 import { DISTRICT_COLORS, isPolicyRequirementMet } from "../systems/districts";
+import { canSelectSpecialization } from "../systems/specialization";
 
 interface CommandApplication {
   state: CityState;
@@ -56,6 +58,10 @@ export function processCityCommand(
 const COMMAND_HANDLERS = {
   PLACE_ROAD: placeRoad,
   REMOVE_ROAD: removeRoad,
+  SET_ROAD_TIER: setRoadTier,
+  PLACE_TRAFFIC_LIGHT: placeTrafficLight,
+  SET_SPECIALIZATION: setSpecialization,
+  CHANGE_ELEVATION: changeElevation,
   PAINT_ZONE: paintZone,
   REMOVE_ZONE: removeZone,
   PLACE_BUILDING: placeBuilding,
@@ -94,6 +100,7 @@ function placeRoad(
   state.roads.push(createRoad(id, command));
   state.achievementProgress.roadsPlaced += 1;
   state.economy.money -= getRoadCost(command.roadType);
+  state.traffic.roadNetworkDirty = true;
   refreshAllRoadConnections(state);
   return success(state, [
     { type: "ROAD_PLACED", x: command.x, y: command.y, roadId: id },
@@ -114,6 +121,7 @@ function removeRoad(
   const roadId = nextTile.roadId;
   nextTile.roadId = null;
   state.roads = state.roads.filter((road) => road.id !== roadId);
+  state.traffic.roadNetworkDirty = true;
   refreshAllRoadConnections(state);
   return success(state, [
     { type: "ROAD_REMOVED", x: command.x, y: command.y },
@@ -158,6 +166,12 @@ function placeBuilding(
 ): CommandApplication {
   const definition = getBuildingById(command.definitionId);
   if (!definition) return failure(current, "Unknown building");
+  if (
+    definition.id.startsWith("landmark_") &&
+    current.buildings.some((building) => building.definitionId === definition.id)
+  ) {
+    return failure(current, "Landmark already placed");
+  }
   const rotation = command.rotation ?? 0;
   const validation = validateBuildingPlacement(
     current,
@@ -222,6 +236,91 @@ function setSpeed(
   const state = cloneCityState(current);
   state.time.speed = command.speed;
   return success(state, []);
+}
+
+function setRoadTier(
+  current: CityState,
+  command: Extract<GameCommand, { type: "SET_ROAD_TIER" }>,
+): CommandApplication {
+  const road = current.roads.find(
+    (item) => item.position[0] === command.x && item.position[1] === command.y,
+  );
+  if (!road) return failure(current, "No road on this tile");
+  const oldCost = getRoadCost(road.type);
+  const newCost = getRoadCost(command.roadType);
+  const change =
+    newCost >= oldCost ? newCost - oldCost : -Math.floor((oldCost - newCost) / 2);
+  if (change > current.economy.money) return failure(current, "Insufficient money");
+  const state = cloneCityState(current);
+  const target = state.roads.find((item) => item.id === road.id);
+  if (target) target.type = command.roadType;
+  state.economy.money -= change;
+  state.traffic.roadNetworkDirty = true;
+  return success(state, []);
+}
+
+function placeTrafficLight(
+  current: CityState,
+  command: Extract<GameCommand, { type: "PLACE_TRAFFIC_LIGHT" }>,
+): CommandApplication {
+  const road = current.roads.find(
+    (item) => item.position[0] === command.x && item.position[1] === command.y,
+  );
+  if (!road || !current.traffic.intersections.includes(road.id)) {
+    return failure(current, "Traffic lights require an intersection");
+  }
+  if (current.traffic.trafficLights.some((light) => light.roadId === road.id)) {
+    return failure(current, "Traffic light already placed");
+  }
+  if (current.economy.money < TRAFFIC_BALANCE.TRAFFIC_LIGHT_COST) {
+    return failure(current, "Insufficient money");
+  }
+  const state = cloneCityState(current);
+  state.economy.money -= TRAFFIC_BALANCE.TRAFFIC_LIGHT_COST;
+  state.traffic.trafficLights.push({
+    roadId: road.id,
+    tickPlaced: state.time.tick,
+    phase: "green",
+  });
+  return success(state, []);
+}
+
+function setSpecialization(
+  current: CityState,
+  command: Extract<GameCommand, { type: "SET_SPECIALIZATION" }>,
+): CommandApplication {
+  if (!canSelectSpecialization(current, command.specializationId))
+    return failure(current, "Specialization requirements are not met");
+  if (current.time.tick - current.specialization.lastSwitchTick < 12)
+    return failure(current, "Specialization is on cooldown");
+  const cost = current.specialization.active
+    ? Math.floor(current.economy.monthlyIncome * 0.5)
+    : 0;
+  if (current.economy.money < cost) return failure(current, "Insufficient money");
+  const state = cloneCityState(current);
+  state.economy.money -= cost;
+  state.specialization = {
+    active: command.specializationId,
+    lastSwitchTick: state.time.tick,
+  };
+  return success(state, []);
+}
+
+function changeElevation(
+  current: CityState,
+  command: Extract<GameCommand, { type: "CHANGE_ELEVATION" }>,
+): CommandApplication {
+  const tile = getTile(current, command.x, command.y);
+  if (!tile) return failure(current, "Out of bounds");
+  const elevation = Math.max(0, Math.min(10, tile.elevation + command.delta));
+  if (elevation === tile.elevation || current.economy.money < 100)
+    return failure(current, "Elevation change is not available");
+  const state = cloneCityState(current);
+  const next = getRequiredTile(state, command.x, command.y);
+  next.elevation = elevation;
+  next.terrain = elevation === 0 ? "water" : "grass";
+  state.economy.money -= 100;
+  return success(state, [{ type: "TILE_CHANGED", x: command.x, y: command.y }]);
 }
 
 function takeLoanCommand(
@@ -467,13 +566,22 @@ function validateZonePaint(
 ): string | null {
   const tile = getTile(state, x, y);
   if (!tile) return "Out of bounds";
-  if (!state.progression.unlockedFeatures.includes(`${zoneType}_zoning`)) {
+  if (!isZonePaintUnlocked(state, zoneType)) {
     return "Zone type is locked";
   }
   if (tile.roadId) return "Cannot zone a road";
   if (tile.buildingId) return "Cannot zone a building";
   if (tile.terrain !== "grass") return "Zone requires buildable terrain";
   return null;
+}
+
+function isZonePaintUnlocked(state: CityState, zoneType: ZoneType): boolean {
+  if (zoneType.startsWith("medium")) return state.population.total >= 2500;
+  if (zoneType.startsWith("high")) return state.population.total >= 10000;
+  if (zoneType === "office") {
+    return state.population.total >= 5000 && state.services.workforceQuality >= 40;
+  }
+  return state.progression.unlockedFeatures.includes(`${zoneType}_zoning`);
 }
 
 function validateBuildingPlacement(
@@ -569,9 +677,13 @@ function isBuildableTile(tile: Tile): boolean {
 }
 
 function getRoadCost(roadType: Road["type"]): number {
-  return roadType === "dirt"
-    ? CONSTRUCTION_COSTS.DIRT_ROAD
-    : CONSTRUCTION_COSTS.PAVED_ROAD;
+  if (roadType === "dirt") return CONSTRUCTION_COSTS.DIRT_ROAD;
+  if (roadType === "paved") return CONSTRUCTION_COSTS.PAVED_ROAD;
+  return roadType === "local"
+    ? TRAFFIC_BALANCE.LOCAL_ROAD_COST
+    : roadType === "collector"
+      ? TRAFFIC_BALANCE.COLLECTOR_ROAD_COST
+      : TRAFFIC_BALANCE.ARTERIAL_ROAD_COST;
 }
 
 function getRequiredTile(state: CityState, x: number, y: number): Tile {

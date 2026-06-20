@@ -26,7 +26,12 @@ describe("createInitialCityState", () => {
     const state = createInitialCityState();
     expect(state.economy.money).toBe(50000);
     expect(state.economy.taxRates.residential).toBe(10);
-    expect(state.demand).toEqual({ residential: 50, commercial: 30, industrial: 30 });
+    expect(state.demand).toEqual({
+      residential: 50,
+      commercial: 30,
+      industrial: 30,
+      office: 20,
+    });
     expect(state.happiness.value).toBe(70);
     expect(state.progression.unlockedFeatures).toContain("dirt_road");
     expect(state.progression.unlockedFeatures).toContain("residential_zoning");

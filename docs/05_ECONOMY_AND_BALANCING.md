@@ -1,5 +1,9 @@
 # Economy and Balancing
 
+## Extended income
+
+Monthly income also includes office, tourism, event, and specialization modifiers. Their source values remain in simulation state so the UI only displays the computed breakdown.
+
 ## Purpose
 
 This document defines the initial economy model and balancing assumptions.

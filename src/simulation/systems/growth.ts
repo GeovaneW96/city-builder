@@ -34,14 +34,24 @@ export function updateConstructionStatuses(state: CityState): GameEvent[] {
 }
 
 export function growZonedBuildings(state: CityState): GameEvent[] {
-  return (["residential", "commercial", "industrial"] as const).flatMap((zoneType) =>
-    growZoneType(state, zoneType),
-  );
+  return ZONE_TYPES.flatMap((zoneType) => growZoneType(state, zoneType));
 }
+
+const ZONE_TYPES: ZoneType[] = [
+  "residential",
+  "commercial",
+  "industrial",
+  "medium_residential",
+  "medium_commercial",
+  "medium_industrial",
+  "high_residential",
+  "high_commercial",
+  "office",
+];
 
 function growZoneType(state: CityState, zoneType: ZoneType): GameEvent[] {
   const definition = getZoneDefinition(zoneType);
-  if (!definition || state.demand[zoneType] < MIN_DEMAND_FOR_GROWTH) return [];
+  if (!definition || getZoneDemand(state, zoneType) < MIN_DEMAND_FOR_GROWTH) return [];
   if (!isZoneUnlocked(state, zoneType)) return [];
 
   const events: GameEvent[] = [];
@@ -81,7 +91,36 @@ function canGrowAt(
     const tile = getTile(state, cell.x, cell.y);
     return tile?.zone === zoneType && !tile.roadId && !tile.buildingId;
   });
-  return fits && hasAdjacentRoad(state, footprint);
+  return (
+    fits &&
+    hasAdjacentRoad(state, footprint) &&
+    meetsDensityRequirements(state, x, y, zoneType)
+  );
+}
+
+function meetsDensityRequirements(
+  state: CityState,
+  x: number,
+  y: number,
+  zoneType: ZoneType,
+): boolean {
+  const requirement = getDensityRequirement(zoneType);
+  if (!requirement) return zoneType !== "office" || state.office.unlocked;
+  const landValue = state.map[y]?.[x]?.landValue ?? 0;
+  const coverage = (state.services.healthCoverage + state.services.educationCoverage) / 2;
+  return (
+    landValue >= requirement.landValue &&
+    coverage >= 60 &&
+    state.population.total >= requirement.population
+  );
+}
+
+function getDensityRequirement(
+  zoneType: ZoneType,
+): { landValue: number; population: number } | null {
+  if (zoneType.startsWith("medium")) return { landValue: 50, population: 2500 };
+  if (zoneType.startsWith("high")) return { landValue: 75, population: 10000 };
+  return null;
 }
 
 function spawnZoneBuilding(
@@ -126,9 +165,33 @@ function createZoneBuilding(
 function getZoneDefinition(zoneType: ZoneType): BuildingDefinition | null {
   if (zoneType === "residential") return RESIDENTIAL_BUILDINGS[0] ?? null;
   if (zoneType === "commercial") return COMMERCIAL_BUILDINGS[0] ?? null;
-  return INDUSTRIAL_BUILDINGS[0] ?? null;
+  if (zoneType === "industrial") return INDUSTRIAL_BUILDINGS[0] ?? null;
+  const definitions: Partial<Record<ZoneType, string>> = {
+    medium_residential: "medium_house",
+    high_residential: "high_apartment",
+    medium_commercial: "medium_shop",
+    high_commercial: "large_store",
+    medium_industrial: "medium_factory",
+    office: "small_office",
+  };
+  const id = definitions[zoneType];
+  return id
+    ? ([...RESIDENTIAL_BUILDINGS, ...COMMERCIAL_BUILDINGS, ...INDUSTRIAL_BUILDINGS].find(
+        (building) => building.id === id,
+      ) ?? null)
+    : null;
 }
 
 function isZoneUnlocked(state: CityState, zoneType: ZoneType): boolean {
+  if (zoneType.startsWith("medium")) return state.population.total >= 2500;
+  if (zoneType.startsWith("high")) return state.population.total >= 10000;
+  if (zoneType === "office") return state.office.unlocked;
   return state.progression.unlockedFeatures.includes(`${zoneType}_zoning`);
+}
+
+function getZoneDemand(state: CityState, zoneType: ZoneType): number {
+  if (zoneType === "office") return state.demand.office;
+  if (zoneType.endsWith("residential")) return state.demand.residential;
+  if (zoneType.endsWith("commercial")) return state.demand.commercial;
+  return state.demand.industrial;
 }

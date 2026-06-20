@@ -18,6 +18,9 @@ describe("city rating", () => {
       waterDemand: 100,
       healthCoverage: 100,
       educationCoverage: 100,
+      healthQuality: 0,
+      educationQuality: 0,
+      workforceQuality: 0,
     };
     state.population.total = 100;
     state.population.growthRate = 10;

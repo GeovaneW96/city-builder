@@ -1,5 +1,9 @@
 # Map, Grid, and Terrain
 
+## Terrain state
+
+Tiles store elevation and water state. Elevation edits are simulation commands with a per-level cost; sea-level tiles are not buildable.
+
 ## Purpose
 
 This document defines the world model.

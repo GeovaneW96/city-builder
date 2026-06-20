@@ -1,5 +1,9 @@
 # Buildings and Zones
 
+## Density and landmarks
+
+Medium/high density and office zones use population, land-value, service, and workforce gates. Hotels and landmarks are manual placements; each landmark definition is unique per city.
+
 ## Purpose
 
 This document defines the initial building and zoning model.

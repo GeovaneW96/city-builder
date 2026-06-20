@@ -1,10 +1,23 @@
 export type TerrainType = "grass" | "water" | "blocked";
-export type ZoneType = "residential" | "commercial" | "industrial";
+export type ZoneType =
+  | "residential"
+  | "commercial"
+  | "industrial"
+  | "medium_residential"
+  | "medium_commercial"
+  | "medium_industrial"
+  | "high_residential"
+  | "high_commercial"
+  | "office";
 
 export interface Tile {
   x: number;
   y: number;
   terrain: TerrainType;
+  elevation: number;
+  resourceType: "ore" | "oil" | "fertile_soil" | null;
+  richness: number;
+  depleted: boolean;
   roadId: string | null;
   zone: ZoneType | null;
   buildingId: string | null;
@@ -15,7 +28,7 @@ export interface Tile {
 
 export interface Road {
   id: string;
-  type: "dirt" | "paved";
+  type: "dirt" | "paved" | "local" | "collector" | "arterial";
   position: [number, number];
   connections: {
     north: boolean;
@@ -58,13 +71,19 @@ export interface BuildingDefinition {
     powerCapacity?: number;
     waterCapacity?: number;
     healthRadius?: number;
+    healthCapacity?: number;
+    healthTier?: 1 | 2 | 3;
     educationRadius?: number;
+    educationCapacity?: number;
+    educationTier?: 1 | 2 | 3;
     policeRadius?: number;
     fireRadius?: number;
     garbageCollectionRadius?: number;
     garbageCapacity?: number;
     happiness?: number;
     pollution?: number;
+    office?: boolean;
+    attractiveness?: number;
   };
 }
 
@@ -97,6 +116,40 @@ export interface EconomyState {
   monthsBelowZero: number;
   loans: Loan[];
   lastLoanTick: number;
+  tourismIncome: number;
+}
+
+export interface TourismState {
+  income: number;
+  attractiveness: {
+    score: number;
+    breakdown: {
+      parks: number;
+      landmarks: number;
+      serviceCoverage: number;
+      lowPollution: number;
+      beaches: number;
+    };
+  };
+}
+
+export type SpecializationId =
+  | "industrial_hub"
+  | "commercial_hub"
+  | "tourist_destination"
+  | "education_center"
+  | "green_city";
+export interface SpecializationState {
+  active: SpecializationId | null;
+  lastSwitchTick: number;
+}
+
+export type CityEventType = "economic_boom" | "economic_downturn" | "epidemic";
+export interface CityEvent {
+  id: string;
+  type: CityEventType;
+  startTick: number;
+  durationTicks: number;
 }
 
 export type LoanType = "small" | "medium" | "large";
@@ -122,6 +175,14 @@ export interface DemandState {
   residential: number;
   commercial: number;
   industrial: number;
+  office: number;
+}
+
+export interface OfficeState {
+  unlocked: boolean;
+  totalCapacity: number;
+  filledJobs: number;
+  taxIncome: number;
 }
 
 export interface ServicesState {
@@ -131,6 +192,9 @@ export interface ServicesState {
   waterDemand: number;
   healthCoverage: number;
   educationCoverage: number;
+  healthQuality: number;
+  educationQuality: number;
+  workforceQuality: number;
 }
 
 export interface TrafficSegment {
@@ -140,6 +204,24 @@ export interface TrafficSegment {
   congestion: number;
 }
 
+export type TrafficAgentType = "commuter" | "customer" | "cargo";
+
+export interface TrafficAgent {
+  id: string;
+  type: TrafficAgentType;
+  originBuildingId: string;
+  destinationBuildingId: string;
+  startTick: number;
+  route: string[];
+  currentEdgeIndex: number;
+}
+
+export interface TrafficLight {
+  roadId: string;
+  tickPlaced: number;
+  phase: "green" | "yellow" | "red";
+}
+
 export interface TrafficState {
   cityCongestion: number;
   totalTrips: number;
@@ -147,6 +229,13 @@ export interface TrafficState {
   commercialMultiplier: number;
   industrialMultiplier: number;
   segments: TrafficSegment[];
+  agents: TrafficAgent[];
+  queuedAgents: TrafficAgent[];
+  intersections: string[];
+  trafficLights: TrafficLight[];
+  roadNetworkDirty: boolean;
+  nextAgentId: number;
+  lastAgentTick: number;
 }
 
 export interface GoodsState {
@@ -337,6 +426,10 @@ export interface CityState {
   economy: EconomyState;
   population: PopulationState;
   demand: DemandState;
+  office: OfficeState;
+  tourism: TourismState;
+  specialization: SpecializationState;
+  events: CityEvent[];
   services: ServicesState;
   traffic: TrafficState;
   goods: GoodsState;
@@ -355,8 +448,22 @@ export interface CityState {
 }
 
 export type GameCommand =
-  | { type: "PLACE_ROAD"; x: number; y: number; roadType: "dirt" | "paved" }
+  | {
+      type: "PLACE_ROAD";
+      x: number;
+      y: number;
+      roadType: "dirt" | "paved" | "local" | "collector" | "arterial";
+    }
   | { type: "REMOVE_ROAD"; x: number; y: number }
+  | {
+      type: "SET_ROAD_TIER";
+      x: number;
+      y: number;
+      roadType: "local" | "collector" | "arterial";
+    }
+  | { type: "PLACE_TRAFFIC_LIGHT"; x: number; y: number }
+  | { type: "SET_SPECIALIZATION"; specializationId: SpecializationId }
+  | { type: "CHANGE_ELEVATION"; x: number; y: number; delta: -1 | 1 }
   | { type: "PAINT_ZONE"; x: number; y: number; zoneType: ZoneType }
   | { type: "REMOVE_ZONE"; x: number; y: number }
   | {

@@ -1,11 +1,21 @@
 import { DEMAND_PARAMS, HAPPINESS_DEFAULTS } from "../../data/balance";
 import type { CityState, DemandState } from "../../shared/types";
 import type { CityMetrics } from "./metrics";
-import { getAvailableHousing, getAvailableJobs } from "./metrics";
+import { getAvailableHousing, getAvailableJobs, getDefinition } from "./metrics";
 import { getNightlifeDemandBonus } from "./districts";
 
 export function recomputeDemand(state: CityState, metrics: CityMetrics): void {
   state.demand = calculateDemand(state, metrics);
+  const totalCapacity = getOfficeCapacity(state);
+  const workforceRatio = Math.min(1, state.services.workforceQuality / 100);
+  state.office = {
+    unlocked: state.population.total >= 5000 && state.services.workforceQuality >= 40,
+    totalCapacity,
+    filledJobs: Math.round(totalCapacity * workforceRatio),
+    taxIncome: Math.round(
+      totalCapacity * workforceRatio * 10 * (state.economy.taxRates.commercial / 10),
+    ),
+  };
 }
 
 export function calculateDemand(state: CityState, metrics: CityMetrics): DemandState {
@@ -39,7 +49,22 @@ export function calculateDemand(state: CityState, metrics: CityMetrics): DemandS
         metrics.industrialJobs * DEMAND_PARAMS.INDUSTRIAL_CAP_WEIGHT -
         pollutionPenalty,
     ),
+    office: clampDemand(
+      20 + state.services.workforceQuality * 0.5 - getOfficeCapacity(state) * 0.3,
+    ),
   };
+}
+
+function getOfficeCapacity(state: CityState): number {
+  return state.buildings.reduce((total, building) => {
+    const definition = getDefinition(building);
+    return (
+      total +
+      (building.status === "active" && definition?.effects.office
+        ? (definition.effects.jobs ?? 0)
+        : 0)
+    );
+  }, 0);
 }
 
 function clampDemand(value: number): number {

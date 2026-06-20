@@ -604,12 +604,12 @@ This document lists every feature across all four implementation phases. Under e
 
 | #     | Testable Logic                                                 | Status |
 | ----- | -------------------------------------------------------------- | ------ |
-| 3.1.1 | Agents spawn at residential buildings with commute destination |        |
-| 3.1.2 | Agents travel along road network using pathfinding (A\*)       |        |
-| 3.1.3 | Agent travel time affected by road type and congestion         |        |
-| 3.1.4 | Agent count limited to performance budget                      |        |
-| 3.1.5 | Agents despawn at destination                                  |        |
-| 3.1.6 | Pathfinding respects one-way roads if applicable               |        |
+| 3.1.1 | Agents spawn at residential buildings with commute destination | done   |
+| 3.1.2 | Agents travel along road network using pathfinding (A\*)       | done   |
+| 3.1.3 | Agent travel time affected by road type and congestion         | done   |
+| 3.1.4 | Agent count limited to performance budget                      | done   |
+| 3.1.5 | Agents despawn at destination                                  | done   |
+| 3.1.6 | Pathfinding respects one-way roads if applicable               | n/a    |
 
 ### 3.2 Road Hierarchy (Arterial, Collector, Local)
 
@@ -617,10 +617,10 @@ This document lists every feature across all four implementation phases. Under e
 
 | #     | Testable Logic                                                  | Status |
 | ----- | --------------------------------------------------------------- | ------ |
-| 3.2.1 | Road types: local, collector, arterial with distinct capacities |        |
-| 3.2.2 | Higher-tier roads have higher speed limits                      |        |
-| 3.2.3 | Pathfinding prefers higher-tier roads for longer trips          |        |
-| 3.2.4 | Road upgrade/downgrade costs defined per tier                   |        |
+| 3.2.1 | Road types: local, collector, arterial with distinct capacities | done   |
+| 3.2.2 | Higher-tier roads have higher speed limits                      | done   |
+| 3.2.3 | Pathfinding prefers higher-tier roads for longer trips          | done   |
+| 3.2.4 | Road upgrade/downgrade costs defined per tier                   | done   |
 
 ### 3.3 Traffic Lights and Intersections
 
@@ -628,9 +628,9 @@ This document lists every feature across all four implementation phases. Under e
 
 | #     | Testable Logic                                 | Status |
 | ----- | ---------------------------------------------- | ------ |
-| 3.3.1 | Intersections detected where roads cross       |        |
-| 3.3.2 | Traffic light reduces intersection congestion  |        |
-| 3.3.3 | Traffic light has construction and upkeep cost |        |
+| 3.3.1 | Intersections detected where roads cross       | done   |
+| 3.3.2 | Traffic light reduces intersection congestion  | done   |
+| 3.3.3 | Traffic light has construction and upkeep cost | done   |
 
 ### 3.4 Education Tiers
 

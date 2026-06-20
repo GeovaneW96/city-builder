@@ -3,6 +3,7 @@ import {
   MONTHLY_UPKEEP,
   TAX_INCOME_FORMULAS,
   TRANSPORT_BALANCE,
+  TRAFFIC_BALANCE,
   DISTRICT_BALANCE,
   calculateTaxIncome,
 } from "../../data/balance";
@@ -12,6 +13,8 @@ import type { CityMetrics } from "./metrics";
 import { processLoanPayments } from "./loans";
 import { getDistrictPolicyCost, getTaxBreakShare } from "./districts";
 import { getCommercialLandValueMultiplier } from "./land-productivity";
+import { getSpecializationMultiplier } from "./specialization";
+import { getEventTaxMultiplier } from "./events";
 
 export function runEconomy(state: CityState, metrics: CityMetrics): void {
   const income = calculateMonthlyIncome(state, metrics);
@@ -38,17 +41,27 @@ export function calculateMonthlyIncome(state: CityState, metrics: CityMetrics): 
   const commercialIncome = calculateTaxIncome(
     commercialBase *
       state.traffic.commercialMultiplier *
-      state.goods.commercialMultiplier,
+      state.goods.commercialMultiplier *
+      (1 + state.services.educationQuality * 0.002) *
+      getSpecializationMultiplier(state, "commercial"),
     state.economy.taxRates.commercial,
   );
   const industrialIncome = calculateTaxIncome(
-    industrialBase * state.traffic.industrialMultiplier,
+    industrialBase *
+      state.traffic.industrialMultiplier *
+      (1 + state.services.educationQuality * 0.001) *
+      getSpecializationMultiplier(state, "industrial"),
     state.economy.taxRates.industrial,
   );
-  return Math.round(
-    applyTaxBreak(state, "residential", residentialIncome) +
-      applyTaxBreak(state, "commercial", commercialIncome) +
-      applyTaxBreak(state, "industrial", industrialIncome),
+  return (
+    Math.round(
+      applyTaxBreak(state, "residential", residentialIncome) +
+        applyTaxBreak(state, "commercial", commercialIncome) +
+        applyTaxBreak(state, "industrial", industrialIncome),
+    ) *
+      getEventTaxMultiplier(state) +
+    state.office.taxIncome +
+    state.tourism.income * getSpecializationMultiplier(state, "tourism")
   );
 }
 
@@ -76,6 +89,7 @@ export function calculateMonthlyExpenses(state: CityState): number {
     calculateRoadUpkeep(state) +
     calculateBuildingUpkeep(state) +
     calculateTransportUpkeep(state) +
+    state.traffic.trafficLights.length * TRAFFIC_BALANCE.TRAFFIC_LIGHT_UPKEEP +
     getDistrictPolicyCost(state)
   );
 }
@@ -98,12 +112,19 @@ function calculateTransportUpkeep(state: CityState): number {
 
 function calculateRoadUpkeep(state: CityState): number {
   return state.roads.reduce((total, road) => {
-    const upkeep =
-      road.type === "dirt"
-        ? MONTHLY_UPKEEP.DIRT_ROAD_PER_TILE
-        : MONTHLY_UPKEEP.PAVED_ROAD_PER_TILE;
+    const upkeep = getRoadUpkeep(road.type);
     return total + upkeep;
   }, 0);
+}
+
+function getRoadUpkeep(type: CityState["roads"][number]["type"]): number {
+  if (type === "dirt") return MONTHLY_UPKEEP.DIRT_ROAD_PER_TILE;
+  if (type === "paved") return MONTHLY_UPKEEP.PAVED_ROAD_PER_TILE;
+  return type === "local"
+    ? TRAFFIC_BALANCE.LOCAL_ROAD_UPKEEP
+    : type === "collector"
+      ? TRAFFIC_BALANCE.COLLECTOR_ROAD_UPKEEP
+      : TRAFFIC_BALANCE.ARTERIAL_ROAD_UPKEEP;
 }
 
 function calculateBuildingUpkeep(state: CityState): number {

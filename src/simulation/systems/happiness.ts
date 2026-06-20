@@ -171,7 +171,7 @@ function calculateServicesBonus(state: CityState): number {
   const education =
     (state.services.educationCoverage / 100) *
     SERVICE_HAPPINESS.FULL_EDUCATION_COVERAGE_BONUS;
-  return Math.round(health + education);
+  return Math.round(health + education + state.services.healthQuality / 10);
 }
 
 function calculatePollutionPenalty(state: CityState): number {

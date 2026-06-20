@@ -20,6 +20,10 @@ export function createMap(): Tile[][] {
       x,
       y,
       terrain: "grass" as const,
+      elevation: 1,
+      resourceType: null,
+      richness: 0,
+      depleted: false,
       roadId: null,
       zone: null,
       buildingId: null,
@@ -55,10 +59,22 @@ export function cloneCityState(state: CityState): CityState {
       taxRates: { ...state.economy.taxRates },
       loans: (state.economy.loans ?? []).map((loan) => ({ ...loan })),
       lastLoanTick: state.economy.lastLoanTick ?? -LOAN_BALANCE.COOLDOWN_TICKS,
+      tourismIncome: state.economy.tourismIncome ?? 0,
     },
     population: { ...state.population },
-    demand: { ...state.demand },
-    services: { ...state.services },
+    demand: { ...state.demand, office: state.demand.office ?? 20 },
+    office: { ...state.office },
+    tourism: cloneTourism(state),
+    specialization: {
+      ...(state.specialization ?? { active: null, lastSwitchTick: -12 }),
+    },
+    events: state.events.map((event) => ({ ...event })),
+    services: {
+      ...state.services,
+      healthQuality: state.services.healthQuality ?? 0,
+      educationQuality: state.services.educationQuality ?? 0,
+      workforceQuality: state.services.workforceQuality ?? 0,
+    },
     traffic: cloneTrafficState(state.traffic),
     goods: cloneGoodsState(state.goods),
     extendedServices: cloneExtendedServicesState(state.extendedServices),
@@ -77,6 +93,31 @@ export function cloneCityState(state: CityState): CityState {
     },
     warnings: state.warnings.map((warning) => ({ ...warning })),
     time: { ...state.time },
+  };
+}
+
+function cloneTourism(state: CityState): CityState["tourism"] {
+  const tourism = state.tourism;
+  if (!tourism)
+    return {
+      income: 0,
+      attractiveness: {
+        score: 0,
+        breakdown: {
+          parks: 0,
+          landmarks: 0,
+          serviceCoverage: 0,
+          lowPollution: 0,
+          beaches: 0,
+        },
+      },
+    };
+  return {
+    ...tourism,
+    attractiveness: {
+      ...tourism.attractiveness,
+      breakdown: { ...tourism.attractiveness.breakdown },
+    },
   };
 }
 
@@ -225,9 +266,32 @@ function cloneTrafficState(traffic: TrafficState | undefined): TrafficState {
       commercialMultiplier: 1,
       industrialMultiplier: 1,
       segments: [],
+      agents: [],
+      queuedAgents: [],
+      intersections: [],
+      trafficLights: [],
+      roadNetworkDirty: true,
+      nextAgentId: 1,
+      lastAgentTick: -1,
     };
   }
-  return { ...traffic, segments: traffic.segments.map((segment) => ({ ...segment })) };
+  return {
+    ...traffic,
+    segments: traffic.segments.map((segment) => ({ ...segment })),
+    agents: (traffic.agents ?? []).map((agent) => ({
+      ...agent,
+      route: [...agent.route],
+    })),
+    queuedAgents: (traffic.queuedAgents ?? []).map((agent) => ({
+      ...agent,
+      route: [...agent.route],
+    })),
+    intersections: [...(traffic.intersections ?? [])],
+    trafficLights: (traffic.trafficLights ?? []).map((light) => ({ ...light })),
+    roadNetworkDirty: traffic.roadNetworkDirty ?? true,
+    nextAgentId: traffic.nextAgentId ?? 1,
+    lastAgentTick: traffic.lastAgentTick ?? -1,
+  };
 }
 
 function cloneGoodsState(goods: CityState["goods"] | undefined): CityState["goods"] {

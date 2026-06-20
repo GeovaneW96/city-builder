@@ -13,20 +13,7 @@ export function createInitialCityState(): CityState {
     map: createMap(),
     buildings: [],
     roads: [],
-    economy: {
-      money: STARTING_MONEY,
-      monthlyIncome: 0,
-      monthlyExpenses: 0,
-      taxRates: {
-        residential: DEFAULT_TAX_RATE,
-        commercial: DEFAULT_TAX_RATE,
-        industrial: DEFAULT_TAX_RATE,
-      },
-      isBankrupt: false,
-      monthsBelowZero: 0,
-      loans: [],
-      lastLoanTick: -LOAN_BALANCE.COOLDOWN_TICKS,
-    },
+    economy: createInitialEconomy(),
     population: {
       total: 0,
       residentialCapacity: 0,
@@ -34,7 +21,11 @@ export function createInitialCityState(): CityState {
       unemployedWorkers: 0,
       growthRate: 0,
     },
-    demand: { residential: 50, commercial: 30, industrial: 30 },
+    demand: { residential: 50, commercial: 30, industrial: 30, office: 20 },
+    office: { unlocked: false, totalCapacity: 0, filledJobs: 0, taxIncome: 0 },
+    tourism: createInitialTourism(),
+    specialization: { active: null, lastSwitchTick: -12 },
+    events: [],
     services: {
       powerCapacity: 0,
       powerDemand: 0,
@@ -42,6 +33,9 @@ export function createInitialCityState(): CityState {
       waterDemand: 0,
       healthCoverage: 0,
       educationCoverage: 0,
+      healthQuality: 0,
+      educationQuality: 0,
+      workforceQuality: 0,
     },
     traffic: createInitialTrafficState(),
     goods: createInitialGoodsState(),
@@ -65,6 +59,40 @@ export function createInitialCityState(): CityState {
   };
 }
 
+function createInitialEconomy() {
+  return {
+    money: STARTING_MONEY,
+    monthlyIncome: 0,
+    monthlyExpenses: 0,
+    taxRates: {
+      residential: DEFAULT_TAX_RATE,
+      commercial: DEFAULT_TAX_RATE,
+      industrial: DEFAULT_TAX_RATE,
+    },
+    isBankrupt: false,
+    monthsBelowZero: 0,
+    loans: [],
+    lastLoanTick: -LOAN_BALANCE.COOLDOWN_TICKS,
+    tourismIncome: 0,
+  };
+}
+
+function createInitialTourism() {
+  return {
+    income: 0,
+    attractiveness: {
+      score: 0,
+      breakdown: {
+        parks: 0,
+        landmarks: 0,
+        serviceCoverage: 0,
+        lowPollution: 0,
+        beaches: 0,
+      },
+    },
+  };
+}
+
 function createInitialTrafficState() {
   return {
     cityCongestion: 0,
@@ -73,6 +101,13 @@ function createInitialTrafficState() {
     commercialMultiplier: 1,
     industrialMultiplier: 1,
     segments: [],
+    agents: [],
+    queuedAgents: [],
+    intersections: [],
+    trafficLights: [],
+    roadNetworkDirty: true,
+    nextAgentId: 1,
+    lastAgentTick: -1,
   };
 }
 

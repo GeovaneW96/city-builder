@@ -1,5 +1,9 @@
 # Simulation Systems
 
+## Phase 3 extensions
+
+Simulation now includes deterministic agent traffic, tiered services, density and office demand, tourism, specialization, and time-bound city events. These systems remain data/state driven and run without rendering dependencies.
+
 ## Purpose
 
 This document defines how the city simulation should work.

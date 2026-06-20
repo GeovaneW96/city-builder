@@ -15,7 +15,43 @@ export function recomputeServices(state: CityState): void {
     waterDemand: sumDemand(activeBuildings, "water"),
     healthCoverage: calculateCoverage(state, activeBuildings, "healthRadius"),
     educationCoverage: calculateCoverage(state, activeBuildings, "educationRadius"),
+    healthQuality: calculateQuality(activeBuildings, "health"),
+    educationQuality: calculateQuality(activeBuildings, "education"),
+    workforceQuality: calculateQuality(activeBuildings, "education"),
   };
+}
+
+function calculateQuality(
+  buildings: BuildingInstance[],
+  service: "health" | "education",
+): number {
+  const capacityKey = service === "health" ? "healthCapacity" : "educationCapacity";
+  const tierKey = service === "health" ? "healthTier" : "educationTier";
+  const radiusKey = service === "health" ? "healthRadius" : "educationRadius";
+  const residents = buildings.filter(hasResidents);
+  const weightedCapacity = buildings.reduce((total, building) => {
+    const effects = getDefinition(building)?.effects;
+    return total + (effects?.[capacityKey] ?? 0) * (effects?.[tierKey] ?? 0);
+  }, 0);
+  if (residents.length === 0 || weightedCapacity === 0) return 0;
+  const served = residents.reduce((total, resident) => {
+    return total + getQualityCoverage(resident, buildings, radiusKey, tierKey);
+  }, 0);
+  return Math.min(100, Math.round((served / (residents.length * 3)) * 100));
+}
+
+function getQualityCoverage(
+  resident: BuildingInstance,
+  providers: BuildingInstance[],
+  radiusKey: "healthRadius" | "educationRadius",
+  tierKey: "healthTier" | "educationTier",
+): number {
+  return providers.reduce((total, provider) => {
+    const effects = getDefinition(provider)?.effects;
+    const covered =
+      getManhattanDistance(resident, provider) <= (effects?.[radiusKey] ?? 0);
+    return total + (covered ? (effects?.[tierKey] ?? 0) : 0);
+  }, 0);
 }
 
 function sumCapacity(
