@@ -265,9 +265,10 @@ Within a single simulation tick, the following runs **in order**:
 8. **Public Transport and Traffic** — update active bus coverage, then assign trips to roads and calculate congestion effects.
 9. **Goods** — calculate industrial supply, commercial demand, shortages, and commercial productivity.
 10. **Happiness** — rebuild road-bounded neighborhoods, calculate their local happiness, then calculate the population-weighted city score.
-11. **Warnings** — rebuild active warnings list from current state.
-12. **Progression** — check milestones, apply unlocks and rewards.
-13. **Events** — emit `GameEvent` objects for any changed state (rendering/UI consume these).
+11. **Rating and Achievements** — calculate city rating, apply its next-tick immigration modifier, and unlock eligible one-time rewards.
+12. **Warnings** — rebuild active warnings list from current state.
+13. **Progression** — check milestones, apply unlocks and rewards.
+14. **Events** — emit `GameEvent` objects for any changed state (rendering/UI consume these).
 
 ### Building Growth Details
 

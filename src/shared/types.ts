@@ -190,6 +190,33 @@ export interface PublicTransportState {
   happinessBonus: number;
 }
 
+export type CityGrade = "A" | "B" | "C" | "D" | "F";
+
+export interface CityRatingState {
+  score: number;
+  grade: CityGrade;
+  immigrationModifier: number;
+  components: {
+    economy: number;
+    happiness: number;
+    services: number;
+    environment: number;
+    growth: number;
+  };
+}
+
+export interface AchievementDefinition {
+  id: string;
+  name: string;
+  description: string;
+  reward: number;
+}
+
+export interface AchievementState {
+  id: string;
+  unlockedAt: number | null;
+}
+
 export interface HappinessState {
   value: number;
   components: {
@@ -265,6 +292,8 @@ export interface CityState {
   goods: GoodsState;
   extendedServices: ExtendedServicesState;
   publicTransport: PublicTransportState;
+  rating: CityRatingState;
+  achievements: AchievementState[];
   happiness: HappinessState;
   neighborhoods: Neighborhood[];
   neighborhoodMode: "auto" | "manual";

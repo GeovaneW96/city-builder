@@ -92,9 +92,14 @@ residentialDemand =
   50
   + availableJobs * 0.5
   + happinessModifier
+  + cityRatingImmigrationModifier * 20
   - availableHousing * 0.3
   - unemployment * 0.4
 ```
+
+The city rating system supplies `cityRatingImmigrationModifier`: A/B ratings add demand,
+C is neutral, and D/F ratings reduce it. Rating weights, thresholds, and modifiers are
+data-driven in `src/data/balance/rating.ts`.
 
 ### Commercial Demand
 

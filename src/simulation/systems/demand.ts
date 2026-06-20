@@ -19,7 +19,8 @@ export function calculateDemand(state: CityState, metrics: CityMetrics): DemandS
     residential: clampDemand(
       DEMAND_PARAMS.RESIDENTIAL_BASE +
         availableJobs * DEMAND_PARAMS.RESIDENTIAL_JOB_WEIGHT +
-        happinessModifier -
+        happinessModifier +
+        state.rating.immigrationModifier * 20 +
         availableHousing * Math.abs(DEMAND_PARAMS.RESIDENTIAL_HOUSING_WEIGHT) -
         metrics.unemployedWorkers *
           Math.abs(DEMAND_PARAMS.RESIDENTIAL_UNEMPLOYMENT_WEIGHT),

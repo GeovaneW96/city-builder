@@ -62,6 +62,8 @@ export function cloneCityState(state: CityState): CityState {
     goods: cloneGoodsState(state.goods),
     extendedServices: cloneExtendedServicesState(state.extendedServices),
     publicTransport: clonePublicTransportState(state.publicTransport),
+    rating: cloneRating(state.rating),
+    achievements: (state.achievements ?? []).map((achievement) => ({ ...achievement })),
     happiness: {
       value: state.happiness.value,
       components: { ...state.happiness.components },
@@ -235,4 +237,16 @@ function clonePublicTransportState(
     })),
     coveredBuildingIds: [...publicTransport.coveredBuildingIds],
   };
+}
+
+function cloneRating(rating: CityState["rating"] | undefined): CityState["rating"] {
+  if (!rating) {
+    return {
+      score: 0,
+      grade: "F",
+      immigrationModifier: -0.2,
+      components: { economy: 0, happiness: 0, services: 0, environment: 0, growth: 0 },
+    };
+  }
+  return { ...rating, components: { ...rating.components } };
 }

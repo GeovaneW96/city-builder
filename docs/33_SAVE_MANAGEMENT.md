@@ -212,6 +212,15 @@ interface SaveManagementConfig {
 }
 ```
 
+## Current Implementation
+
+`SaveSlotManager` provides one dedicated autosave slot and five persisted manual slots over
+`localStorage`. Each write updates the separate metadata record and a compact slot index.
+The in-game inspector lets the player choose a slot, save, load, delete, export a JSON envelope,
+or import an envelope into the first available manual slot. Autosave writes only while simulation
+time is running and resets after a manual save. Import validates JSON, export version, city name,
+and save schema before it writes anything.
+
 ## Tests
 
 - [ ] Save to slot writes blob and metadata to localStorage

@@ -47,6 +47,8 @@ export function createInitialCityState(): CityState {
     goods: createInitialGoodsState(),
     extendedServices: createInitialExtendedServicesState(),
     publicTransport: createInitialPublicTransportState(),
+    rating: createInitialRatingState(),
+    achievements: [],
     happiness: createInitialHappinessState(),
     neighborhoods: [],
     neighborhoodMode: "auto",
@@ -124,5 +126,14 @@ function createInitialPublicTransportState() {
     ridership: 0,
     activeRouteCount: 0,
     happinessBonus: 0,
+  };
+}
+
+function createInitialRatingState() {
+  return {
+    score: 0,
+    grade: "F" as const,
+    immigrationModifier: -0.2,
+    components: { economy: 0, happiness: 0, services: 0, environment: 0, growth: 0 },
   };
 }

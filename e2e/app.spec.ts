@@ -57,7 +57,7 @@ test("a saved road persists through a reload and load", async ({ page }) => {
   await page.getByRole("button", { name: "Road", exact: true }).click();
   await canvas.click({ position: { x: 640, y: 360 } });
   await page.getByRole("button", { name: "Save", exact: true }).click();
-  await expect(page.getByText("Saved.")).toBeVisible();
+  await expect(page.getByText("Saved to manual_0.")).toBeVisible();
 
   await page.reload();
   await pauseSimulation(page);
@@ -86,6 +86,21 @@ test("sound and overlays can be toggled without conflicting states", async ({ pa
   await pollution.click();
   await expect(zoning).not.toHaveClass(/active/);
   await expect(pollution).toHaveClass(/active/);
+});
+
+test("the debug overlay displays performance metrics when toggled", async ({ page }) => {
+  await page.goto("/");
+  await pauseSimulation(page);
+  const debug = page.getByRole("button", { name: "Debug", exact: true });
+  const overlay = page.locator('[data-ui="debug"]');
+
+  await debug.click();
+
+  await expect(debug).toHaveClass(/active/);
+  await expect(overlay).toBeVisible();
+  await expect(overlay).toContainText("FPS");
+  await expect(overlay).toContainText("Draw calls");
+  await expect(overlay).toContainText("Tick");
 });
 
 async function pauseSimulation(page: Page): Promise<void> {

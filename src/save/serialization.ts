@@ -4,12 +4,16 @@ import { cloneCityState } from "../simulation/grid/map";
 export const SAVE_VERSION = 1;
 
 export interface SaveSlotMetadata {
+  id: string;
   name: string;
   cityName: string;
   population: number;
   money: number;
   happiness: number;
+  playTime: number;
+  date: string;
   saveVersion: number;
+  scenarioId: string;
 }
 
 export interface CitySaveData {
@@ -58,12 +62,17 @@ export function deserializeSave(serialized: string): CitySaveData {
 }
 
 function createSlotMetadata(state: CityState, cityName: string): SaveSlotMetadata {
+  const date = new Date().toISOString();
   return {
+    id: "manual_0",
     name: "Manual Save",
     cityName,
     population: state.population.total,
     money: state.economy.money,
     happiness: state.happiness.value,
+    playTime: state.time.tick,
+    date,
     saveVersion: SAVE_VERSION,
+    scenarioId: "first_settlement",
   };
 }

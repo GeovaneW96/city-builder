@@ -529,7 +529,7 @@ This document lists every feature across all four implementation phases. Under e
 
 | #      | Testable Logic                                                              | Status |
 | ------ | --------------------------------------------------------------------------- | ------ |
-| 2.12.1 | City rating computed from economy, happiness, services, environment, growth |        |
+| 2.12.1 | City rating computed from economy, happiness, services, environment, growth | done   |
 | 2.12.2 | Rating displayed as letter grade (A–F)                                      |        |
 | 2.12.3 | Rating affects citizen immigration rate                                     |        |
 | 2.12.4 | Rating breakdown shows strengths/weaknesses                                 |        |
@@ -551,10 +551,10 @@ This document lists every feature across all four implementation phases. Under e
 
 | #      | Testable Logic                                 | Status |
 | ------ | ---------------------------------------------- | ------ |
-| 2.14.1 | Export produces downloadable JSON file         |        |
-| 2.14.2 | Import accepts valid JSON file and loads state |        |
-| 2.14.3 | Import rejects invalid/malformed save file     |        |
-| 2.14.4 | Import saves to a new save slot                |        |
+| 2.14.1 | Export produces downloadable JSON file         | done   |
+| 2.14.2 | Import accepts valid JSON file and loads state | done   |
+| 2.14.3 | Import rejects invalid/malformed save file     | done   |
+| 2.14.4 | Import saves to a new save slot                | done   |
 
 ### 2.15 Multiple Save Slots
 
@@ -562,12 +562,12 @@ This document lists every feature across all four implementation phases. Under e
 
 | #      | Testable Logic                                     | Status |
 | ------ | -------------------------------------------------- | ------ |
-| 2.15.1 | Save slot selected before save operation           |        |
-| 2.15.2 | Save slot stores metadata (name, date, population) |        |
-| 2.15.3 | Save slot loads correct state                      |        |
-| 2.15.4 | Save slot deletion works                           |        |
-| 2.15.5 | Save slot list survives page reload                |        |
-| 2.15.6 | Autosave saves to dedicated autosave slot          |        |
+| 2.15.1 | Save slot selected before save operation           | done   |
+| 2.15.2 | Save slot stores metadata (name, date, population) | done   |
+| 2.15.3 | Save slot loads correct state                      | done   |
+| 2.15.4 | Save slot deletion works                           | done   |
+| 2.15.5 | Save slot list survives page reload                | done   |
+| 2.15.6 | Autosave saves to dedicated autosave slot          | done   |
 
 ### 2.16 Debug Tools
 
@@ -575,10 +575,10 @@ This document lists every feature across all four implementation phases. Under e
 
 | #      | Testable Logic                         | Status |
 | ------ | -------------------------------------- | ------ |
-| 2.16.1 | FPS counter displayed in debug overlay |        |
-| 2.16.2 | Draw call count displayed              |        |
-| 2.16.3 | Simulation tick time displayed         |        |
-| 2.16.4 | Debug overlay toggleable               |        |
+| 2.16.1 | FPS counter displayed in debug overlay | done   |
+| 2.16.2 | Draw call count displayed              | done   |
+| 2.16.3 | Simulation tick time displayed         | done   |
+| 2.16.4 | Debug overlay toggleable               | done   |
 
 ### 2.17 E2E Tests with Playwright
 

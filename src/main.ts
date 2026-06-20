@@ -14,7 +14,14 @@ import {
   updateSelectionHighlight,
 } from "./rendering/three/grid";
 import { createScene, renderFrame } from "./rendering/three/scene";
-import { createSaveData, deserializeSave, serializeSave } from "./save/serialization";
+import {
+  AUTOSAVE_INTERVAL_MS,
+  AUTOSAVE_SLOT_ID,
+  SAVE_SLOT_IDS,
+  SaveSlotManager,
+  getSlotLabel,
+  type SaveSlotId,
+} from "./save/slots";
 import {
   getFootprint,
   getTile,
@@ -34,7 +41,6 @@ import type {
 import { createAudioFeedback } from "./ui/audio";
 import { useUIStore } from "./ui/store";
 
-const SAVE_KEY = "cities:first_settlement:manual";
 const TICK_INTERVALS: Record<1 | 2 | 3, number> = { 1: 250, 2: 83, 3: 42 };
 
 const app = document.getElementById("app");
@@ -48,9 +54,29 @@ const ui = createInterface(app);
 const audioFeedback = createAudioFeedback(
   () => useUIStore.getState().settings.soundEnabled,
 );
+const saveSlots = new SaveSlotManager(localStorage);
 let isDragging = false;
 let placedDuringDrag = new Set<string>();
 let lastTickAt = performance.now();
+let lastAutosaveAt = performance.now();
+let selectedSaveSlot: SaveSlotId = "manual_0";
+let debugVisible = false;
+let frameCount = 0;
+let framesPerSecond = 0;
+let frameWindowStartedAt = performance.now();
+let lastSimulationTickMs = 0;
+const GLOBAL_ACTIONS: Record<string, (target: HTMLElement) => void> = {
+  overlay: (target) => setOverlay(target.dataset.overlay),
+  speed: (target) => setSpeed(Number(target.dataset.speed) as 0 | 1 | 2 | 3),
+  sound: () => toggleSound(),
+  loan: (target) => takeLoan(target.dataset.loan),
+  save: () => saveGame(),
+  load: () => loadGame(),
+  "delete-save": () => deleteSave(),
+  "export-save": () => exportSave(),
+  "import-save": () => ui.importFile.click(),
+  debug: () => toggleDebug(),
+};
 
 bindInterface();
 bindPointerInput();
@@ -61,6 +87,7 @@ useUIStore.subscribe(syncAll);
 requestAnimationFrame(animate);
 
 function animate(now: number): void {
+  updateFrameRate(now);
   runSimulationClock(now);
   renderFrame(scene);
   requestAnimationFrame(animate);
@@ -74,10 +101,25 @@ function runSimulationClock(now: number): void {
   }
   const interval = TICK_INTERVALS[speed];
   while (now - lastTickAt >= interval) {
+    const tickStartedAt = performance.now();
     const result = useSimulationStore.getState().tick();
+    lastSimulationTickMs = performance.now() - tickStartedAt;
     audioFeedback.playEvents(result.events);
     lastTickAt += interval;
   }
+  if (now - lastAutosaveAt >= AUTOSAVE_INTERVAL_MS) {
+    saveSlots.save(AUTOSAVE_SLOT_ID, useSimulationStore.getState().getSaveData());
+    lastAutosaveAt = now;
+  }
+}
+
+function updateFrameRate(now: number): void {
+  frameCount += 1;
+  const elapsed = now - frameWindowStartedAt;
+  if (elapsed < 1000) return;
+  framesPerSecond = Math.round((frameCount * 1000) / elapsed);
+  frameCount = 0;
+  frameWindowStartedAt = now;
 }
 
 function syncAll(): void {
@@ -292,6 +334,11 @@ function toggleSound(): void {
   useUIStore.getState().updateSettings({ soundEnabled: !settings.soundEnabled });
 }
 
+function toggleDebug(): void {
+  debugVisible = !debugVisible;
+  renderInterface(useSimulationStore.getState().state, useUIStore.getState());
+}
+
 function bindInterface(): void {
   ui.root.addEventListener("click", (event) => {
     const target = event.target;
@@ -302,6 +349,16 @@ function bindInterface(): void {
     const target = event.target;
     if (target instanceof HTMLInputElement && target.dataset.tax) {
       setTaxRate(target.dataset.tax, Number(target.value));
+    }
+  });
+  ui.root.addEventListener("change", (event) => {
+    const target = event.target;
+    if (target instanceof HTMLSelectElement && target.dataset.ui === "save-slot") {
+      setSaveSlot(target.value);
+    }
+    if (target instanceof HTMLInputElement && target.dataset.ui === "import-file") {
+      void importSaveFile(target.files?.[0]);
+      target.value = "";
     }
   });
 }
@@ -316,13 +373,10 @@ function handleToolbarClick(target: HTMLElement): void {
 }
 
 function handleGlobalAction(action: string | undefined, target: HTMLElement): boolean {
-  if (action === "overlay") setOverlay(target.dataset.overlay);
-  if (action === "speed") setSpeed(Number(target.dataset.speed) as 0 | 1 | 2 | 3);
-  if (action === "sound") toggleSound();
-  if (action === "loan") takeLoan(target.dataset.loan);
-  if (action === "save") saveGame();
-  if (action === "load") loadGame();
-  return ["overlay", "speed", "sound", "loan", "save", "load"].includes(action ?? "");
+  const handler = action ? GLOBAL_ACTIONS[action] : undefined;
+  if (!handler) return false;
+  handler(target);
+  return true;
 }
 
 function setZoneTool(zone: string | undefined): void {
@@ -359,25 +413,71 @@ function takeLoan(loanType: string | undefined): void {
 }
 
 function saveGame(): void {
-  const save = createSaveData(useSimulationStore.getState().getSaveData());
-  localStorage.setItem(SAVE_KEY, serializeSave(save));
-  ui.status.textContent = "Saved.";
+  saveSlots.save(selectedSaveSlot, useSimulationStore.getState().getSaveData());
+  lastAutosaveAt = performance.now();
+  ui.status.textContent = `Saved to ${selectedSaveSlot}.`;
 }
 
 function loadGame(): void {
-  const serialized = localStorage.getItem(SAVE_KEY);
-  if (!serialized) {
+  const save = saveSlots.load(selectedSaveSlot);
+  if (!save) {
     ui.status.textContent = "No save found.";
     return;
   }
-  useSimulationStore.getState().loadSave(deserializeSave(serialized).state);
+  useSimulationStore.getState().loadSave(save.state);
   ui.status.textContent = "Loaded.";
+}
+
+function deleteSave(): void {
+  const deleted = saveSlots.delete(selectedSaveSlot);
+  ui.status.textContent = deleted ? "Save deleted." : "Save slot is already empty.";
+}
+
+function exportSave(): void {
+  try {
+    const contents = saveSlots.export(selectedSaveSlot);
+    downloadSave(contents, selectedSaveSlot);
+    ui.status.textContent = "Save exported.";
+  } catch (error) {
+    ui.status.textContent = getErrorMessage(error);
+  }
+}
+
+async function importSaveFile(file: File | undefined): Promise<void> {
+  if (!file) return;
+  try {
+    const destination = saveSlots.firstAvailableManualSlot();
+    const save = saveSlots.import(destination, await file.text());
+    selectedSaveSlot = destination;
+    useSimulationStore.getState().loadSave(save.state);
+    ui.status.textContent = `Imported into ${destination}.`;
+  } catch (error) {
+    ui.status.textContent = getErrorMessage(error);
+  }
+}
+
+function setSaveSlot(value: string): void {
+  if (isSaveSlotId(value)) selectedSaveSlot = value;
+}
+
+function downloadSave(contents: string, slot: SaveSlotId): void {
+  const blob = new Blob([contents], { type: "application/json" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `first-settlement_${slot}.json`;
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
+
+function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : "Save operation failed.";
 }
 
 function renderInterface(state: CityState, uiState: UIState): void {
   ui.money.textContent = formatMoney(state.economy.money);
   ui.population.textContent = `${state.population.total} / ${FIRST_SETTLEMENT.winCondition.populationMin}`;
   ui.happiness.textContent = `${state.happiness.value}%`;
+  ui.rating.textContent = `${state.rating.grade} (${state.rating.score})`;
   ui.income.textContent = `${formatMoney(state.economy.monthlyIncome)} / ${formatMoney(state.economy.monthlyExpenses)}`;
   ui.date.textContent = `Y${state.time.year} M${state.time.month}`;
   ui.objective.textContent = getCurrentObjectiveLabel(state);
@@ -388,6 +488,10 @@ function renderInterface(state: CityState, uiState: UIState): void {
   ui.preview.textContent = renderPreview(uiState.placementPreview);
   ui.sound.textContent = `Sound: ${uiState.settings.soundEnabled ? "On" : "Off"}`;
   ui.sound.setAttribute("aria-pressed", String(uiState.settings.soundEnabled));
+  ui.debugToggle.setAttribute("aria-pressed", String(debugVisible));
+  ui.debug.hidden = !debugVisible;
+  ui.debug.textContent = `FPS ${framesPerSecond} · Draw calls ${scene.renderer.info.render.calls} · Tick ${lastSimulationTickMs.toFixed(2)} ms`;
+  updateSaveSlotControl();
   updateToolButtons(state, uiState);
   updateTaxControls(state);
 }
@@ -468,9 +572,19 @@ function updateTaxControls(state: CityState): void {
   });
 }
 
+function updateSaveSlotControl(): void {
+  const options = SAVE_SLOT_IDS.map((id) => {
+    const label = getSlotLabel(id, saveSlots.getMetadata(id));
+    return `<option value="${id}">${label}</option>`;
+  }).join("");
+  if (ui.saveSlot.innerHTML !== options) ui.saveSlot.innerHTML = options;
+  ui.saveSlot.value = selectedSaveSlot;
+}
+
 function isActiveButton(button: HTMLButtonElement, uiState: UIState): boolean {
   if (button.dataset.action === "road") return uiState.buildMode === "road";
   if (button.dataset.action === "demolish") return uiState.buildMode === "demolish";
+  if (button.dataset.action === "debug") return debugVisible;
   if (button.dataset.zone) return uiState.selectedZoneType === button.dataset.zone;
   if (button.dataset.building)
     return uiState.selectedBuildingId === button.dataset.building;
@@ -512,6 +626,7 @@ function createInterface(container: HTMLElement) {
     money: getElement(root, "money"),
     population: getElement(root, "population"),
     happiness: getElement(root, "happiness"),
+    rating: getElement(root, "rating"),
     income: getElement(root, "income"),
     date: getElement(root, "date"),
     objective: getElement(root, "objective"),
@@ -522,6 +637,10 @@ function createInterface(container: HTMLElement) {
     preview: getElement(root, "preview"),
     status: getElement(root, "status"),
     sound: getElement(root, "sound"),
+    debugToggle: getElement(root, "debug-toggle"),
+    debug: getElement(root, "debug"),
+    saveSlot: getElement<HTMLSelectElement>(root, "save-slot"),
+    importFile: getElement<HTMLInputElement>(root, "import-file"),
   };
 }
 
@@ -531,9 +650,11 @@ function getInterfaceMarkup(): string {
       <span>Money <strong data-ui="money"></strong></span>
       <span>Population <strong data-ui="population"></strong></span>
       <span>Happiness <strong data-ui="happiness"></strong></span>
+      <span>Rating <strong data-ui="rating"></strong></span>
       <span>Income / upkeep <strong data-ui="income"></strong></span>
       <span>Date <strong data-ui="date"></strong></span>
       <button data-action="sound" data-ui="sound" aria-pressed="true"></button>
+      <button data-action="debug" data-ui="debug-toggle" aria-pressed="false">Debug</button>
       <div class="speed">${speedButtons()}</div>
     </div>
     <aside class="panel left">
@@ -543,6 +664,7 @@ function getInterfaceMarkup(): string {
       <div class="taxes">${taxControls()}</div>
       <div data-ui="loans" class="loans"></div>
       <ol data-ui="warnings" class="warnings"></ol>
+      <p data-ui="debug" class="debug" hidden></p>
     </aside>
     <aside class="panel right">
       <h2>Inspector</h2>
@@ -550,8 +672,13 @@ function getInterfaceMarkup(): string {
       <p data-ui="preview"></p>
       <p data-ui="status"></p>
       <div class="save-row">
+        <select data-ui="save-slot" aria-label="Save slot"></select>
         <button data-action="save">Save</button>
         <button data-action="load">Load</button>
+        <button data-action="delete-save">Delete</button>
+        <button data-action="export-save">Export</button>
+        <button data-action="import-save">Import</button>
+        <input data-ui="import-file" type="file" accept="application/json,.json" hidden />
       </div>
     </aside>
     <nav class="toolbar">${toolbarButtons()}</nav>
@@ -617,10 +744,17 @@ function injectStyles(): void {
   document.head.appendChild(style);
 }
 
-function getElement(root: HTMLElement, key: string): HTMLElement {
-  const element = root.querySelector<HTMLElement>(`[data-ui="${key}"]`);
+function getElement<T extends HTMLElement = HTMLElement>(
+  root: HTMLElement,
+  key: string,
+): T {
+  const element = root.querySelector<T>(`[data-ui="${key}"]`);
   if (!element) throw new Error(`Missing UI element ${key}`);
   return element;
+}
+
+function isSaveSlotId(value: string): value is SaveSlotId {
+  return SAVE_SLOT_IDS.includes(value as SaveSlotId);
 }
 
 function getRoadCost(roadType: "dirt" | "paved"): number {

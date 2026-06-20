@@ -108,4 +108,12 @@ Public-transport save data includes stop positions, routes, covered-building ide
 ridership, and active-route derived values. It is cloned as plain JSON-safe arrays and rebuilt
 on each tick.
 
+City rating and achievement state are part of `CityState`. Rating stores its score, grade,
+immigration modifier, and component breakdown; achievements store each unlocked ID and tick so
+one-time rewards cannot repeat after loading a save.
+
+Save slots add storage-only metadata for the slot ID, display name, scenario ID, simulation
+play time, and save timestamp. The metadata is derived when a slot is written, rather than being
+used as an input to simulation state.
+
 Cloud saves are not in scope for the initial version.

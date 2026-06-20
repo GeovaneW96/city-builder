@@ -226,6 +226,14 @@ The achievement system runs as part of the simulation tick. After each tick:
 3. Apply any one-time rewards (e.g. money bonus).
 4. Update achievement state in CityState.
 
+## Current Implementation
+
+The Phase 2 implementation calculates an economy, happiness, services, environment, and growth
+breakdown every tick, assigns an A–F grade, and feeds its immigration modifier into residential
+demand on the following tick. The HUD shows the grade and score. Achievement definitions are
+data-driven and currently include population, happiness, and road-building milestones; unlocked
+IDs and reward ticks persist in `CityState` and rewards are idempotent.
+
 ## Tests
 
 ### City Rating Tests

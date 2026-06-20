@@ -63,6 +63,13 @@ Debug tools:
 - memory usage estimates;
 - slow system warnings.
 
+## Current Implementation
+
+The inspector includes a toggleable debug overlay. It reports an averaged frames-per-second
+sample, the current Three.js draw-call count, and the duration of the most recent simulation
+tick. These diagnostics read rendering and clock data only; they do not feed back into the city
+simulation.
+
 ## Initial Limits
 
 Initial limits:

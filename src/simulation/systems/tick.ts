@@ -17,6 +17,8 @@ import { recomputeTraffic } from "./traffic";
 import { recomputeGoods } from "./goods";
 import { recomputeExtendedServices } from "./extended-services";
 import { recomputePublicTransport } from "./public-transport";
+import { recomputeRating } from "./rating";
+import { updateAchievements } from "./achievements";
 
 export type TickResult = SimulationTickResult;
 
@@ -50,6 +52,8 @@ export function tickCity(current: CityState): TickResult {
   recomputeTraffic(state);
   recomputeGoods(state, finalMetrics);
   recomputeHappiness(state);
+  recomputeRating(state);
+  updateAchievements(state);
   events.push(...rebuildWarnings(state));
   events.push(...updateProgression(state));
   emitSummaryEvents(state, events);
