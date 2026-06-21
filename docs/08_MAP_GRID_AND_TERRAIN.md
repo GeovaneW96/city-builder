@@ -3,6 +3,7 @@
 ## Terrain state
 
 Tiles store elevation and water state. Elevation edits are simulation commands with a per-level cost; sea-level tiles are not buildable.
+Maps also store a selected biome on each tile, defaulting to temperate.
 
 ## Purpose
 

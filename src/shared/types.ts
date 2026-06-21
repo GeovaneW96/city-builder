@@ -1,4 +1,5 @@
 export type TerrainType = "grass" | "water" | "blocked";
+export type BiomeType = "temperate" | "desert" | "tropical" | "arctic" | "volcanic";
 export type ZoneType =
   | "residential"
   | "commercial"
@@ -14,6 +15,7 @@ export interface Tile {
   x: number;
   y: number;
   terrain: TerrainType;
+  biome: BiomeType;
   elevation: number;
   resourceType: "ore" | "oil" | "fertile_soil" | null;
   richness: number;

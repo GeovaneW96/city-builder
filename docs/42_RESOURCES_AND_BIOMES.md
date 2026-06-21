@@ -1,6 +1,7 @@
 # Resources and Biomes
 
 Current simulation support stores deposit richness/depletion and applies deterministic yearly depletion for active extraction sites.
+Map construction accepts a biome type and stores it on each tile for deterministic biome-aware generation and rendering.
 
 ## Purpose
 

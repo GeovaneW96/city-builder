@@ -1,4 +1,5 @@
 import type {
+  BiomeType,
   BuildingDefinition,
   BuildingInstance,
   CityState,
@@ -14,12 +15,13 @@ export interface FootprintCell {
   y: number;
 }
 
-export function createMap(): Tile[][] {
+export function createMap(biome: BiomeType = "temperate"): Tile[][] {
   return Array.from({ length: GRID_SIZE }, (_, y) =>
     Array.from({ length: GRID_SIZE }, (_, x) => ({
       x,
       y,
       terrain: "grass" as const,
+      biome,
       elevation: 1,
       resourceType: null,
       richness: 0,
