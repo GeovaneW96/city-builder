@@ -16,5 +16,7 @@ function deplete(tile: Tile): void {
 
 export function getResourceMultiplier(tile: Tile | undefined): number {
   if (!tile?.resourceType || tile.depleted) return 1;
-  return tile.resourceType === "oil" ? 1 + tile.richness / 100 : 1 + tile.richness / 200;
+  if (tile.resourceType === "oil") return 1 + tile.richness / 100;
+  if (tile.resourceType === "fertile_soil") return 1 + tile.richness / 150;
+  return 1 + tile.richness / 200;
 }

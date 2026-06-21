@@ -15,6 +15,8 @@ describe("resources", () => {
     expect(getResourceMultiplier(tile)).toBe(1.5);
     tile.resourceType = "oil";
     expect(getResourceMultiplier(tile)).toBe(2);
+    tile.resourceType = "fertile_soil";
+    expect(getResourceMultiplier(tile)).toBeCloseTo(1.667);
   });
 
   it("generates deterministic biome-specific deposits", () => {
@@ -25,7 +27,7 @@ describe("resources", () => {
     expect(tropical.some((tile) => tile.resourceType === "ore")).toBe(false);
   });
 
-  it("boosts industrial jobs on ore and oil deposits", () => {
+  it("boosts industrial jobs on ore, oil, and fertile soil deposits", () => {
     const state = createInitialCityState();
     state.buildings = [building("small_factory", 2, 2)];
     state.map[2]![2]!.resourceType = "ore";
@@ -33,6 +35,9 @@ describe("resources", () => {
     expect(calculateCityMetrics(state).industrialJobs).toBe(18);
     state.map[2]![2]!.resourceType = "oil";
     expect(calculateCityMetrics(state).industrialJobs).toBe(24);
+    state.map[2]![2]!.resourceType = "fertile_soil";
+    state.map[2]![2]!.richness = 75;
+    expect(calculateCityMetrics(state).industrialJobs).toBe(18);
   });
 });
 

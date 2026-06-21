@@ -771,7 +771,7 @@ This document lists every feature across all four implementation phases. Under e
 | 4.4.1 | Resource deposits spawned on map generation  |        |
 | 4.4.2 | Ore deposit boosts industrial output in area |        |
 | 4.4.3 | Oil deposit boosts industrial output         |        |
-| 4.4.4 | Fertile land boosts farming output           |        |
+| 4.4.4 | Fertile land boosts farming output           | done   |
 | 4.4.5 | Resources deplete over time                  |        |
 
 ### 4.5 Different Biomes

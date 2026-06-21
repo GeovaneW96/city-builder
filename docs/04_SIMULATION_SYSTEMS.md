@@ -11,7 +11,7 @@ City state cloning preserves premium entitlement metadata for saves and snapshot
 Active epidemic, fire, and flood events feed their temporary happiness effects through the normal happiness system. Fire events also double the fire spread rate. Flood events trigger when water demand exceeds capacity in a city with water tiles.
 Biome-specific resource deposits are seeded deterministically during map construction.
 Map-dependent systems derive bounds from the active map rather than a fixed grid constant.
-Industrial metrics include resource-deposit productivity when an active industrial building occupies an ore or oil tile.
+Industrial metrics include resource-deposit productivity when an active industrial building occupies an ore, oil, or fertile soil tile.
 Landmark festivals are processed as time-bound city events and apply their happiness modifier through the normal system.
 Extended fire service processing propagates unresolved fires to all adjacent unprotected buildings, with spread rate doubled during a fire event.
 Education Center specialization increases derived workforce quality from education coverage but reduces commercial and industrial income.
