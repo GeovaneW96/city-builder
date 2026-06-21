@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createInitialCityState } from "../state";
-import { getEventTaxMultiplier, updateEvents } from "./events";
+import { getEventHappinessModifier, getEventTaxMultiplier, updateEvents } from "./events";
 
 describe("city events", () => {
   it("triggers and resolves an epidemic from health coverage", () => {
@@ -8,6 +8,7 @@ describe("city events", () => {
     state.population.total = 100;
     updateEvents(state);
     expect(state.events[0]?.type).toBe("epidemic");
+    expect(getEventHappinessModifier(state)).toBe(-20);
     state.services.healthCoverage = 30;
     updateEvents(state);
     expect(state.events).toHaveLength(0);

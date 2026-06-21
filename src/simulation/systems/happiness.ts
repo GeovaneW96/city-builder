@@ -8,6 +8,7 @@ import { getBuildingById } from "../../data/buildings";
 import type { CityState, HappinessState, Neighborhood } from "../../shared/types";
 import { recomputeNeighborhoods } from "./neighborhoods";
 import { getBuildingPolicyHappiness } from "./districts";
+import { getEventHappinessModifier } from "./events";
 
 export function recomputeHappiness(state: CityState): void {
   const neighborhoods = recomputeNeighborhoods(state);
@@ -109,6 +110,7 @@ function calculateGlobalHappiness(state: CityState): HappinessState {
   const garbage = state.extendedServices.garbageHappinessPenalty;
   const transit = state.publicTransport.happinessBonus;
   const policies = calculatePolicyHappiness(state);
+  const events = getEventHappinessModifier(state);
   const value = clamp(
     HAPPINESS_DEFAULTS.BASE +
       tax +
@@ -122,7 +124,8 @@ function calculateGlobalHappiness(state: CityState): HappinessState {
       crime +
       garbage +
       transit +
-      policies,
+      policies +
+      events,
   );
 
   return {

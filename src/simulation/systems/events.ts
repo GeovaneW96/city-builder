@@ -32,3 +32,8 @@ export function getEventTaxMultiplier(state: CityState): number {
   if (state.events.some((event) => event.type === "economic_downturn")) return 0.7;
   return 1;
 }
+
+export function getEventHappinessModifier(state: CityState): number {
+  if (state.events.some((event) => event.type === "epidemic")) return -20;
+  return 0;
+}

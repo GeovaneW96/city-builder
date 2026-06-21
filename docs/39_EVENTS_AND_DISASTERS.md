@@ -12,6 +12,8 @@ Events are data-driven and emitted by the simulation tick pipeline. The event sy
 
 ### Event Lifecycle
 
+An active epidemic applies a -20 modifier through the standard happiness calculation until healthcare coverage resolves it.
+
 ```
 Tick N:  event triggered → state created → effects applied
 Tick N+1..N+duration: effects persist
