@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import { createInitialCityState } from "../state";
 import { createMap } from "../grid/map";
 import { getResourceMultiplier } from "./resources";
+import { calculateCityMetrics } from "./metrics";
+import type { BuildingInstance } from "../../shared/types";
 
 describe("resources", () => {
   it("stores resource richness and calculates deposit productivity", () => {
@@ -22,4 +24,30 @@ describe("resources", () => {
     expect(tropical.some((tile) => tile.resourceType === "fertile_soil")).toBe(true);
     expect(tropical.some((tile) => tile.resourceType === "ore")).toBe(false);
   });
+
+  it("boosts industrial jobs on ore and oil deposits", () => {
+    const state = createInitialCityState();
+    state.buildings = [building("small_factory", 2, 2)];
+    state.map[2]![2]!.resourceType = "ore";
+    state.map[2]![2]!.richness = 100;
+    expect(calculateCityMetrics(state).industrialJobs).toBe(18);
+    state.map[2]![2]!.resourceType = "oil";
+    expect(calculateCityMetrics(state).industrialJobs).toBe(24);
+  });
 });
+
+function building(definitionId: string, x: number, y: number): BuildingInstance {
+  return {
+    id: `${definitionId}:${x},${y}`,
+    definitionId,
+    position: [x, y],
+    rotation: 0,
+    status: "active",
+    warnings: [],
+    createdAtTick: 0,
+    lockedUntilTick: 0,
+    unresolvedWarningTicks: 0,
+    upgradeTier: 1,
+    lastUpgradeTick: 0,
+  };
+}

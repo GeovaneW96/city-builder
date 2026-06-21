@@ -11,6 +11,7 @@ City state cloning preserves premium entitlement metadata for saves and snapshot
 Active epidemic events feed their temporary happiness effect through the normal happiness system.
 Biome-specific resource deposits are seeded deterministically during map construction.
 Map-dependent systems derive bounds from the active map rather than a fixed grid constant.
+Industrial metrics include resource-deposit productivity when an active industrial building occupies an ore or oil tile.
 
 ## Purpose
 

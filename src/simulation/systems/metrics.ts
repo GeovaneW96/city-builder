@@ -6,6 +6,7 @@ import type {
   CityState,
 } from "../../shared/types";
 import { getIndustrialLandValueMultiplier } from "./land-productivity";
+import { getResourceMultiplier } from "./resources";
 
 export interface CityMetrics {
   activeBuildings: BuildingInstance[];
@@ -72,11 +73,15 @@ function sumEffect(
     const definition = getDefinition(building);
     if (!definition || definition.category !== category) return total;
     const value = definition.effects[effect] ?? 0;
-    const multiplier =
+    const landValueMultiplier =
       category === "industrial" && effect === "jobs"
         ? getIndustrialLandValueMultiplier(state, building)
         : 1;
-    return total + value * multiplier;
+    const resourceMultiplier =
+      category === "industrial" && effect === "jobs"
+        ? getResourceMultiplier(state.map[building.position[1]]?.[building.position[0]])
+        : 1;
+    return total + value * landValueMultiplier * resourceMultiplier;
   }, 0);
 }
 
