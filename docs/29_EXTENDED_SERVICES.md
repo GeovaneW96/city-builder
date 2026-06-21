@@ -1,5 +1,7 @@
 # Extended Services
 
+Unprotected fires now deterministically spread from a building that reaches the fire-risk threshold to one adjacent uncovered target before both are removed.
+
 ## Purpose
 
 This document defines police, fire, and garbage service systems. These services extend the base services system (power, water, health, education) with crime, fire risk, and waste management mechanics.

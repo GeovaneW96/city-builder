@@ -63,7 +63,24 @@ function updateFireRisk(
     if (target.fireRisk >= EXTENDED_SERVICE_BALANCE.FIRE_RISK_THRESHOLD)
       burned.add(target.id);
   });
+  spreadFire(targets, providers, burned);
   return burned;
+}
+
+function spreadFire(
+  targets: BuildingInstance[],
+  providers: BuildingInstance[],
+  burned: Set<string>,
+): void {
+  const source = targets.find((target) => burned.has(target.id));
+  if (!source) return;
+  const adjacent = targets.find(
+    (target) =>
+      !burned.has(target.id) &&
+      getDistance(source, target) === 1 &&
+      !isCovered(target, providers, "fireRadius"),
+  );
+  if (adjacent) burned.add(adjacent.id);
 }
 
 function collectGarbage(

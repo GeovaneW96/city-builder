@@ -30,6 +30,17 @@ describe("police and fire services", () => {
     expect(state.buildings).toHaveLength(0);
     expect(events.some((event) => event.type === "BUILDING_REMOVED")).toBe(true);
   });
+
+  it("spreads an unresolved fire to an adjacent uncovered building", () => {
+    const state = createInitialCityState();
+    const factory = addBuilding(state, "small_factory", 10, 10);
+    addBuilding(state, "small_house", 11, 10);
+    factory.fireRisk = 99;
+
+    recomputeExtendedServices(state);
+
+    expect(state.buildings).toHaveLength(0);
+  });
 });
 
 describe("garbage service", () => {
