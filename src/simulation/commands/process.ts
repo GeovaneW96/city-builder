@@ -26,7 +26,6 @@ import {
   getOrthogonalNeighbors,
   getTile,
   hasAdjacentRoad,
-  isInBounds,
   refreshAllRoadConnections,
 } from "../grid/map";
 import { advanceCommandObjectives } from "../systems/progression";
@@ -477,7 +476,7 @@ function validateDistrictCells(
   if (width < DISTRICT_BALANCE.MIN_WIDTH || height < DISTRICT_BALANCE.MIN_HEIGHT) {
     return "Districts must be at least 2 by 2 tiles";
   }
-  if (!cells.every((cell) => isInBounds(cell.x, cell.y)))
+  if (!cells.every((cell) => getTile(state, cell.x, cell.y)))
     return "District is out of bounds";
   return cells.some((cell) => getRequiredTile(state, cell.x, cell.y).districtId)
     ? "District overlaps an existing district"
@@ -598,7 +597,7 @@ function validateBuildingPlacement(
   if (!isBuildingUnlocked(state, definition)) return "Building is locked";
   if (state.economy.money < definition.cost) return "Insufficient money";
   const footprint = getFootprint(definition, x, y, rotation);
-  if (!footprint.every((cell) => isInBounds(cell.x, cell.y))) return "Out of bounds";
+  if (!footprint.every((cell) => getTile(state, cell.x, cell.y))) return "Out of bounds";
   if (
     !footprint.every((cell) => isBuildableTile(getRequiredTile(state, cell.x, cell.y)))
   ) {

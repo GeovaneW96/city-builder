@@ -15,9 +15,9 @@ export interface FootprintCell {
   y: number;
 }
 
-export function createMap(biome: BiomeType = "temperate"): Tile[][] {
-  return Array.from({ length: GRID_SIZE }, (_, y) =>
-    Array.from({ length: GRID_SIZE }, (_, x) => createTile(x, y, biome)),
+export function createMap(size = GRID_SIZE, biome: BiomeType = "temperate"): Tile[][] {
+  return Array.from({ length: size }, (_, y) =>
+    Array.from({ length: size }, (_, x) => createTile(x, y, biome)),
   );
 }
 
@@ -70,7 +70,7 @@ export function isInBounds(x: number, y: number): boolean {
 }
 
 export function getTile(state: CityState, x: number, y: number): Tile | null {
-  if (!isInBounds(x, y)) return null;
+  if (x < 0 || y < 0) return null;
   return state.map[y]?.[x] ?? null;
 }
 
@@ -249,7 +249,7 @@ export function getOrthogonalNeighbors(x: number, y: number): FootprintCell[] {
     { x: x + 1, y },
     { x, y: y + 1 },
     { x: x - 1, y },
-  ].filter((cell) => isInBounds(cell.x, cell.y));
+  ];
 }
 
 export function refreshAllRoadConnections(state: CityState): void {

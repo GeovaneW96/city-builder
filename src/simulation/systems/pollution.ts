@@ -1,7 +1,6 @@
 import { POLLUTION_BALANCE } from "../../data/balance";
 import { getBuildingById } from "../../data/buildings";
 import type { BuildingInstance, CityState } from "../../shared/types";
-import { GRID_SIZE } from "../constants";
 import { getGreenInitiativeMultiplier } from "./districts";
 
 interface PollutionSource {
@@ -33,12 +32,12 @@ function applyBuildingPollution(state: CityState, building: BuildingInstance): v
   const radius = POLLUTION_BALANCE.INDUSTRIAL_RADIUS;
   for (
     let y = Math.max(0, originY - radius);
-    y <= Math.min(GRID_SIZE - 1, originY + radius);
+    y <= Math.min(state.map.length - 1, originY + radius);
     y++
   ) {
     for (
       let x = Math.max(0, originX - radius);
-      x <= Math.min(GRID_SIZE - 1, originX + radius);
+      x <= Math.min((state.map[0]?.length ?? 0) - 1, originX + radius);
       x++
     ) {
       applyTilePollution(state, x, y, { x: originX, y: originY, amount: pollution });

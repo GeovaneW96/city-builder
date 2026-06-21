@@ -16,8 +16,8 @@ describe("resources", () => {
   });
 
   it("generates deterministic biome-specific deposits", () => {
-    const desert = createMap("desert").flat();
-    const tropical = createMap("tropical").flat();
+    const desert = createMap(64, "desert").flat();
+    const tropical = createMap(64, "tropical").flat();
     expect(desert.some((tile) => tile.resourceType === "oil")).toBe(true);
     expect(tropical.some((tile) => tile.resourceType === "fertile_soil")).toBe(true);
     expect(tropical.some((tile) => tile.resourceType === "ore")).toBe(false);

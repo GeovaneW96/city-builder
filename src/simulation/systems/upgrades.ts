@@ -17,7 +17,7 @@ import type {
   CityState,
   GameEvent,
 } from "../../shared/types";
-import { getBuildingFootprint, getFootprint, getTile, isInBounds } from "../grid/map";
+import { getBuildingFootprint, getFootprint, getTile } from "../grid/map";
 
 interface UpgradeRequirements {
   cooldown: number;
@@ -136,7 +136,6 @@ function hasAvailableFootprint(
 ): boolean {
   const [x, y] = building.position;
   return getFootprint(next, x, y, building.rotation).every((cell) => {
-    if (!isInBounds(cell.x, cell.y)) return false;
     const tile = getTile(state, cell.x, cell.y);
     return (
       tile?.terrain === "grass" &&

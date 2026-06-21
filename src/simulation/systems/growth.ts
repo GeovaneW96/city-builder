@@ -11,7 +11,6 @@ import type {
 import {
   BUILDING_CONSTRUCTION_TICKS,
   BUILDING_LOCK_TICKS,
-  GRID_SIZE,
   MAX_ZONE_GROWTH_PER_TICK,
   MIN_DEMAND_FOR_GROWTH,
 } from "../constants";
@@ -56,7 +55,7 @@ function growZoneType(state: CityState, zoneType: ZoneType): GameEvent[] {
 
   const events: GameEvent[] = [];
   let spawned = 0;
-  for (let y = 0; y < GRID_SIZE && spawned < MAX_ZONE_GROWTH_PER_TICK; y++) {
+  for (let y = 0; y < state.map.length && spawned < MAX_ZONE_GROWTH_PER_TICK; y++) {
     spawned += growZoneRow(state, y, zoneType, definition, events);
   }
   return events;
@@ -70,7 +69,11 @@ function growZoneRow(
   events: GameEvent[],
 ): number {
   let spawned = 0;
-  for (let x = 0; x < GRID_SIZE && spawned < MAX_ZONE_GROWTH_PER_TICK; x++) {
+  for (
+    let x = 0;
+    x < (state.map[y]?.length ?? 0) && spawned < MAX_ZONE_GROWTH_PER_TICK;
+    x++
+  ) {
     if (canGrowAt(state, x, y, zoneType, definition)) {
       spawnZoneBuilding(state, x, y, definition, events);
       spawned += 1;

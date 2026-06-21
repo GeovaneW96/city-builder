@@ -10,6 +10,7 @@ Map generation accepts a biome selector as simulation data.
 City state cloning preserves premium entitlement metadata for saves and snapshots.
 Active epidemic events feed their temporary happiness effect through the normal happiness system.
 Biome-specific resource deposits are seeded deterministically during map construction.
+Map-dependent systems derive bounds from the active map rather than a fixed grid constant.
 
 ## Purpose
 

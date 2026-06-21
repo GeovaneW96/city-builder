@@ -18,7 +18,9 @@ describe("terrain elevation", () => {
   });
 
   it("creates maps with a selected biome", () => {
-    expect(createMap("desert")[0]?.[0]?.biome).toBe("desert");
+    expect(createMap(64, "desert")[0]?.[0]?.biome).toBe("desert");
+    expect(createMap(128)).toHaveLength(128);
+    expect(createMap(256)[0]).toHaveLength(256);
   });
 
   it("turns lowered sea-level tiles into water and rejects invalid positions", () => {
