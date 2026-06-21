@@ -94,6 +94,7 @@ Requirements:
 ## Implementation
 
 Education Center applies its 1.5× education effectiveness to derived workforce quality, capped at 100.
+Industrial Hub increases pollution output by 50%; Green City halves pollution output and adds 10 happiness.
 
 Specialization effects are applied as multipliers to the relevant simulation systems.
 

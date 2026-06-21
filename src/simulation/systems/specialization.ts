@@ -42,3 +42,13 @@ export function getSpecializationMultiplier(
 export function getEducationSpecializationMultiplier(state: CityState): number {
   return state.specialization.active === "education_center" ? 1.5 : 1;
 }
+
+export function getPollutionSpecializationMultiplier(state: CityState): number {
+  if (state.specialization.active === "industrial_hub") return 1.5;
+  if (state.specialization.active === "green_city") return 0.5;
+  return 1;
+}
+
+export function getSpecializationHappinessModifier(state: CityState): number {
+  return state.specialization.active === "green_city" ? 10 : 0;
+}

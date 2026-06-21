@@ -15,6 +15,7 @@ Industrial metrics include resource-deposit productivity when an active industri
 Landmark festivals are processed as time-bound city events and apply their happiness modifier through the normal system.
 Extended fire service processing propagates unresolved fires to adjacent unprotected buildings.
 Education Center specialization increases derived workforce quality from education coverage.
+Industrial and Green City specialization effects feed pollution and happiness through their respective systems.
 
 ## Purpose
 

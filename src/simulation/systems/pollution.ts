@@ -2,6 +2,7 @@ import { POLLUTION_BALANCE } from "../../data/balance";
 import { getBuildingById } from "../../data/buildings";
 import type { BuildingInstance, CityState } from "../../shared/types";
 import { getGreenInitiativeMultiplier } from "./districts";
+import { getPollutionSpecializationMultiplier } from "./specialization";
 
 interface PollutionSource {
   x: number;
@@ -25,7 +26,9 @@ function resetTileEnvironment(state: CityState): void {
 function applyBuildingPollution(state: CityState, building: BuildingInstance): void {
   const definition = getBuildingById(building.definitionId);
   const pollution =
-    (definition?.effects.pollution ?? 0) * getGreenInitiativeMultiplier(state, building);
+    (definition?.effects.pollution ?? 0) *
+    getGreenInitiativeMultiplier(state, building) *
+    getPollutionSpecializationMultiplier(state);
   if (pollution <= 0) return;
 
   const [originX, originY] = building.position;

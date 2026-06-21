@@ -2,7 +2,11 @@ import { describe, expect, it } from "vitest";
 import { processCityCommand } from "../commands/process";
 import { createInitialCityState } from "../state";
 import { getSpecializationMultiplier } from "./specialization";
-import { getEducationSpecializationMultiplier } from "./specialization";
+import {
+  getEducationSpecializationMultiplier,
+  getPollutionSpecializationMultiplier,
+  getSpecializationHappinessModifier,
+} from "./specialization";
 
 describe("city specialization", () => {
   it("starts inactive and enforces industrial hub requirements", () => {
@@ -51,6 +55,15 @@ describe("city specialization", () => {
     const state = createInitialCityState();
     state.specialization.active = "education_center";
     expect(getEducationSpecializationMultiplier(state)).toBe(1.5);
+  });
+
+  it("applies industrial and green-city environmental tradeoffs", () => {
+    const state = createInitialCityState();
+    state.specialization.active = "industrial_hub";
+    expect(getPollutionSpecializationMultiplier(state)).toBe(1.5);
+    state.specialization.active = "green_city";
+    expect(getPollutionSpecializationMultiplier(state)).toBe(0.5);
+    expect(getSpecializationHappinessModifier(state)).toBe(10);
   });
 });
 
