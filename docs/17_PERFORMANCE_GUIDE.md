@@ -29,12 +29,13 @@ Initial targets:
 
 ## Rendering Guidelines
 
-- Use instanced meshes for repeated objects.
+- Use instanced meshes for repeated simple objects and reuse loaded GLTF geometry/materials for
+  generated models.
 - Batch static geometry when possible.
 - Avoid rendering every tile as a separate mesh.
 - Update only changed objects.
 - Use simple materials.
-- Avoid heavy post-processing initially.
+- Gate bloom and other post-processing behind quality settings.
 - Dispose geometries/materials/textures when removed.
 
 ## Simulation Guidelines
@@ -69,6 +70,11 @@ The inspector includes a toggleable debug overlay. It reports an averaged frames
 sample, the current Three.js draw-call count, and the duration of the most recent simulation
 tick. These diagnostics read rendering and clock data only; they do not feed back into the city
 simulation.
+
+The renderer exposes `low`, `medium`, `high`, and `ultra` profiles. They cap device pixel ratio,
+choose shadow-map resolution, enable bloom only at high or ultra, and reduce generated street,
+vehicle, and nature detail at lower settings. The generated GLB manager preloads each asset once
+and clones cached scenes, avoiding repeat fetches and source-geometry recreation.
 
 ## Initial Limits
 

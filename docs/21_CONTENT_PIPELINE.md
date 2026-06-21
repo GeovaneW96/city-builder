@@ -55,6 +55,21 @@ Early content can use placeholders:
 
 Final art should not block gameplay systems.
 
+## Generated City Asset Library
+
+The reusable final-art kit is generated locally with Blender rather than downloaded from an
+external asset library. Run the following command from the repository root:
+
+```bash
+blender --background --python tools/generate_city_assets.py
+```
+
+It writes tile-scale GLB files to `public/assets/generated/` and a generated `manifest.json`.
+Assets use a ground-centred root pivot, named PBR materials, emissive window or lighting
+materials where applicable, and shared repeated geometry for an instancing-friendly loading
+path. Do not edit generated GLB files by hand; change `tools/generate_city_assets.py` and
+rerun the generator instead.
+
 ## Content Quality Checklist
 
 Before adding content:

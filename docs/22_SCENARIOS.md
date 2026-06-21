@@ -8,6 +8,14 @@ Scenarios provide structured goals and replayability.
 
 Start with one scenario.
 
+## Novavista Showcase
+
+The default live scene is a paused, fully developed Novavista showcase. It is a deterministic
+simulation state with a coastal lake, a hierarchical arterial/collector/local grid, zoned neighbourhoods, active
+buildings, landmarks, and matching city metrics. It exists to present the intended city scale
+and visual language immediately; the original First Settlement state remains available through
+`createInitialCityState()` for tutorial and simulation tests.
+
 ## Scenario 1: First Settlement
 
 ### Goal
