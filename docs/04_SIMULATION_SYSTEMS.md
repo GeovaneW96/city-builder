@@ -9,6 +9,7 @@ Terrain placement validation enforces water, elevation, and slope constraints be
 Map generation accepts a biome selector as simulation data.
 City state cloning preserves premium entitlement metadata for saves and snapshots.
 Active epidemic events feed their temporary happiness effect through the normal happiness system.
+Biome-specific resource deposits are seeded deterministically during map construction.
 
 ## Purpose
 

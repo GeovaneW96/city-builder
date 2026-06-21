@@ -2,6 +2,7 @@
 
 Current simulation support stores deposit richness/depletion and applies deterministic yearly depletion for active extraction sites.
 Map construction accepts a biome type and stores it on each tile for deterministic biome-aware generation and rendering.
+Resource deposits are deterministically seeded at map creation using each biome's documented ore, oil, and fertile-soil distribution.
 
 ## Purpose
 

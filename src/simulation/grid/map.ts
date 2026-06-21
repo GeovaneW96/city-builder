@@ -17,23 +17,52 @@ export interface FootprintCell {
 
 export function createMap(biome: BiomeType = "temperate"): Tile[][] {
   return Array.from({ length: GRID_SIZE }, (_, y) =>
-    Array.from({ length: GRID_SIZE }, (_, x) => ({
-      x,
-      y,
-      terrain: "grass" as const,
-      biome,
-      elevation: 1,
-      resourceType: null,
-      richness: 0,
-      depleted: false,
-      roadId: null,
-      zone: null,
-      buildingId: null,
-      pollution: 0,
-      landValue: 50,
-      districtId: null,
-    })),
+    Array.from({ length: GRID_SIZE }, (_, x) => createTile(x, y, biome)),
   );
+}
+
+function createTile(x: number, y: number, biome: BiomeType): Tile {
+  const resourceType = getGeneratedResource(x, y, biome);
+  return {
+    x,
+    y,
+    terrain: "grass" as const,
+    biome,
+    elevation: 1,
+    resourceType,
+    richness: resourceType ? 50 + ((x * 17 + y * 31) % 51) : 0,
+    depleted: false,
+    roadId: null,
+    zone: null,
+    buildingId: null,
+    pollution: 0,
+    landValue: 50,
+    districtId: null,
+  };
+}
+
+function getGeneratedResource(
+  x: number,
+  y: number,
+  biome: BiomeType,
+): Tile["resourceType"] {
+  const value = (x * 17 + y * 31) % 100;
+  const thresholds = getResourceThresholds(biome);
+  if (value < thresholds.ore) return "ore";
+  if (value < thresholds.ore + thresholds.oil) return "oil";
+  if (value < thresholds.ore + thresholds.oil + thresholds.fertile) return "fertile_soil";
+  return null;
+}
+
+function getResourceThresholds(biome: BiomeType) {
+  const distributions = {
+    temperate: { ore: 3, oil: 1, fertile: 4 },
+    desert: { ore: 2, oil: 6, fertile: 0 },
+    tropical: { ore: 0, oil: 1, fertile: 8 },
+    arctic: { ore: 1, oil: 5, fertile: 0 },
+    volcanic: { ore: 8, oil: 0, fertile: 1 },
+  };
+  return distributions[biome];
 }
 
 export function isInBounds(x: number, y: number): boolean {

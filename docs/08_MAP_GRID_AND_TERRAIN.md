@@ -5,6 +5,7 @@
 Tiles store elevation and water state. Elevation edits are simulation commands with a per-level cost; sea-level tiles are not buildable.
 Maps also store a selected biome on each tile, defaulting to temperate.
 City state also retains entitlement metadata independently of terrain rendering.
+Biome selection deterministically influences initial resource deposits on the grid.
 
 ## Purpose
 
