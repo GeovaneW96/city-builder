@@ -7,6 +7,7 @@ Maps also store a selected biome on each tile, defaulting to temperate.
 City state also retains entitlement metadata independently of terrain rendering.
 Biome selection deterministically influences initial resource deposits on the grid.
 Simulation bounds are taken from the active map dimensions, enabling the planned 128×128 and 256×256 maps.
+Map performance tiers provide state-size and chunking guidance for consumers of the grid.
 
 ## Purpose
 

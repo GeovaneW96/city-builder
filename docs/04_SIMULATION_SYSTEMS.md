@@ -16,6 +16,7 @@ Landmark festivals are processed as time-bound city events and apply their happi
 Extended fire service processing propagates unresolved fires to adjacent unprotected buildings.
 Education Center specialization increases derived workforce quality from education coverage.
 Industrial and Green City specialization effects feed pollution and happiness through their respective systems.
+Map size tiers expose deterministic performance-budget data for simulation and rendering consumers.
 
 ## Purpose
 
