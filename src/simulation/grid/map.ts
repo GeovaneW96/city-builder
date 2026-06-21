@@ -47,6 +47,7 @@ export function getTile(state: CityState, x: number, y: number): Tile | null {
 
 export function cloneCityState(state: CityState): CityState {
   return {
+    premium: getPremium(state),
     map: cloneMap(state.map),
     buildings: state.buildings.map((building) => ({
       ...building,
@@ -96,6 +97,10 @@ export function cloneCityState(state: CityState): CityState {
     warnings: state.warnings.map((warning) => ({ ...warning })),
     time: { ...state.time },
   };
+}
+
+function getPremium(state: CityState): boolean {
+  return state.premium ?? false;
 }
 
 function cloneTourism(state: CityState): CityState["tourism"] {

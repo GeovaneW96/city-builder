@@ -10,6 +10,7 @@ import { createMap } from "./grid/map";
 
 export function createInitialCityState(): CityState {
   return {
+    premium: false,
     map: createMap(),
     buildings: [],
     roads: [],

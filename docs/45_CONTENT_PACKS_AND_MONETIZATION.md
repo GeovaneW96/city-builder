@@ -1,6 +1,7 @@
 # Content Packs and Monetization
 
 Current content-pack helpers validate pack identities and building-ID conflicts before merging optional content.
+The premium entitlement is persisted directly in city state and therefore round-trips through standard saves and snapshots.
 
 ## Purpose
 

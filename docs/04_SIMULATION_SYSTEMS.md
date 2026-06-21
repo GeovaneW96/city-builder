@@ -7,6 +7,7 @@ Simulation now includes deterministic agent traffic, tiered services, density an
 Scenario validation, events, resource depletion, and terrain editing are also simulation-side systems.
 Terrain placement validation enforces water, elevation, and slope constraints before state changes.
 Map generation accepts a biome selector as simulation data.
+City state cloning preserves premium entitlement metadata for saves and snapshots.
 
 ## Purpose
 

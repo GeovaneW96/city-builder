@@ -422,6 +422,7 @@ export interface TimeState {
 }
 
 export interface CityState {
+  premium: boolean;
   map: Tile[][];
   buildings: BuildingInstance[];
   roads: Road[];

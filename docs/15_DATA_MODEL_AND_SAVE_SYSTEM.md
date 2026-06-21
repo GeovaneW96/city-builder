@@ -1,6 +1,7 @@
 # Data Model and Save System
 
 Standalone save helpers also support city snapshots, local leaderboard records, and supporter-entitlement persistence.
+The `premium` city-state field is cloned and serialized with every standard save.
 
 ## Purpose
 
