@@ -8,13 +8,14 @@ import type {
 } from "../shared/types";
 import { processCityCommand } from "./commands/process";
 import { cloneCityState } from "./grid/map";
+import { createNovavistaShowcaseState } from "./scenarios/novavista";
 import { createInitialCityState } from "./state";
 import { tickCity } from "./systems/tick";
 
 export { createInitialCityState };
 
 export const useSimulationStore = create<SimulationStore>()((set, get) => ({
-  state: createInitialCityState(),
+  state: createNovavistaShowcaseState(),
 
   tick(): SimulationTickResult {
     const result = tickCity(get().state);

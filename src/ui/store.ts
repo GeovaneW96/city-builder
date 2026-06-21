@@ -31,7 +31,7 @@ export const useUIStore = create<UIStore>()((set) => ({
   placementPreview: null,
   activeOverlay: null,
   settings: {
-    graphicsQuality: "medium",
+    graphicsQuality: "high",
     soundEnabled: true,
     musicVolume: 0.7,
     sfxVolume: 1.0,
