@@ -8,7 +8,7 @@ Scenario validation, events, resource depletion, and terrain editing are also si
 Terrain placement validation enforces water, elevation, and slope constraints before state changes.
 Map generation accepts a biome selector as simulation data.
 City state cloning preserves premium entitlement metadata for saves and snapshots.
-Active epidemic events feed their temporary happiness effect through the normal happiness system.
+Active epidemic, fire, and flood events feed their temporary happiness effects through the normal happiness system. Fire events also double the fire spread rate. Flood events trigger when water demand exceeds capacity in a city with water tiles.
 Biome-specific resource deposits are seeded deterministically during map construction.
 Map-dependent systems derive bounds from the active map rather than a fixed grid constant.
 Industrial metrics include resource-deposit productivity when an active industrial building occupies an ore or oil tile.

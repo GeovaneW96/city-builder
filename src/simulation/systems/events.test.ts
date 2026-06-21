@@ -1,9 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { createInitialCityState } from "../state";
 import type { BuildingInstance } from "../../shared/types";
-import { getEventHappinessModifier, getEventTaxMultiplier, updateEvents } from "./events";
+import {
+  getEventFireSpreadMultiplier,
+  getEventHappinessModifier,
+  getEventTaxMultiplier,
+  updateEvents,
+} from "./events";
 
-describe("city events", () => {
+describe("core events", () => {
   it("triggers and resolves an epidemic from health coverage", () => {
     const state = createInitialCityState();
     state.population.total = 100;
@@ -41,6 +46,39 @@ describe("city events", () => {
     updateEvents(state);
     expect(state.events.find((event) => event.type === "festival")).toBeDefined();
     expect(getEventHappinessModifier(state)).toBe(10);
+  });
+});
+
+describe("disaster events", () => {
+  it("triggers and resolves a fire event with happiness penalty", () => {
+    const state = createInitialCityState();
+    state.population.total = 100;
+    state.services.healthCoverage = 100;
+    state.buildings = [building("small_factory")];
+    state.extendedServices.fireCoverage = 20;
+    updateEvents(state);
+    expect(state.events.some((event) => event.type === "fire")).toBe(true);
+    expect(getEventHappinessModifier(state)).toBe(-15);
+    expect(getEventFireSpreadMultiplier(state)).toBe(2);
+    state.extendedServices.fireCoverage = 40;
+    updateEvents(state);
+    expect(state.events.some((event) => event.type === "fire")).toBe(false);
+  });
+
+  it("triggers and resolves a flood event with happiness penalty", () => {
+    const state = createInitialCityState();
+    state.population.total = 200;
+    state.services.healthCoverage = 100;
+    state.map[0]![0]!.terrain = "water";
+    state.map[0]![0]!.elevation = 0;
+    state.services.waterCapacity = 50;
+    state.services.waterDemand = 100;
+    updateEvents(state);
+    expect(state.events.some((event) => event.type === "flood")).toBe(true);
+    expect(getEventHappinessModifier(state)).toBe(-10);
+    state.services.waterCapacity = 200;
+    updateEvents(state);
+    expect(state.events.some((event) => event.type === "flood")).toBe(false);
   });
 });
 

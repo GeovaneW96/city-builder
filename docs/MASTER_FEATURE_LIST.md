@@ -707,7 +707,7 @@ This document lists every feature across all four implementation phases. Under e
 
 | #      | Testable Logic                                           | Status |
 | ------ | -------------------------------------------------------- | ------ |
-| 3.10.1 | Event types: fire, flood, economic downturn, epidemic    |        |
+| 3.10.1 | Event types: fire, flood, economic downturn, epidemic    | done   |
 | 3.10.2 | Event triggered by game conditions or random chance      | done   |
 | 3.10.3 | Event has duration, effects, and resolution conditions   | done   |
 | 3.10.4 | Fire spreads to adjacent buildings without fire coverage |        |

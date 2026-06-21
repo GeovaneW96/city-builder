@@ -150,7 +150,9 @@ export type CityEventType =
   | "economic_boom"
   | "economic_downturn"
   | "epidemic"
-  | "festival";
+  | "festival"
+  | "fire"
+  | "flood";
 export interface CityEvent {
   id: string;
   type: CityEventType;

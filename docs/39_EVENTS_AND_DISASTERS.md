@@ -14,7 +14,8 @@ Events are data-driven and emitted by the simulation tick pipeline. The event sy
 
 An active epidemic applies a -20 modifier through the standard happiness calculation until healthcare coverage resolves it.
 Landmark placement starts or refreshes a three-tick festival, adding +10 happiness without stacking.
-The fire-risk simulation spreads an unresolved fire to one adjacent uncovered building.
+A fire event triggers when fire coverage drops below 30% with industrial buildings present, applying -15 happiness and doubling fire spread rate until coverage >= 40%.
+A flood event triggers when water demand exceeds capacity and water tiles exist, applying -10 happiness until capacity catches up.
 
 ```
 Tick N:  event triggered → state created → effects applied
@@ -48,19 +49,27 @@ type EventType = "fire" | "economic_boom" | "economic_downturn" | "epidemic" | "
 
 ### Fire
 
-| Property        | Value                                                 |
-| --------------- | ----------------------------------------------------- |
-| Trigger         | Random chance each tick when fire coverage < 30%      |
-| Target          | Random occupied building tile                         |
-| Spread          | Spreads to adjacent buildings each tick if unresolved |
-| Resolution      | Resolved when fire station covers the tile            |
-| Effect          | Destroys buildings (sets to empty tile)               |
-| Duration        | Until resolved by fire coverage or building destroyed |
-| Frequency check | Every tick: `chance = (30 - fireCoverage%) × 0.01`    |
+| Property   | Value                                                                      |
+| ---------- | -------------------------------------------------------------------------- |
+| Trigger    | Fire coverage < 30% and at least one industrial building present           |
+| Target     | City-wide event                                                            |
+| Effect     | -15 happiness, doubles fire spread rate (getEventFireSpreadMultiplier = 2) |
+| Resolution | Fire coverage >= 40%                                                       |
+| Duration   | 6 ticks, or until fire coverage reaches 40%                                |
 
-If fire coverage is at 10%, each tick has a `(30 - 10) × 0.01 = 0.2` (20%) chance of starting a new fire.
+The fire event amplifies existing fire-spread mechanics: while active, the fire spread multiplier doubles, causing fires to spread faster to adjacent unprotected buildings.
 
-Fire spreads to one adjacent building per unresolved tick. A destroyed building is removed from state and the tile becomes empty.
+### Flood
+
+| Property   | Value                                                                  |
+| ---------- | ---------------------------------------------------------------------- |
+| Trigger    | Water demand > water capacity, population > 100, and water tiles exist |
+| Target     | City-wide event                                                        |
+| Effect     | -10 happiness                                                          |
+| Resolution | Water capacity >= water demand                                         |
+| Duration   | 6 ticks, or until water capacity meets demand                          |
+
+The flood event represents water infrastructure strain when demand exceeds capacity in a city with water features (rivers, coastline). It resolves when sufficient water capacity is restored through additional water towers or reduced demand.
 
 ### Economic Boom
 
