@@ -1,0 +1,426 @@
+{
+  "generator": "tools/generate_city_assets.py",
+  "assetCount": 54,
+  "assets": [
+    {
+      "id": "residential_rowhouse_brick",
+      "category": "residential",
+      "path": "assets/generated/buildings/residential/residential_rowhouse_brick.glb",
+      "footprint": [
+        0.86,
+        0.82
+      ],
+      "height": 0.72
+    },
+    {
+      "id": "residential_rowhouse_stucco",
+      "category": "residential",
+      "path": "assets/generated/buildings/residential/residential_rowhouse_stucco.glb",
+      "footprint": [
+        0.92,
+        0.86
+      ],
+      "height": 0.82
+    },
+    {
+      "id": "residential_cottage_corner",
+      "category": "residential",
+      "path": "assets/generated/buildings/residential/residential_cottage_corner.glb",
+      "footprint": [
+        1.08,
+        0.95
+      ],
+      "height": 0.96
+    },
+    {
+      "id": "residential_duplex",
+      "category": "residential",
+      "path": "assets/generated/buildings/residential/residential_duplex.glb",
+      "footprint": [
+        1.16,
+        0.94
+      ],
+      "height": 0.98
+    },
+    {
+      "id": "residential_townhouse",
+      "category": "residential",
+      "path": "assets/generated/buildings/residential/residential_townhouse.glb",
+      "footprint": [
+        1.04,
+        0.9
+      ],
+      "height": 1.34
+    },
+    {
+      "id": "residential_walkup_3",
+      "category": "residential",
+      "path": "assets/generated/buildings/residential/residential_walkup_3.glb",
+      "footprint": [
+        1.18,
+        1.0
+      ],
+      "height": 1.95
+    },
+    {
+      "id": "residential_walkup_5",
+      "category": "residential",
+      "path": "assets/generated/buildings/residential/residential_walkup_5.glb",
+      "footprint": [
+        1.24,
+        1.03
+      ],
+      "height": 3.08
+    },
+    {
+      "id": "residential_apartment_balcony",
+      "category": "residential",
+      "path": "assets/generated/buildings/residential/residential_apartment_balcony.glb",
+      "footprint": [
+        1.3,
+        1.08
+      ],
+      "height": 3.68
+    },
+    {
+      "id": "residential_courtyard",
+      "category": "residential",
+      "path": "assets/generated/buildings/residential/residential_courtyard.glb",
+      "footprint": [
+        1.48,
+        1.26
+      ],
+      "height": 2.52
+    },
+    {
+      "id": "residential_tower_slim",
+      "category": "residential",
+      "path": "assets/generated/buildings/residential/residential_tower_slim.glb",
+      "footprint": [
+        1.0,
+        0.92
+      ],
+      "height": 5.25
+    },
+    {
+      "id": "commercial_corner_shop",
+      "category": "commercial",
+      "path": "assets/generated/buildings/commercial/commercial_corner_shop.glb",
+      "footprint": [
+        1.0,
+        0.9
+      ],
+      "height": 0.86
+    },
+    {
+      "id": "commercial_market",
+      "category": "commercial",
+      "path": "assets/generated/buildings/commercial/commercial_market.glb",
+      "footprint": [
+        1.36,
+        0.98
+      ],
+      "height": 1.02
+    },
+    {
+      "id": "commercial_cafe",
+      "category": "commercial",
+      "path": "assets/generated/buildings/commercial/commercial_cafe.glb",
+      "footprint": [
+        0.96,
+        0.88
+      ],
+      "height": 0.78
+    },
+    {
+      "id": "commercial_office_lowrise",
+      "category": "commercial",
+      "path": "assets/generated/buildings/commercial/commercial_office_lowrise.glb",
+      "footprint": [
+        1.38,
+        1.02
+      ],
+      "height": 2.18
+    },
+    {
+      "id": "commercial_office_midrise",
+      "category": "commercial",
+      "path": "assets/generated/buildings/commercial/commercial_office_midrise.glb",
+      "footprint": [
+        1.28,
+        1.1
+      ],
+      "height": 3.48
+    },
+    {
+      "id": "commercial_glass_tower",
+      "category": "commercial",
+      "path": "assets/generated/buildings/commercial/commercial_glass_tower.glb",
+      "footprint": [
+        1.02,
+        1.0
+      ],
+      "height": 5.6
+    },
+    {
+      "id": "commercial_stepped_tower",
+      "category": "commercial",
+      "path": "assets/generated/buildings/commercial/commercial_stepped_tower.glb",
+      "footprint": [
+        1.22,
+        1.07
+      ],
+      "height": 4.42
+    },
+    {
+      "id": "commercial_hotel",
+      "category": "commercial",
+      "path": "assets/generated/buildings/commercial/commercial_hotel.glb",
+      "footprint": [
+        1.27,
+        1.08
+      ],
+      "height": 3.92
+    },
+    {
+      "id": "commercial_mall",
+      "category": "commercial",
+      "path": "assets/generated/buildings/commercial/commercial_mall.glb",
+      "footprint": [
+        1.58,
+        1.22
+      ],
+      "height": 1.48
+    },
+    {
+      "id": "commercial_office_slab",
+      "category": "commercial",
+      "path": "assets/generated/buildings/commercial/commercial_office_slab.glb",
+      "footprint": [
+        1.46,
+        0.96
+      ],
+      "height": 3.0
+    },
+    {
+      "id": "industrial_small_warehouse",
+      "category": "industrial",
+      "path": "assets/generated/buildings/industrial/industrial_small_warehouse.glb",
+      "footprint": [
+        1.42,
+        1.04
+      ],
+      "height": 1.15
+    },
+    {
+      "id": "industrial_long_warehouse",
+      "category": "industrial",
+      "path": "assets/generated/buildings/industrial/industrial_long_warehouse.glb",
+      "footprint": [
+        1.8,
+        1.12
+      ],
+      "height": 1.38
+    },
+    {
+      "id": "industrial_sawtooth_factory",
+      "category": "industrial",
+      "path": "assets/generated/buildings/industrial/industrial_sawtooth_factory.glb",
+      "footprint": [
+        1.58,
+        1.35
+      ],
+      "height": 1.72
+    },
+    {
+      "id": "industrial_logistics_depot",
+      "category": "industrial",
+      "path": "assets/generated/buildings/industrial/industrial_logistics_depot.glb",
+      "footprint": [
+        1.72,
+        1.2
+      ],
+      "height": 1.3
+    },
+    {
+      "id": "industrial_processing_plant",
+      "category": "industrial",
+      "path": "assets/generated/buildings/industrial/industrial_processing_plant.glb",
+      "footprint": [
+        1.48,
+        1.28
+      ],
+      "height": 2.24
+    },
+    {
+      "id": "civic_clinic",
+      "category": "civic",
+      "path": "assets/generated/buildings/civic/civic_clinic.glb",
+      "footprint": [
+        1.3,
+        1.04
+      ],
+      "height": 1.52
+    },
+    {
+      "id": "civic_fire_station",
+      "category": "civic",
+      "path": "assets/generated/buildings/civic/civic_fire_station.glb",
+      "footprint": [
+        1.52,
+        1.05
+      ],
+      "height": 1.28
+    },
+    {
+      "id": "civic_school",
+      "category": "civic",
+      "path": "assets/generated/buildings/civic/civic_school.glb",
+      "footprint": [
+        1.74,
+        1.18
+      ],
+      "height": 1.54
+    },
+    {
+      "id": "civic_library",
+      "category": "civic",
+      "path": "assets/generated/buildings/civic/civic_library.glb",
+      "footprint": [
+        1.24,
+        1.04
+      ],
+      "height": 1.86
+    },
+    {
+      "id": "civic_city_hall",
+      "category": "civic",
+      "path": "assets/generated/buildings/civic/civic_city_hall.glb",
+      "footprint": [
+        1.34,
+        1.12
+      ],
+      "height": 2.92
+    },
+    {
+      "id": "road_2_lane_straight",
+      "category": "roads",
+      "path": "assets/generated/roads/road_2_lane_straight.glb"
+    },
+    {
+      "id": "road_4_lane_straight",
+      "category": "roads",
+      "path": "assets/generated/roads/road_4_lane_straight.glb"
+    },
+    {
+      "id": "road_4_way_intersection",
+      "category": "roads",
+      "path": "assets/generated/roads/road_4_way_intersection.glb"
+    },
+    {
+      "id": "road_t_intersection",
+      "category": "roads",
+      "path": "assets/generated/roads/road_t_intersection.glb"
+    },
+    {
+      "id": "road_with_sidewalks",
+      "category": "roads",
+      "path": "assets/generated/roads/road_with_sidewalks.glb"
+    },
+    {
+      "id": "streetlight",
+      "category": "props",
+      "path": "assets/generated/props/streetlight.glb"
+    },
+    {
+      "id": "traffic_light",
+      "category": "props",
+      "path": "assets/generated/props/traffic_light.glb"
+    },
+    {
+      "id": "bench",
+      "category": "props",
+      "path": "assets/generated/props/bench.glb"
+    },
+    {
+      "id": "trash_bin",
+      "category": "props",
+      "path": "assets/generated/props/trash_bin.glb"
+    },
+    {
+      "id": "bus_stop",
+      "category": "props",
+      "path": "assets/generated/props/bus_stop.glb"
+    },
+    {
+      "id": "billboard",
+      "category": "props",
+      "path": "assets/generated/props/billboard.glb"
+    },
+    {
+      "id": "road_sign",
+      "category": "props",
+      "path": "assets/generated/props/road_sign.glb"
+    },
+    {
+      "id": "plaza_planter",
+      "category": "props",
+      "path": "assets/generated/props/plaza_planter.glb"
+    },
+    {
+      "id": "rooftop_hvac",
+      "category": "props",
+      "path": "assets/generated/props/rooftop_hvac.glb"
+    },
+    {
+      "id": "car_compact",
+      "category": "vehicles",
+      "path": "assets/generated/vehicles/car_compact.glb"
+    },
+    {
+      "id": "car_sedan",
+      "category": "vehicles",
+      "path": "assets/generated/vehicles/car_sedan.glb"
+    },
+    {
+      "id": "bus_city",
+      "category": "vehicles",
+      "path": "assets/generated/vehicles/bus_city.glb"
+    },
+    {
+      "id": "truck_delivery",
+      "category": "vehicles",
+      "path": "assets/generated/vehicles/truck_delivery.glb"
+    },
+    {
+      "id": "tree_oak",
+      "category": "nature",
+      "path": "assets/generated/nature/tree_oak.glb"
+    },
+    {
+      "id": "tree_maple",
+      "category": "nature",
+      "path": "assets/generated/nature/tree_maple.glb"
+    },
+    {
+      "id": "tree_conifer",
+      "category": "nature",
+      "path": "assets/generated/nature/tree_conifer.glb"
+    },
+    {
+      "id": "bush_cluster",
+      "category": "nature",
+      "path": "assets/generated/nature/bush_cluster.glb"
+    },
+    {
+      "id": "rock_cluster",
+      "category": "nature",
+      "path": "assets/generated/nature/rock_cluster.glb"
+    },
+    {
+      "id": "park_lamp",
+      "category": "nature",
+      "path": "assets/generated/nature/park_lamp.glb"
+    }
+  ]
+}
