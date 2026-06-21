@@ -8,7 +8,8 @@ export function updateEvents(state: CityState): void {
   );
   if (state.services.healthCoverage >= 30)
     state.events = state.events.filter((event) => event.type !== "epidemic");
-  if (state.events.length > 0) return;
+  refreshFestival(state);
+  if (state.events.some((event) => event.type !== "festival")) return;
   const type = getTriggeredEvent(state);
   if (type)
     state.events.push({
@@ -34,6 +35,23 @@ export function getEventTaxMultiplier(state: CityState): number {
 }
 
 export function getEventHappinessModifier(state: CityState): number {
-  if (state.events.some((event) => event.type === "epidemic")) return -20;
-  return 0;
+  const epidemic = state.events.some((event) => event.type === "epidemic") ? -20 : 0;
+  const festival = state.events.some((event) => event.type === "festival") ? 10 : 0;
+  return epidemic + festival;
+}
+
+function refreshFestival(state: CityState): void {
+  const landmarkPlaced = state.buildings.some(
+    (building) =>
+      building.createdAtTick === state.time.tick &&
+      building.definitionId.startsWith("landmark_"),
+  );
+  if (!landmarkPlaced) return;
+  state.events = state.events.filter((event) => event.type !== "festival");
+  state.events.push({
+    id: `festival:${state.time.tick}`,
+    type: "festival",
+    startTick: state.time.tick,
+    durationTicks: 3,
+  });
 }

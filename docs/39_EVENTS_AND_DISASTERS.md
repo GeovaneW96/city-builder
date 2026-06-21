@@ -13,6 +13,7 @@ Events are data-driven and emitted by the simulation tick pipeline. The event sy
 ### Event Lifecycle
 
 An active epidemic applies a -20 modifier through the standard happiness calculation until healthcare coverage resolves it.
+Landmark placement starts or refreshes a three-tick festival, adding +10 happiness without stacking.
 
 ```
 Tick N:  event triggered → state created → effects applied

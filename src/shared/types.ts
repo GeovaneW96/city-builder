@@ -146,7 +146,11 @@ export interface SpecializationState {
   lastSwitchTick: number;
 }
 
-export type CityEventType = "economic_boom" | "economic_downturn" | "epidemic";
+export type CityEventType =
+  | "economic_boom"
+  | "economic_downturn"
+  | "epidemic"
+  | "festival";
 export interface CityEvent {
   id: string;
   type: CityEventType;

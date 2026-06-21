@@ -12,6 +12,7 @@ Active epidemic events feed their temporary happiness effect through the normal 
 Biome-specific resource deposits are seeded deterministically during map construction.
 Map-dependent systems derive bounds from the active map rather than a fixed grid constant.
 Industrial metrics include resource-deposit productivity when an active industrial building occupies an ore or oil tile.
+Landmark festivals are processed as time-bound city events and apply their happiness modifier through the normal system.
 
 ## Purpose
 

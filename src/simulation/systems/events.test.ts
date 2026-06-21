@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createInitialCityState } from "../state";
+import type { BuildingInstance } from "../../shared/types";
 import { getEventHappinessModifier, getEventTaxMultiplier, updateEvents } from "./events";
 
 describe("city events", () => {
@@ -33,4 +34,28 @@ describe("city events", () => {
     updateEvents(downturn);
     expect(getEventTaxMultiplier(downturn)).toBe(0.7);
   });
+
+  it("starts and refreshes a landmark festival", () => {
+    const state = createInitialCityState();
+    state.buildings = [building("landmark_statue")];
+    updateEvents(state);
+    expect(state.events.find((event) => event.type === "festival")).toBeDefined();
+    expect(getEventHappinessModifier(state)).toBe(10);
+  });
 });
+
+function building(definitionId: string): BuildingInstance {
+  return {
+    id: definitionId,
+    definitionId,
+    position: [1, 1],
+    rotation: 0,
+    status: "active",
+    warnings: [],
+    createdAtTick: 0,
+    lockedUntilTick: 0,
+    unresolvedWarningTicks: 0,
+    upgradeTier: 1,
+    lastUpgradeTick: 0,
+  };
+}
