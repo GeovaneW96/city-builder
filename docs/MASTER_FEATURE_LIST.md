@@ -640,7 +640,7 @@ This document lists every feature across all four implementation phases. Under e
 | ----- | ---------------------------------------------------------- | ------ |
 | 3.4.1 | Education levels: elementary, high school, university      | done   |
 | 3.4.2 | Higher education improves workforce quality                | done   |
-| 3.4.3 | Education level affects building upgrade eligibility       |        |
+| 3.4.3 | Education level affects building upgrade eligibility       | done   |
 | 3.4.4 | Each education building has cost, upkeep, capacity, radius | done   |
 
 ### 3.5 Healthcare Tiers

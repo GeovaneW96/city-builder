@@ -20,14 +20,14 @@ Zone-grown buildings start at Tier 1 when first spawned. Upgrades happen automat
 
 A building upgrades from its current tier to the next when all of the following are met:
 
-| Condition            | Tier 1 → 2              | Tier 2 → 3              |
-| -------------------- | ----------------------- | ----------------------- |
-| Min land value       | 30                      | 60                      |
-| Min city happiness   | 50                      | 65                      |
-| Health coverage      | Within radius of clinic | Within radius of clinic |
-| Education coverage   | Not required            | Within radius of school |
-| Population milestone | 200                     | 500                     |
-| Cooldown (ticks)     | 12                      | 24                      |
+| Condition            | Tier 1 → 2              | Tier 2 → 3                                                  |
+| -------------------- | ----------------------- | ----------------------------------------------------------- |
+| Min land value       | 30                      | 60                                                          |
+| Min city happiness   | 50                      | 65                                                          |
+| Health coverage      | Within radius of clinic | Within radius of clinic                                     |
+| Education coverage   | Not required            | Within radius of tier-2+ school (high_school or university) |
+| Population milestone | 200                     | 500                                                         |
+| Cooldown (ticks)     | 12                      | 24                                                          |
 
 If the building has any active warnings (no road access, abandoned status, etc.), upgrades are blocked until warnings are resolved.
 
@@ -109,16 +109,18 @@ If footprint size changes (e.g., 1x1 → 2x1), the upgrade is **blocked** if adj
 Stored in `src/data/balance/upgrades.ts`:
 
 ```txt
-UPGRADE_COOLDOWN_T1_T2        = 12
-UPGRADE_COOLDOWN_T2_T3        = 24
-UPGRADE_LAND_VALUE_T1_T2      = 30
-UPGRADE_LAND_VALUE_T2_T3      = 60
-UPGRADE_HAPPINESS_T1_T2       = 50
-UPGRADE_HAPPINESS_T2_T3       = 65
-UPGRADE_POPULATION_T1_T2      = 200
-UPGRADE_POPULATION_T2_T3      = 500
-UPGRADE_REQUIRES_EDUCATION_T2 = false
-UPGRADE_REQUIRES_EDUCATION_T3 = true
+UPGRADE_COOLDOWN_T1_T2               = 12
+UPGRADE_COOLDOWN_T2_T3               = 24
+UPGRADE_LAND_VALUE_T1_T2             = 30
+UPGRADE_LAND_VALUE_T2_T3             = 60
+UPGRADE_HAPPINESS_T1_T2              = 50
+UPGRADE_HAPPINESS_T2_T3              = 65
+UPGRADE_POPULATION_T1_T2             = 200
+UPGRADE_POPULATION_T2_T3             = 500
+UPGRADE_REQUIRES_EDUCATION_T1_T2     = false
+UPGRADE_REQUIRES_EDUCATION_T2_T3     = true
+UPGRADE_REQUIRED_EDUCATION_TIER_T1_T2 = 0
+UPGRADE_REQUIRED_EDUCATION_TIER_T2_T3 = 2
 ```
 
 ## Integration Points

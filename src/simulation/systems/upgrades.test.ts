@@ -52,12 +52,38 @@ describe("upgrade restrictions", () => {
     updateBuildingUpgrades(state);
     building.status = "active";
     state.time.tick = 50;
-    removeBuilding(state, "school");
+    removeBuilding(state, "high_school");
 
     updateBuildingUpgrades(state);
 
     expect(building.definitionId).toBe("medium_house");
     expect(building.upgradeTier).toBe(2);
+  });
+
+  it("requires education tier 2 for t2-to-t3 upgrade, tier 1 is insufficient", () => {
+    const { state, building } = createEligibleState("small_house");
+    updateBuildingUpgrades(state);
+    building.status = "active";
+    state.time.tick = 50;
+    removeBuilding(state, "high_school");
+    addBuilding(state, "elementary_school", 10, 10);
+
+    updateBuildingUpgrades(state);
+
+    expect(building.definitionId).toBe("medium_house");
+    expect(building.upgradeTier).toBe(2);
+  });
+
+  it("allows t2-to-t3 upgrade when education tier 2 is present", () => {
+    const { state, building } = createEligibleState("small_house");
+    updateBuildingUpgrades(state);
+    building.status = "active";
+    state.time.tick = 50;
+
+    updateBuildingUpgrades(state);
+
+    expect(building.definitionId).toBe("high_apartment");
+    expect(building.upgradeTier).toBe(3);
   });
 
   it("blocks upgrades for warnings, cooldowns, and unavailable footprints", () => {
@@ -82,7 +108,7 @@ function createEligibleState(definitionId: string, x = 10, y = 10) {
   setLandValue(state, 70, x, y);
   const building = addBuilding(state, definitionId, x, y);
   addBuilding(state, "clinic", x, y);
-  addBuilding(state, "school", x, y);
+  addBuilding(state, "high_school", x, y);
   state.map[y]![x]!.buildingId = building.id;
   return { state, building };
 }

@@ -114,8 +114,8 @@ Building upgrades depend on:
 
 - land value;
 - happiness;
-- services;
-- education;
+- services (health coverage within radius);
+- education (tier-2+ school coverage within radius for t2→t3 upgrade);
 - density unlocks.
 
 ## Population System

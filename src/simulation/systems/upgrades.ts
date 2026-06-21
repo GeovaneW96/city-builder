@@ -9,6 +9,8 @@ import {
   UPGRADE_POPULATION_T2_T3,
   UPGRADE_REQUIRES_EDUCATION_T1_T2,
   UPGRADE_REQUIRES_EDUCATION_T2_T3,
+  UPGRADE_REQUIRED_EDUCATION_TIER_T1_T2,
+  UPGRADE_REQUIRED_EDUCATION_TIER_T2_T3,
 } from "../../data/balance";
 import { getBuildingById, getNextDensityBuilding } from "../../data/buildings";
 import type {
@@ -25,6 +27,7 @@ interface UpgradeRequirements {
   happiness: number;
   population: number;
   requiresEducation: boolean;
+  requiredEducationTier: number;
 }
 
 export function updateBuildingUpgrades(state: CityState): GameEvent[] {
@@ -68,6 +71,8 @@ function hasRequiredServices(
   requirements: UpgradeRequirements,
 ): boolean {
   if (!hasRequiredService(state, building, "healthRadius")) return false;
+  if (requirements.requiredEducationTier > 0)
+    return hasEducationTier(state, building, requirements.requiredEducationTier);
   return (
     !requirements.requiresEducation ||
     hasRequiredService(state, building, "educationRadius")
@@ -84,6 +89,7 @@ function getRequirements(
       happiness: UPGRADE_HAPPINESS_T1_T2,
       population: UPGRADE_POPULATION_T1_T2,
       requiresEducation: UPGRADE_REQUIRES_EDUCATION_T1_T2,
+      requiredEducationTier: UPGRADE_REQUIRED_EDUCATION_TIER_T1_T2,
     };
   }
   if (tier === 2) {
@@ -93,6 +99,7 @@ function getRequirements(
       happiness: UPGRADE_HAPPINESS_T2_T3,
       population: UPGRADE_POPULATION_T2_T3,
       requiresEducation: UPGRADE_REQUIRES_EDUCATION_T2_T3,
+      requiredEducationTier: UPGRADE_REQUIRED_EDUCATION_TIER_T2_T3,
     };
   }
   return null;
@@ -121,6 +128,21 @@ function isServiceProvider(
   if (provider.status !== "active") return false;
   const radius = getBuildingById(provider.definitionId)?.effects[effect] ?? 0;
   return radius > 0 && getManhattanDistance(provider, building) <= radius;
+}
+
+function hasEducationTier(
+  state: CityState,
+  building: BuildingInstance,
+  requiredTier: number,
+): boolean {
+  return state.buildings.some((provider) => {
+    if (provider.status !== "active") return false;
+    const definition = getBuildingById(provider.definitionId);
+    const radius = definition?.effects.educationRadius ?? 0;
+    if (radius <= 0) return false;
+    const tier = definition?.effects.educationTier ?? 0;
+    return tier >= requiredTier && getManhattanDistance(provider, building) <= radius;
+  });
 }
 
 function getManhattanDistance(a: BuildingInstance, b: BuildingInstance): number {

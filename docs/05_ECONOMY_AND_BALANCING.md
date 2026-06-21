@@ -90,7 +90,7 @@ Suggested initial model:
 
 ## Population and Jobs
 
-Building definitions (population capacity, jobs, costs, upkeep) are defined in `docs/07_BUILDINGS_AND_ZONES.md` and data files under `src/data/`. Density-tier upgrade thresholds and cooldowns are data-driven in `src/data/balance/upgrades.ts`.
+Building definitions (population capacity, jobs, costs, upkeep) are defined in `docs/07_BUILDINGS_AND_ZONES.md` and data files under `src/data/`. Density-tier upgrade thresholds, cooldowns, and education tier requirements are data-driven in `src/data/balance/upgrades.ts`.
 
 ## Demand Rules
 
