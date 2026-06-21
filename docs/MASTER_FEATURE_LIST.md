@@ -671,10 +671,10 @@ This document lists every feature across all four implementation phases. Under e
 
 | #     | Testable Logic                              | Status |
 | ----- | ------------------------------------------- | ------ |
-| 3.7.1 | Office zone type available at milestone     |        |
-| 3.7.2 | Office buildings provide skilled jobs       |        |
-| 3.7.3 | Office buildings require educated workforce |        |
-| 3.7.4 | Office buildings produce no pollution       |        |
+| 3.7.1 | Office zone type available at milestone     | done   |
+| 3.7.2 | Office buildings provide skilled jobs       | done   |
+| 3.7.3 | Office buildings require educated workforce | done   |
+| 3.7.4 | Office buildings produce no pollution       | done   |
 
 ### 3.8 Tourism and Landmarks
 
@@ -682,11 +682,11 @@ This document lists every feature across all four implementation phases. Under e
 
 | #     | Testable Logic                                     | Status |
 | ----- | -------------------------------------------------- | ------ |
-| 3.8.1 | Tourism demand calculated from city attractiveness |        |
-| 3.8.2 | Landmarks increase tourism attractiveness          |        |
-| 3.8.3 | Parks and services contribute to attractiveness    |        |
-| 3.8.4 | Tourism provides alternative income source         |        |
-| 3.8.5 | Landmarks have high cost and upkeep                |        |
+| 3.8.1 | Tourism demand calculated from city attractiveness | done   |
+| 3.8.2 | Landmarks increase tourism attractiveness          | done   |
+| 3.8.3 | Parks and services contribute to attractiveness    | done   |
+| 3.8.4 | Tourism provides alternative income source         | done   |
+| 3.8.5 | Landmarks have high cost and upkeep                | done   |
 
 ### 3.9 City Specialization Mechanics
 
@@ -694,10 +694,10 @@ This document lists every feature across all four implementation phases. Under e
 
 | #     | Testable Logic                                        | Status |
 | ----- | ----------------------------------------------------- | ------ |
-| 3.9.1 | Specialization path chosen via policy or milestone    |        |
-| 3.9.2 | Industrial specialization boosts industrial output    |        |
-| 3.9.3 | Commercial specialization boosts commercial income    |        |
-| 3.9.4 | Tourism specialization boosts tourism income          |        |
+| 3.9.1 | Specialization path chosen via policy or milestone    | done   |
+| 3.9.2 | Industrial specialization boosts industrial output    | done   |
+| 3.9.3 | Commercial specialization boosts commercial income    | done   |
+| 3.9.4 | Tourism specialization boosts tourism income          | done   |
 | 3.9.5 | Education specialization boosts education effects     |        |
 | 3.9.6 | Specialization has tradeoffs (neglects other sectors) |        |
 
@@ -708,10 +708,10 @@ This document lists every feature across all four implementation phases. Under e
 | #      | Testable Logic                                           | Status |
 | ------ | -------------------------------------------------------- | ------ |
 | 3.10.1 | Event types: fire, flood, economic downturn, epidemic    |        |
-| 3.10.2 | Event triggered by game conditions or random chance      |        |
-| 3.10.3 | Event has duration, effects, and resolution conditions   |        |
+| 3.10.2 | Event triggered by game conditions or random chance      | done   |
+| 3.10.3 | Event has duration, effects, and resolution conditions   | done   |
 | 3.10.4 | Fire spreads to adjacent buildings without fire coverage |        |
-| 3.10.5 | Economic downturn reduces tax income temporarily         |        |
+| 3.10.5 | Economic downturn reduces tax income temporarily         | done   |
 
 ### 3.11 Scenario Editor
 
