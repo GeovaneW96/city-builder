@@ -49,8 +49,9 @@ const TICK_INTERVALS: Record<1 | 2 | 3, number> = { 1: 250, 2: 83, 3: 42 };
 const app = document.getElementById("app");
 if (!app) throw new Error("No #app element found");
 
-const scene = createScene(app);
-const grid = createGrid(scene.scene);
+const mapSize = useSimulationStore.getState().state.map.length;
+const scene = createScene(app, mapSize);
+const grid = createGrid(scene.scene, mapSize);
 const cityLayers = createCityRenderLayers(scene.scene);
 const mouse = new Vector2();
 const ui = createInterface(app);
@@ -186,7 +187,7 @@ function pickGridPosition(event: PointerEvent): [number, number] | null {
   const rect = scene.renderer.domElement.getBoundingClientRect();
   mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
   mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-  return screenToGrid(mouse, scene.camera, grid.raycasterTarget);
+  return screenToGrid(mouse, scene.camera, grid.raycasterTarget, scene.gridSize);
 }
 
 function applyToolAt(position: [number, number]): void {

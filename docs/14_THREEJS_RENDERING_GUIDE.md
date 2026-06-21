@@ -40,6 +40,10 @@ Recommended camera:
 
 Orthographic camera improves readability and city-builder feel.
 
+### Dynamic Map Size
+
+`createScene(container, gridSize)` accepts a configurable grid size. Camera distance, zoom limits, and shadow camera bounds scale proportionally to the grid size. The camera center also adapts to `gridSize / 2`. The `SceneContext` exposes the grid size for use by other rendering code.
+
 ## Picking
 
 Use raycasting to convert mouse position to grid tile.

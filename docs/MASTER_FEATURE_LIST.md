@@ -739,7 +739,7 @@ This document lists every feature across all four implementation phases. Under e
 | ----- | ---------------------------------------- | ------ |
 | 4.1.1 | Map size configurable (128×128, 256×256) | done   |
 | 4.1.2 | Map size affects performance budget      | done   |
-| 4.1.3 | Camera bounds adapt to map size          |        |
+| 4.1.3 | Camera bounds adapt to map size          | done   |
 
 ### 4.2 Terrain Editing and Elevation
 

@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-const GRID_SIZE = 64;
+const DEFAULT_GRID_SIZE = 64;
 const TILE_SIZE = 1;
 
 const COLORS = {
@@ -16,6 +16,7 @@ export interface GridContext {
   selectionHighlight: THREE.Mesh;
   ground: THREE.Mesh;
   raycasterTarget: THREE.Mesh;
+  gridSize: number;
 }
 
 function createHighlightMesh(
@@ -39,45 +40,51 @@ function createHighlightMesh(
   return mesh;
 }
 
-export function createGrid(scene: THREE.Scene): GridContext {
+export function createGrid(
+  scene: THREE.Scene,
+  gridSize = DEFAULT_GRID_SIZE,
+): GridContext {
+  const half = gridSize / 2;
+
   const ground = new THREE.Mesh(
-    new THREE.PlaneGeometry(GRID_SIZE, GRID_SIZE),
+    new THREE.PlaneGeometry(gridSize, gridSize),
     new THREE.MeshStandardMaterial({ color: COLORS.GROUND, roughness: 0.9 }),
   );
   ground.rotation.x = -Math.PI / 2;
-  ground.position.set(GRID_SIZE / 2, -0.01, GRID_SIZE / 2);
+  ground.position.set(half, -0.01, half);
   ground.receiveShadow = true;
   scene.add(ground);
 
   const raycasterTarget = new THREE.Mesh(
-    new THREE.PlaneGeometry(GRID_SIZE, GRID_SIZE),
+    new THREE.PlaneGeometry(gridSize, gridSize),
     new THREE.MeshBasicMaterial({ visible: false, side: THREE.DoubleSide }),
   );
   raycasterTarget.rotation.x = -Math.PI / 2;
-  raycasterTarget.position.set(GRID_SIZE / 2, 0, GRID_SIZE / 2);
+  raycasterTarget.position.set(half, 0, half);
   raycasterTarget.name = "grid";
   scene.add(raycasterTarget);
 
   const gridHelper = new THREE.GridHelper(
-    GRID_SIZE,
-    GRID_SIZE,
+    gridSize,
+    gridSize,
     COLORS.GRID_LINE,
     COLORS.GRID_LINE,
   );
-  gridHelper.position.set(GRID_SIZE / 2, 0.001, GRID_SIZE / 2);
+  gridHelper.position.set(half, 0.001, half);
   scene.add(gridHelper);
 
   const hoverHighlight = createHighlightMesh(scene, COLORS.HOVER, 0.5, 0.002);
 
   const selectionHighlight = createHighlightMesh(scene, COLORS.SELECTED, 0.4, 0.003);
 
-  return { hoverHighlight, selectionHighlight, ground, raycasterTarget };
+  return { hoverHighlight, selectionHighlight, ground, raycasterTarget, gridSize };
 }
 
 export function screenToGrid(
   mouse: THREE.Vector2,
   camera: THREE.PerspectiveCamera,
   raycasterTarget: THREE.Mesh,
+  gridSize = DEFAULT_GRID_SIZE,
 ): [number, number] | null {
   const raycaster = new THREE.Raycaster();
   raycaster.setFromCamera(mouse, camera);
@@ -91,7 +98,7 @@ export function screenToGrid(
   const gridX = Math.floor(point.x);
   const gridY = Math.floor(point.z);
 
-  if (gridX < 0 || gridX >= GRID_SIZE || gridY < 0 || gridY >= GRID_SIZE) {
+  if (gridX < 0 || gridX >= gridSize || gridY < 0 || gridY >= gridSize) {
     return null;
   }
 
