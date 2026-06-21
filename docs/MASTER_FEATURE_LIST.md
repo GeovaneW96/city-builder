@@ -719,11 +719,11 @@ This document lists every feature across all four implementation phases. Under e
 
 | #      | Testable Logic                                           | Status |
 | ------ | -------------------------------------------------------- | ------ |
-| 3.11.1 | Scenario editor creates valid scenario definition        |        |
-| 3.11.2 | Scenario definition matches Scenario schema              |        |
-| 3.11.3 | Custom start conditions, objectives, win/loss conditions |        |
-| 3.11.4 | Scenario exported to JSON format                         |        |
-| 3.11.5 | Exported scenario importable and playable                |        |
+| 3.11.1 | Scenario editor creates valid scenario definition        | done   |
+| 3.11.2 | Scenario definition matches Scenario schema              | done   |
+| 3.11.3 | Custom start conditions, objectives, win/loss conditions | done   |
+| 3.11.4 | Scenario exported to JSON format                         | done   |
+| 3.11.5 | Exported scenario importable and playable                | done   |
 
 ---
 
@@ -790,10 +790,10 @@ This document lists every feature across all four implementation phases. Under e
 
 | #     | Testable Logic                                    | Status |
 | ----- | ------------------------------------------------- | ------ |
-| 4.6.1 | Mod loads building definitions from external file |        |
-| 4.6.2 | Mod loads custom balance values                   |        |
-| 4.6.3 | Mod loading fails gracefully on invalid data      |        |
-| 4.6.4 | Mods can add new scenario definitions             |        |
+| 4.6.1 | Mod loads building definitions from external file | done   |
+| 4.6.2 | Mod loads custom balance values                   | done   |
+| 4.6.3 | Mod loading fails gracefully on invalid data      | done   |
+| 4.6.4 | Mods can add new scenario definitions             | done   |
 
 ### 4.7 Shareable City Snapshots
 
@@ -831,6 +831,6 @@ This document lists every feature across all four implementation phases. Under e
 
 | #      | Testable Logic                                             | Status |
 | ------ | ---------------------------------------------------------- | ------ |
-| 4.10.1 | Premium features gated behind flag                         |        |
-| 4.10.2 | Non-premium game fully functional without premium features |        |
+| 4.10.1 | Premium features gated behind flag                         | done   |
+| 4.10.2 | Non-premium game fully functional without premium features | done   |
 | 4.10.3 | Premium flag persists in save data                         | done   |
