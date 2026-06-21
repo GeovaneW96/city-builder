@@ -1,5 +1,5 @@
 import { getBuildingById } from "../../data/buildings";
-import type { ZoneType } from "../../shared/types";
+import type { BiomeType, ZoneType } from "../../shared/types";
 
 export type ScenarioCondition =
   | "population"
@@ -26,6 +26,7 @@ export interface ScenarioDefinition {
   description: string;
   mapWidth: number;
   mapHeight: number;
+  biome: BiomeType;
   startingMoney: number;
   startingPopulation: number;
   startingHappiness: number;
@@ -43,6 +44,7 @@ export function createScenario(): ScenarioDefinition {
     description: "",
     mapWidth: 64,
     mapHeight: 64,
+    biome: "temperate",
     startingMoney: 50000,
     startingPopulation: 0,
     startingHappiness: 70,

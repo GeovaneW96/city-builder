@@ -6,7 +6,7 @@ Simulation now includes deterministic agent traffic, tiered services, density an
 
 Scenario validation, events, resource depletion, and terrain editing are also simulation-side systems.
 Terrain placement validation enforces water, elevation, and slope constraints before state changes.
-Map generation accepts a biome selector as simulation data.
+Map generation accepts a biome selector as simulation data. Scenario definitions include an optional `biome` field that controls starting resource distribution and terrain appearance.
 City state cloning preserves premium entitlement metadata for saves and snapshots.
 Active epidemic, fire, and flood events feed their temporary happiness effects through the normal happiness system. Fire events also double the fire spread rate. Flood events trigger when water demand exceeds capacity in a city with water tiles.
 Biome-specific resource deposits are seeded deterministically during map construction.

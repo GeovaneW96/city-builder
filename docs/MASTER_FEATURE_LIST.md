@@ -782,7 +782,7 @@ This document lists every feature across all four implementation phases. Under e
 | ----- | ----------------------------------------- | ------ |
 | 4.5.1 | Biome affects starting terrain appearance | done   |
 | 4.5.2 | Biome affects resource distribution       | done   |
-| 4.5.3 | Biome available as map generation option  |        |
+| 4.5.3 | Biome available as map generation option  | done   |
 
 ### 4.6 Mod Support
 

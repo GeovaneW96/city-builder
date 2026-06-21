@@ -16,7 +16,7 @@ Reach 1,000 population without going bankrupt.
 
 ### Starting Conditions
 
-- 64x64 empty map;
+- 64x64 empty temperate biome map;
 - 50,000 money;
 - basic road unlocked;
 - residential zoning unlocked;

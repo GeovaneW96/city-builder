@@ -3,6 +3,20 @@ import { processCityCommand } from "../commands/process";
 import { createInitialCityState } from "../state";
 import { createMap } from "../grid/map";
 
+describe("biome map generation", () => {
+  it("creates maps with the requested biome via createInitialCityState", () => {
+    const desert = createInitialCityState("desert");
+    expect(desert.map[0]?.[0]?.biome).toBe("desert");
+    const allDesert = desert.map.flat().every((tile) => tile.biome === "desert");
+    expect(allDesert).toBe(true);
+  });
+
+  it("defaults to temperate biome from first settlement scenario", () => {
+    const state = createInitialCityState();
+    expect(state.map[0]?.[0]?.biome).toBe("temperate");
+  });
+});
+
 describe("terrain elevation", () => {
   it("starts flat and changes elevation at the documented cost", () => {
     const state = createInitialCityState();

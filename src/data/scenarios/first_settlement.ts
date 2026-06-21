@@ -20,6 +20,7 @@ export const FIRST_SETTLEMENT = {
   description: "Reach 1,000 population without going bankrupt.",
   startingMoney: 50000,
   mapSize: 64,
+  biome: "temperate",
   winCondition: {
     populationMin: 1000,
     moneyMin: 0,

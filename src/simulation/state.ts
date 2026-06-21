@@ -5,13 +5,15 @@ import {
   STARTING_MONEY,
 } from "../data/balance";
 import { FIRST_SETTLEMENT } from "../data/scenarios/first_settlement";
-import type { CityState } from "../shared/types";
+import type { BiomeType, CityState } from "../shared/types";
 import { createMap } from "./grid/map";
 
-export function createInitialCityState(): CityState {
+export function createInitialCityState(
+  biome: BiomeType = (FIRST_SETTLEMENT.biome as BiomeType) ?? "temperate",
+): CityState {
   return {
     premium: false,
-    map: createMap(),
+    map: createMap(FIRST_SETTLEMENT.mapSize, biome),
     buildings: [],
     roads: [],
     economy: createInitialEconomy(),
