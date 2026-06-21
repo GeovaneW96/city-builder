@@ -735,11 +735,11 @@ This document lists every feature across all four implementation phases. Under e
 
 **Docs:** `41_TERRAIN_AND_WATER_SYSTEM.md`
 
-| #     | Testable Logic                             | Status |
-| ----- | ------------------------------------------ | ------ |
-| 4.1.1 | Map size configurable (128Ã—128, 256Ã—256) |        |
-| 4.1.2 | Map size affects performance budget        |        |
-| 4.1.3 | Camera bounds adapt to map size            |        |
+| #     | Testable Logic                           | Status |
+| ----- | ---------------------------------------- | ------ |
+| 4.1.1 | Map size configurable (128×128, 256×256) | done   |
+| 4.1.2 | Map size affects performance budget      | done   |
+| 4.1.3 | Camera bounds adapt to map size          |        |
 
 ### 4.2 Terrain Editing and Elevation
 
@@ -747,10 +747,10 @@ This document lists every feature across all four implementation phases. Under e
 
 | #     | Testable Logic                                | Status |
 | ----- | --------------------------------------------- | ------ |
-| 4.2.1 | Terrain elevation stored per tile             |        |
-| 4.2.2 | Elevation affects building placement validity |        |
-| 4.2.3 | Elevation costs money per tile changed        |        |
-| 4.2.4 | Steep elevation affects road placement        |        |
+| 4.2.1 | Terrain elevation stored per tile             | done   |
+| 4.2.2 | Elevation affects building placement validity | done   |
+| 4.2.3 | Elevation costs money per tile changed        | done   |
+| 4.2.4 | Steep elevation affects road placement        | done   |
 
 ### 4.3 Water Bodies, Rivers, Coastlines
 
@@ -758,8 +758,8 @@ This document lists every feature across all four implementation phases. Under e
 
 | #     | Testable Logic                                   | Status |
 | ----- | ------------------------------------------------ | ------ |
-| 4.3.1 | Water tiles are not buildable                    |        |
-| 4.3.2 | Water tiles affect land value (waterfront bonus) |        |
+| 4.3.1 | Water tiles are not buildable                    | done   |
+| 4.3.2 | Water tiles affect land value (waterfront bonus) | done   |
 | 4.3.3 | Water can be placed/removed with terrain tools   |        |
 
 ### 4.4 Resource Deposits
@@ -768,11 +768,11 @@ This document lists every feature across all four implementation phases. Under e
 
 | #     | Testable Logic                               | Status |
 | ----- | -------------------------------------------- | ------ |
-| 4.4.1 | Resource deposits spawned on map generation  |        |
-| 4.4.2 | Ore deposit boosts industrial output in area |        |
-| 4.4.3 | Oil deposit boosts industrial output         |        |
+| 4.4.1 | Resource deposits spawned on map generation  | done   |
+| 4.4.2 | Ore deposit boosts industrial output in area | done   |
+| 4.4.3 | Oil deposit boosts industrial output         | done   |
 | 4.4.4 | Fertile land boosts farming output           | done   |
-| 4.4.5 | Resources deplete over time                  |        |
+| 4.4.5 | Resources deplete over time                  | done   |
 
 ### 4.5 Different Biomes
 
@@ -780,8 +780,8 @@ This document lists every feature across all four implementation phases. Under e
 
 | #     | Testable Logic                            | Status |
 | ----- | ----------------------------------------- | ------ |
-| 4.5.1 | Biome affects starting terrain appearance |        |
-| 4.5.2 | Biome affects resource distribution       |        |
+| 4.5.1 | Biome affects starting terrain appearance | done   |
+| 4.5.2 | Biome affects resource distribution       | done   |
 | 4.5.3 | Biome available as map generation option  |        |
 
 ### 4.6 Mod Support
@@ -801,9 +801,9 @@ This document lists every feature across all four implementation phases. Under e
 
 | #     | Testable Logic                                  | Status |
 | ----- | ----------------------------------------------- | ------ |
-| 4.7.1 | City exported as compressed shareable string    |        |
-| 4.7.2 | Shared city can be imported by other players    |        |
-| 4.7.3 | Snapshot includes city name, population, rating |        |
+| 4.7.1 | City exported as compressed shareable string    | done   |
+| 4.7.2 | Shared city can be imported by other players    | done   |
+| 4.7.3 | Snapshot includes city name, population, rating | done   |
 
 ### 4.8 Scenario Leaderboard
 
@@ -811,9 +811,9 @@ This document lists every feature across all four implementation phases. Under e
 
 | #     | Testable Logic                        | Status |
 | ----- | ------------------------------------- | ------ |
-| 4.8.1 | Completion time tracked per scenario  |        |
-| 4.8.2 | Leaderboard sorted by completion time |        |
-| 4.8.3 | Leaderboard data persisted locally    |        |
+| 4.8.1 | Completion time tracked per scenario  | done   |
+| 4.8.2 | Leaderboard sorted by completion time | done   |
+| 4.8.3 | Leaderboard data persisted locally    | done   |
 
 ### 4.9 Cosmetic Packs and Content Packs
 
@@ -821,9 +821,9 @@ This document lists every feature across all four implementation phases. Under e
 
 | #     | Testable Logic                                      | Status |
 | ----- | --------------------------------------------------- | ------ |
-| 4.9.1 | Cosmetic pack provides alternative building visuals |        |
-| 4.9.2 | Content pack provides new building definitions      |        |
-| 4.9.3 | Pack asset loading does not break existing saves    |        |
+| 4.9.1 | Cosmetic pack provides alternative building visuals | done   |
+| 4.9.2 | Content pack provides new building definitions      | done   |
+| 4.9.3 | Pack asset loading does not break existing saves    | done   |
 
 ### 4.10 Premium Version / Supporter Edition
 
@@ -833,4 +833,4 @@ This document lists every feature across all four implementation phases. Under e
 | ------ | ---------------------------------------------------------- | ------ |
 | 4.10.1 | Premium features gated behind flag                         |        |
 | 4.10.2 | Non-premium game fully functional without premium features |        |
-| 4.10.3 | Premium flag persists in save data                         |        |
+| 4.10.3 | Premium flag persists in save data                         | done   |

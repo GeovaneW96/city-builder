@@ -87,6 +87,30 @@ function checkNoTestOnly(staged) {
   }
 }
 
+function checkMasterFeatureList(staged) {
+  const stagedSet = new Set(staged);
+  if (stagedSet.has("docs/MASTER_FEATURE_LIST.md")) return;
+
+  // New non-test source files or new test files ~> feature likely completed
+  const addedFiles = execSync("git diff --cached --name-only --diff-filter=A", {
+    encoding: "utf-8",
+  })
+    .split("\n")
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  const hasNewSource = addedFiles.some(
+    (f) => f.startsWith("src/") && f.endsWith(".ts") && !f.endsWith(".test.ts"),
+  );
+  const hasNewTest = addedFiles.some((f) => f.endsWith(".test.ts"));
+
+  if (!hasNewSource && !hasNewTest) return;
+
+  errors.push(
+    "New source or test files added — stage docs/MASTER_FEATURE_LIST.md to reflect feature status",
+  );
+}
+
 function checkIndexMdDrift() {
   const newDocFiles = execSync("git diff --cached --name-only --diff-filter=A", {
     encoding: "utf-8",
@@ -117,6 +141,7 @@ function main() {
   if (staged.length === 0) process.exit(0);
 
   checkDocs(staged);
+  checkMasterFeatureList(staged);
   checkTestAccompaniment(staged);
   checkNoTestOnly(staged);
   checkIndexMdDrift();
