@@ -74,10 +74,6 @@ export function hideDashboard(els: DashboardElements): void {
   els.root.style.display = "none";
 }
 
-export function isDashboardVisible(els: DashboardElements): boolean {
-  return els.root.style.display !== "none";
-}
-
 export function updateDashboard(els: DashboardElements, state: CityState): void {
   switch (activeTab) {
     case "overview":

@@ -1,5 +1,7 @@
 # UI and UX Design
 
+Removed unused `isDashboardVisible` and `isDashboardActive` exports (were dead code).
+
 ## Purpose
 
 City builders are UI-heavy games.

@@ -1,5 +1,7 @@
 # Simulation Systems
 
+Removed unused `getCurrentObjectiveLabel` export (was dead code).
+
 ## Phase 3 extensions
 
 Simulation now includes deterministic agent traffic, tiered services, density and office demand, tourism, specialization, and time-bound city events. These systems remain data/state driven and run without rendering dependencies.

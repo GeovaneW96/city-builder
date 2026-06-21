@@ -140,23 +140,27 @@ devices for post-processing.
 
 ### Window Emissive Balance
 
-Window emissive is intentionally subdued -- front windows at 0.08 intensity, side windows at
-0.05. Windows use a 17-way color variation (warm white, yellow, cool white, dim blue) with
-~18% of windows randomly turned dark to avoid the "solid glowing strip" look. Per-building
-and per-floor hash seeds ensure deterministic variety across instances.
+Windows are rendered as individual small boxes (not full-width strips). Each building facade has
+a grid of 4-8 columns × 6-10 floors of tiny window panes. 30-60% of windows per building are
+lit (warm white, cool white, yellow, dim blue), the rest are dark reflective glass
+(`0x080c14`, roughness 0.08, metalness 0.45). Window emissive is subdued at 0.06 intensity so
+lit windows glow without washing out facade details. Thin frame strips above and below each
+window, plus horizontal floor separators and vertical column lines, give facades visible
+structure even when all windows are off.
 
 ### Scene Lighting
 
 The night scene uses layered lighting:
 
-- Ambient: dim blue `0x1a2a4a` at 0.28
-- Moonlight: cool directional `0x6688bb` at 1.6, shadow-casting
-- Moon fill: `0x6688bb` at 0.5 from the opposite side
-- Warm city glow: `0xff8844` at 0.12 from ground level
+- Ambient: blue `0x2a3a5a` at 0.45 (brighter fill for facade readability)
+- Moonlight: cool directional `0xaabbdd` at 1.2, shadow-casting (less intense, cooler tint)
+- Moon fill: `0x7799cc` at 0.8 from opposite side
+- Blue rim: `0x4466aa` at 0.4 for edge definition
+- Warm city glow: `0xff8844` at 0.18 from ground level
 - Hemisphere: `0x1a2a50` (sky) / `0x0a0e15` (ground) at 0.45
 
-Background is a gradient texture from near-black to dark blue (`#000510` → `#0f1e2e`) for a
-deep night sky. Fog is a dark haze at `0x0a1420` with range scaled to grid size.
+Background is a 512×512 canvas with a deep gradient plus 300 randomly-placed star dots for
+atmospheric depth. Fog is darker (`0x081018`) with closer start/end range scaled to grid size.
 
 ### Procedural Texture Generation
 
@@ -178,20 +182,21 @@ These textures are cached by key and use `RepeatWrapping` for tiling.
 
 The renderer has `low`, `medium`, `high`, and `ultra` quality profiles. They control:
 
-| Setting        | low | medium | high           | ultra         |
-| -------------- | --- | ------ | -------------- | ------------- |
-| pixelRatioCap  | 1   | 1.5    | 2              | 2             |
-| shadowMapSize  | 512 | 1024   | 2048           | 2048          |
-| bloom          | off | off    | 0.35/0.35/0.82 | 0.45/0.4/0.78 |
-| detailDensity  | 0.3 | 0.55   | 0.8            | 1.0           |
-| propDensity    | 0.2 | 0.4    | 0.7            | 1.0           |
-| vehicleDensity | 0   | 0.3    | 0.6            | 1.0           |
-| treeDensity    | 0.3 | 0.5    | 0.7            | 1.0           |
-| fogDensity     | 0.4 | 0.7    | 1.0            | 1.0           |
-| waterQuality   | 0   | 1      | 1              | 2             |
+| Setting        | low | medium | high           | ultra       |
+| -------------- | --- | ------ | -------------- | ----------- |
+| pixelRatioCap  | 1   | 1.5    | 2              | 2           |
+| shadowMapSize  | 512 | 1024   | 2048           | 2048        |
+| bloom          | off | off    | 0.15/0.08/0.92 | 0.2/0.1/0.9 |
+| detailDensity  | 0.3 | 0.55   | 0.8            | 1.0         |
+| propDensity    | 0.2 | 0.4    | 0.7            | 1.0         |
+| vehicleDensity | 0   | 0.3    | 0.6            | 1.0         |
+| treeDensity    | 0.3 | 0.5    | 0.7            | 1.0         |
+| fogDensity     | 0.4 | 0.7    | 1.0            | 1.0         |
+| waterQuality   | 0   | 1      | 1              | 2           |
 
-Bloom is selective with a 0.82 threshold so only the brightest emissive surfaces (streetlights,
-signs, a few windows) contribute. This prevents bloom from washing out building shapes.
+Bloom is selective with a 0.92 threshold so only the brightest emissive surfaces (streetlights,
+vehicle headlights, a few windows) contribute. Strength is reduced (0.15-0.2) and radius is
+tight (0.08-0.1) to prevent bloom from washing out building shapes.
 
 The quality profile never affects simulation data or player actions.
 
@@ -199,12 +204,15 @@ The quality profile never affects simulation data or player actions.
 
 Road rendering includes:
 
-- Streetlights (instanced, one per ~9 road tiles, alternating sides)
+- Streetlights (instanced with pole, arm, lamp sphere, and warm light cone)
 - Traffic lights (at intersections with 3+ connections)
-- Parked cars (on 2-connection road segments)
+- Parked cars (on 2-connection road segments, with headlights and taillights)
 - Street trees (oak, maple, conifer alongside roads)
 - Street furniture (benches, trash bins at low density)
 - Road signs and bus stops (at high detail density)
+- Crosswalks (5 white stripes per intersection direction)
+- Stop bars (white lines at intersection approaches)
+- Dashed center lane markings (arterial, collector, and local tiers)
 
 Details are placed deterministically using hash-based selection relative to `detailDensity`,
 ensuring consistent placement across renders without random state.

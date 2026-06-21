@@ -7,17 +7,20 @@ describe("Novavista showcase scenario", () => {
     const tiles = state.map.flat();
 
     expect(tiles.filter((tile) => tile.terrain === "water").length).toBeGreaterThan(100);
-    expect(state.roads.length).toBeGreaterThan(450);
+    expect(state.roads.length).toBeGreaterThan(700);
     expect(
       state.roads.some((road) => road.connections.east && road.connections.south),
     ).toBe(true);
-    expect(state.buildings.length).toBeGreaterThan(150);
+    expect(state.buildings.length).toBeGreaterThan(200);
     expect(
       state.buildings.some((building) => building.definitionId === "high_apartment"),
     ).toBe(true);
     expect(
-      state.buildings.some((building) => building.definitionId === "large_plant"),
+      state.buildings.some((building) => building.definitionId === "large_office"),
     ).toBe(true);
+    expect(state.buildings.some((building) => building.definitionId === "hotel")).toBe(
+      true,
+    );
     expect(state.population.total).toBe(5040);
     expect(state.time.speed).toBe(0);
   });

@@ -114,10 +114,6 @@ export function toggleDashboardMode(ui: GameUI): void {
   }
 }
 
-export function isDashboardActive(): boolean {
-  return dashboardMode;
-}
-
 export function showStatus(ui: GameUI, message: string, durationMs = 2000): void {
   ui.status.textContent = message;
   ui.status.classList.add("visible");

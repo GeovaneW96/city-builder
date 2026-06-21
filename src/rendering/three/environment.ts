@@ -4,14 +4,14 @@ import type { CityState, Tile } from "../../shared/types";
 import { getTiledTexture } from "./textures";
 
 const WATER_COLORS = {
-  deep: 0x041a2e,
-  shallow: 0x0c2a48,
-  foam: 0x9ab8c4,
-  rock: 0x5a6870,
-  trunk: 0x5a3c22,
-  foliage: 0x1a4a2a,
-  foliageLight: 0x2a6a38,
-  grassPatch: 0x3a5e28,
+  deep: 0x020e1e,
+  shallow: 0x061828,
+  foam: 0x6a8894,
+  rock: 0x4a5860,
+  trunk: 0x3a2c1a,
+  foliage: 0x142e1e,
+  foliageLight: 0x1a4a2a,
+  grassPatch: 0x2a4a20,
 };
 
 export interface AnimatedWaterMaterial extends THREE.ShaderMaterial {
@@ -92,9 +92,9 @@ function createWaterMaterial(): AnimatedWaterMaterial {
           transformed = instanceMatrix * transformed;
         #endif
         vec4 worldPosition = modelMatrix * transformed;
-        float wave = sin(worldPosition.x * 1.8 + time * 0.8) * 0.015;
-        wave += cos(worldPosition.z * 2.4 + time * 1.1) * 0.01;
-        wave += sin(worldPosition.x * 0.7 + worldPosition.z * 0.5 + time * 0.4) * 0.008;
+        float wave = sin(worldPosition.x * 1.4 + time * 0.5) * 0.012;
+        wave += cos(worldPosition.z * 1.8 + time * 0.7) * 0.008;
+        wave += sin(worldPosition.x * 0.5 + worldPosition.z * 0.4 + time * 0.3) * 0.006;
         worldPosition.y += wave;
         vWave = wave;
         vWorldPosition = worldPosition.xyz;
@@ -106,15 +106,16 @@ function createWaterMaterial(): AnimatedWaterMaterial {
       varying float vWave;
       varying vec3 vWorldPosition;
       void main() {
-        vec3 deepWater = vec3(0.015, 0.06, 0.16);
-        vec3 shallowWater = vec3(0.04, 0.14, 0.28);
-        float ripple = sin(vWorldPosition.x * 2.8 + vWorldPosition.z * 1.6 + time * 1.4);
-        float highlight = smoothstep(0.012, 0.025, abs(vWave) + ripple * 0.003);
+        vec3 deepWater = vec3(0.008, 0.025, 0.08);
+        vec3 shallowWater = vec3(0.02, 0.06, 0.16);
+        float ripple = sin(vWorldPosition.x * 2.4 + vWorldPosition.z * 1.4 + time * 1.0);
+        float highlight = smoothstep(0.018, 0.03, abs(vWave) + ripple * 0.002);
         float fresnel = 1.0 - abs(vWave) * 2.0;
-        vec3 specular = vec3(0.05, 0.08, 0.15) * pow(max(0.0, fresnel), 3.0) * 0.3;
-        vec3 color = mix(deepWater, shallowWater, 0.3 + highlight * 0.25);
-        color += specular;
-        gl_FragColor = vec4(color, 0.95);
+        vec3 specular = vec3(0.08, 0.1, 0.18) * pow(max(0.0, fresnel), 4.0) * 0.2;
+        vec3 moonGlint = vec3(0.1, 0.12, 0.2) * pow(max(0.0, fresnel), 6.0) * 0.15;
+        vec3 color = mix(deepWater, shallowWater, 0.2 + highlight * 0.2);
+        color += specular + moonGlint;
+        gl_FragColor = vec4(color, 0.92);
       }
     `,
   }) as AnimatedWaterMaterial;
@@ -208,21 +209,21 @@ function createFoamInstances(
   horizontal: boolean,
 ): THREE.InstancedMesh {
   const geometry = horizontal
-    ? new THREE.BoxGeometry(0.76, 0.012, 0.042)
-    : new THREE.BoxGeometry(0.042, 0.012, 0.76);
+    ? new THREE.BoxGeometry(0.76, 0.01, 0.035)
+    : new THREE.BoxGeometry(0.035, 0.01, 0.76);
   const mesh = new THREE.InstancedMesh(
     geometry,
     new THREE.MeshBasicMaterial({
       color: WATER_COLORS.foam,
       transparent: true,
-      opacity: 0.44,
+      opacity: 0.28,
       depthWrite: false,
     }),
     edges.length,
   );
   const matrix = new THREE.Matrix4();
   edges.forEach((edge, index) => {
-    matrix.makeTranslation(edge.x, 0.053, edge.y);
+    matrix.makeTranslation(edge.x, 0.045, edge.y);
     mesh.setMatrixAt(index, matrix);
   });
   mesh.instanceMatrix.needsUpdate = true;
@@ -232,28 +233,56 @@ function createFoamInstances(
 function renderGroundCover(group: THREE.Group, state: CityState): void {
   const tiles = state.map
     .flat()
-    .filter((tile) => isVacantGrassTile(state, tile.x, tile.y))
-    .filter((tile) => getTerrainHash(tile.x, tile.y) % 5 === 0);
+    .filter((tile) => isVacantGrassTile(state, tile.x, tile.y));
   if (tiles.length === 0) return;
-  const mesh = new THREE.InstancedMesh(
-    new THREE.CircleGeometry(0.32, 6),
-    new THREE.MeshBasicMaterial({
-      color: WATER_COLORS.grassPatch,
-      transparent: true,
-      opacity: 0.06,
-      depthWrite: false,
-    }),
-    tiles.length,
+
+  const patches = tiles.filter((tile) => getTerrainHash(tile.x, tile.y) % 5 === 0);
+  if (patches.length > 0) {
+    const mesh = new THREE.InstancedMesh(
+      new THREE.CircleGeometry(0.28, 6),
+      new THREE.MeshBasicMaterial({
+        color: WATER_COLORS.grassPatch,
+        transparent: true,
+        opacity: 0.04,
+        depthWrite: false,
+      }),
+      patches.length,
+    );
+    const matrix = new THREE.Matrix4();
+    patches.forEach((tile, index) => {
+      const offset = getTerrainOffset(tile.x, tile.y);
+      matrix.makeRotationX(-Math.PI / 2);
+      matrix.setPosition(tile.x + offset.x, 0.006, tile.y + offset.y);
+      mesh.setMatrixAt(index, matrix);
+    });
+    mesh.instanceMatrix.needsUpdate = true;
+    group.add(mesh);
+  }
+
+  const dirtPatches = tiles.filter(
+    (tile) => getTerrainHash(tile.x + 3, tile.y + 7) % 7 === 0,
   );
-  const matrix = new THREE.Matrix4();
-  tiles.forEach((tile, index) => {
-    const offset = getTerrainOffset(tile.x, tile.y);
-    matrix.makeRotationX(-Math.PI / 2);
-    matrix.setPosition(tile.x + offset.x, 0.008, tile.y + offset.y);
-    mesh.setMatrixAt(index, matrix);
-  });
-  mesh.instanceMatrix.needsUpdate = true;
-  group.add(mesh);
+  if (dirtPatches.length > 0) {
+    const mesh = new THREE.InstancedMesh(
+      new THREE.CircleGeometry(0.18, 6),
+      new THREE.MeshBasicMaterial({
+        color: 0x4a3a2a,
+        transparent: true,
+        opacity: 0.03,
+        depthWrite: false,
+      }),
+      dirtPatches.length,
+    );
+    const matrix = new THREE.Matrix4();
+    dirtPatches.forEach((tile, index) => {
+      const offset = getTerrainOffset(tile.x + 1, tile.y + 3);
+      matrix.makeRotationX(-Math.PI / 2);
+      matrix.setPosition(tile.x + offset.x, 0.005, tile.y + offset.y);
+      mesh.setMatrixAt(index, matrix);
+    });
+    mesh.instanceMatrix.needsUpdate = true;
+    group.add(mesh);
+  }
 }
 
 function renderShoreRocks(group: THREE.Group, state: CityState): void {
@@ -433,7 +462,7 @@ function createTreeTrunks(trees: NaturePlacement[]): THREE.InstancedMesh {
 function createLowerCanopies(trees: NaturePlacement[]): THREE.InstancedMesh {
   const mesh = new THREE.InstancedMesh(
     new THREE.ConeGeometry(0.34, 0.66, 12, 3),
-    new THREE.MeshStandardMaterial({ color: WATER_COLORS.foliage, roughness: 0.9 }),
+    new THREE.MeshStandardMaterial({ color: WATER_COLORS.foliage, roughness: 0.92 }),
     trees.length,
   );
   setTreeMatrices(mesh, trees, 0.54, 1.12, true);
@@ -452,25 +481,25 @@ function createUpperCanopies(trees: NaturePlacement[]): THREE.InstancedMesh {
 
 function createDeciduousCanopies(trees: NaturePlacement[]): THREE.InstancedMesh {
   const mesh = new THREE.InstancedMesh(
-    new THREE.SphereGeometry(0.31, 16, 12),
-    new THREE.MeshStandardMaterial({ color: WATER_COLORS.foliageLight, roughness: 0.9 }),
+    new THREE.SphereGeometry(0.28, 16, 12),
+    new THREE.MeshStandardMaterial({ color: WATER_COLORS.foliageLight, roughness: 0.92 }),
     trees.length * 3,
   );
   const object = new THREE.Object3D();
   const offsets: [number, number, number][] = [
-    [-0.12, 0.56, -0.05],
-    [0.13, 0.62, 0.07],
-    [0, 0.84, 0],
+    [-0.1, 0.52, -0.04],
+    [0.11, 0.58, 0.06],
+    [0, 0.78, 0],
   ];
   trees.forEach((tree, treeIndex) => {
     offsets.forEach(([x, y, z], canopyIndex) => {
-      const scale = tree.scale * (canopyIndex === 2 ? 0.76 : 0.88);
+      const scale = tree.scale * (canopyIndex === 2 ? 0.72 : 0.84);
       object.position.set(
         tree.x + x * tree.scale,
         y * tree.scale,
         tree.y + z * tree.scale,
       );
-      object.scale.set(scale, scale * 0.86, scale);
+      object.scale.set(scale, scale * 0.84, scale);
       object.updateMatrix();
       const index = treeIndex * offsets.length + canopyIndex;
       mesh.setMatrixAt(index, object.matrix);

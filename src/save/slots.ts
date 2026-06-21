@@ -124,12 +124,6 @@ export class SaveSlotManager {
   }
 }
 
-export function getSlotLabel(id: SaveSlotId, metadata: SaveSlotMetadata | null): string {
-  if (!metadata) return id === AUTOSAVE_SLOT_ID ? "Autosave (empty)" : `${id}: Empty`;
-  const prefix = id === AUTOSAVE_SLOT_ID ? "Autosave" : metadata.name;
-  return `${prefix}: ${metadata.cityName} (${metadata.population} residents)`;
-}
-
 function createMetadata(
   id: SaveSlotId,
   data: CitySaveData,
