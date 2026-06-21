@@ -710,7 +710,7 @@ This document lists every feature across all four implementation phases. Under e
 | 3.10.1 | Event types: fire, flood, economic downturn, epidemic    | done   |
 | 3.10.2 | Event triggered by game conditions or random chance      | done   |
 | 3.10.3 | Event has duration, effects, and resolution conditions   | done   |
-| 3.10.4 | Fire spreads to adjacent buildings without fire coverage |        |
+| 3.10.4 | Fire spreads to adjacent buildings without fire coverage | done   |
 | 3.10.5 | Economic downturn reduces tax income temporarily         | done   |
 
 ### 3.11 Scenario Editor

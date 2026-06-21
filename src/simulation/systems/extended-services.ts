@@ -12,7 +12,8 @@ export function recomputeExtendedServices(state: CityState): GameEvent[] {
   const policeProviders = getProviders(active, "policeRadius");
   const fireProviders = getProviders(active, "fireRadius");
   updateCrime(policeTargets, policeProviders);
-  const burned = updateFireRisk(fireTargets, fireProviders);
+  const fireSpreadMultiplier = getSpreadMultiplier(state);
+  const burned = updateFireRisk(fireTargets, fireProviders, fireSpreadMultiplier);
   const garbage = collectGarbage(state, active);
   state.extendedServices = {
     policeCoverage: getCoverage(policeTargets, policeProviders, "policeRadius"),
@@ -22,6 +23,10 @@ export function recomputeExtendedServices(state: CityState): GameEvent[] {
     ...garbage,
   };
   return removeBurnedBuildings(state, burned);
+}
+
+function getSpreadMultiplier(state: CityState): number {
+  return state.events.some((event) => event.type === "fire") ? 2 : 1;
 }
 
 function isPoliceTarget(building: BuildingInstance): boolean {
@@ -53,6 +58,7 @@ function updateCrime(targets: BuildingInstance[], providers: BuildingInstance[])
 function updateFireRisk(
   targets: BuildingInstance[],
   providers: BuildingInstance[],
+  spreadMultiplier: number,
 ): Set<string> {
   const burned = new Set<string>();
   targets.forEach((target) => {
@@ -63,7 +69,7 @@ function updateFireRisk(
     if (target.fireRisk >= EXTENDED_SERVICE_BALANCE.FIRE_RISK_THRESHOLD)
       burned.add(target.id);
   });
-  spreadFire(targets, providers, burned);
+  spreadFire(targets, providers, burned, spreadMultiplier);
   return burned;
 }
 
@@ -71,16 +77,21 @@ function spreadFire(
   targets: BuildingInstance[],
   providers: BuildingInstance[],
   burned: Set<string>,
+  spreadMultiplier: number,
 ): void {
-  const source = targets.find((target) => burned.has(target.id));
-  if (!source) return;
-  const adjacent = targets.find(
-    (target) =>
-      !burned.has(target.id) &&
-      getDistance(source, target) === 1 &&
-      !isCovered(target, providers, "fireRadius"),
-  );
-  if (adjacent) burned.add(adjacent.id);
+  const maxSpread = Math.max(1, burned.size * spreadMultiplier);
+  let spread = 0;
+  for (const source of targets) {
+    if (!burned.has(source.id)) continue;
+    for (const target of targets) {
+      if (burned.has(target.id)) continue;
+      if (getDistance(source, target) !== 1) continue;
+      if (isCovered(target, providers, "fireRadius")) continue;
+      if (spread >= maxSpread) return;
+      burned.add(target.id);
+      spread++;
+    }
+  }
 }
 
 function collectGarbage(

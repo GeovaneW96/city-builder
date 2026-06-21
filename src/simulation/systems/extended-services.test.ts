@@ -31,11 +31,26 @@ describe("police and fire services", () => {
     expect(events.some((event) => event.type === "BUILDING_REMOVED")).toBe(true);
   });
 
-  it("spreads an unresolved fire to an adjacent uncovered building", () => {
+  it("spreads to one adjacent uncovered building per tick under normal conditions", () => {
     const state = createInitialCityState();
     const factory = addBuilding(state, "small_factory", 10, 10);
     addBuilding(state, "small_house", 11, 10);
+    addBuilding(state, "small_house", 9, 10);
     factory.fireRisk = 99;
+
+    recomputeExtendedServices(state);
+
+    expect(state.buildings).toHaveLength(1);
+    expect(state.buildings[0]?.definitionId).toBe("small_house");
+  });
+
+  it("spreads to all adjacent uncovered buildings during a fire event", () => {
+    const state = createInitialCityState();
+    const factory = addBuilding(state, "small_factory", 10, 10);
+    addBuilding(state, "small_house", 11, 10);
+    addBuilding(state, "small_house", 9, 10);
+    factory.fireRisk = 99;
+    state.events = [{ id: "fire:0", type: "fire", startTick: 0, durationTicks: 6 }];
 
     recomputeExtendedServices(state);
 
