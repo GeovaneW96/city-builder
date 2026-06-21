@@ -14,8 +14,10 @@ Map-dependent systems derive bounds from the active map rather than a fixed grid
 Industrial metrics include resource-deposit productivity when an active industrial building occupies an ore or oil tile.
 Landmark festivals are processed as time-bound city events and apply their happiness modifier through the normal system.
 Extended fire service processing propagates unresolved fires to adjacent unprotected buildings.
-Education Center specialization increases derived workforce quality from education coverage.
-Industrial and Green City specialization effects feed pollution and happiness through their respective systems.
+Education Center specialization increases derived workforce quality from education coverage but reduces commercial and industrial income.
+Industrial Hub specialization boosts industrial income and pollution at the cost of commercial income and happiness.
+Commercial Hub specialization boosts commercial income at the cost of industrial income.
+Green City specialization reduces pollution and boosts happiness but penalizes industrial income.
 Map size tiers expose deterministic performance-budget data for simulation and rendering consumers.
 
 ## Purpose

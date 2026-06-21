@@ -57,10 +57,25 @@ describe("city specialization", () => {
     expect(getEducationSpecializationMultiplier(state)).toBe(1.5);
   });
 
-  it("applies industrial and green-city environmental tradeoffs", () => {
+  it("applies tradeoffs for all specializations", () => {
     const state = createInitialCityState();
+
     state.specialization.active = "industrial_hub";
+    expect(getSpecializationMultiplier(state, "industrial")).toBe(1.5);
+    expect(getSpecializationMultiplier(state, "commercial")).toBe(0.8);
     expect(getPollutionSpecializationMultiplier(state)).toBe(1.5);
+    expect(getSpecializationHappinessModifier(state)).toBe(-5);
+
+    state.specialization.active = "commercial_hub";
+    expect(getSpecializationMultiplier(state, "commercial")).toBe(1.5);
+    expect(getSpecializationMultiplier(state, "industrial")).toBe(0.8);
+
+    state.specialization.active = "education_center";
+    expect(getEducationSpecializationMultiplier(state)).toBe(1.5);
+    expect(getSpecializationMultiplier(state, "commercial")).toBe(0.9);
+    expect(getSpecializationMultiplier(state, "industrial")).toBe(0.9);
+    expect(getPollutionSpecializationMultiplier(state)).toBe(0.8);
+
     state.specialization.active = "green_city";
     expect(getPollutionSpecializationMultiplier(state)).toBe(0.5);
     expect(getSpecializationHappinessModifier(state)).toBe(10);

@@ -698,8 +698,8 @@ This document lists every feature across all four implementation phases. Under e
 | 3.9.2 | Industrial specialization boosts industrial output    | done   |
 | 3.9.3 | Commercial specialization boosts commercial income    | done   |
 | 3.9.4 | Tourism specialization boosts tourism income          | done   |
-| 3.9.5 | Education specialization boosts education effects     |        |
-| 3.9.6 | Specialization has tradeoffs (neglects other sectors) |        |
+| 3.9.5 | Education specialization boosts education effects     | done   |
+| 3.9.6 | Specialization has tradeoffs (neglects other sectors) | done   |
 
 ### 3.10 Events and Disasters
 

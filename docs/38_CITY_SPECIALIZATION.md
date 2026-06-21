@@ -93,8 +93,11 @@ Requirements:
 
 ## Implementation
 
-Education Center applies its 1.5× education effectiveness to derived workforce quality, capped at 100.
-Industrial Hub increases pollution output by 50%; Green City halves pollution output and adds 10 happiness.
+Education Center applies its 1.5× education effectiveness to derived workforce quality, capped at 100, but reduces commercial and industrial income by 10% each and pollution output by 20%.
+Industrial Hub increases industrial income by 50% and pollution output by 50%, but reduces commercial income by 20% and happiness by 5.
+Commercial Hub increases commercial income by 50% but reduces industrial income by 20%.
+Green City halves pollution output, adds 10 happiness, and reduces industrial income by 30%.
+Tourist Destination doubles tourism income but reduces commercial income by 20%.
 
 Specialization effects are applied as multipliers to the relevant simulation systems.
 

@@ -31,9 +31,10 @@ export function getSpecializationMultiplier(
   target: "industrial" | "commercial" | "tourism",
 ): number {
   const effects: Record<string, Partial<Record<typeof target, number>>> = {
-    industrial_hub: { industrial: 1.5 },
-    commercial_hub: { commercial: 1.5 },
+    industrial_hub: { industrial: 1.5, commercial: 0.8 },
+    commercial_hub: { commercial: 1.5, industrial: 0.8 },
     tourist_destination: { tourism: 2, commercial: 0.8 },
+    education_center: { commercial: 0.9, industrial: 0.9 },
     green_city: { industrial: 0.7 },
   };
   return effects[state.specialization.active ?? ""]?.[target] ?? 1;
@@ -46,9 +47,12 @@ export function getEducationSpecializationMultiplier(state: CityState): number {
 export function getPollutionSpecializationMultiplier(state: CityState): number {
   if (state.specialization.active === "industrial_hub") return 1.5;
   if (state.specialization.active === "green_city") return 0.5;
+  if (state.specialization.active === "education_center") return 0.8;
   return 1;
 }
 
 export function getSpecializationHappinessModifier(state: CityState): number {
-  return state.specialization.active === "green_city" ? 10 : 0;
+  if (state.specialization.active === "green_city") return 10;
+  if (state.specialization.active === "industrial_hub") return -5;
+  return 0;
 }
