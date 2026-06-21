@@ -1,13 +1,15 @@
 import * as THREE from "three";
+import { getTiledTexture } from "./textures";
 
 const DEFAULT_GRID_SIZE = 64;
 const TILE_SIZE = 1;
 
 const COLORS = {
-  GROUND: 0x8bc34a,
-  HOVER: 0xa5d66a,
-  SELECTED: 0x42a5f5,
-  GRID_LINE: 0x6a9c3a,
+  GROUND: 0x527b36,
+  GROUND_DARK: 0x314d2b,
+  HOVER: 0xa7db73,
+  SELECTED: 0x64b8e7,
+  GRID_LINE: 0xc4d9a0,
   INVALID: 0xef5350,
 };
 
@@ -16,6 +18,7 @@ export interface GridContext {
   selectionHighlight: THREE.Mesh;
   ground: THREE.Mesh;
   raycasterTarget: THREE.Mesh;
+  gridHelper: THREE.GridHelper;
   gridSize: number;
 }
 
@@ -45,13 +48,12 @@ export function createGrid(
   gridSize = DEFAULT_GRID_SIZE,
 ): GridContext {
   const half = gridSize / 2;
-
+  addTerrainBase(scene, gridSize, half);
   const ground = new THREE.Mesh(
-    new THREE.PlaneGeometry(gridSize, gridSize),
-    new THREE.MeshStandardMaterial({ color: COLORS.GROUND, roughness: 0.9 }),
+    createTerrainGeometry(gridSize),
+    createGroundMaterial(gridSize),
   );
-  ground.rotation.x = -Math.PI / 2;
-  ground.position.set(half, -0.01, half);
+  ground.position.set(half, -0.015, half);
   ground.receiveShadow = true;
   scene.add(ground);
 
@@ -71,13 +73,82 @@ export function createGrid(
     COLORS.GRID_LINE,
   );
   gridHelper.position.set(half, 0.001, half);
+  const gridMaterial = gridHelper.material as THREE.LineBasicMaterial;
+  gridMaterial.transparent = true;
+  gridMaterial.opacity = 0.13;
+  gridHelper.visible = false;
   scene.add(gridHelper);
 
   const hoverHighlight = createHighlightMesh(scene, COLORS.HOVER, 0.5, 0.002);
 
   const selectionHighlight = createHighlightMesh(scene, COLORS.SELECTED, 0.4, 0.003);
 
-  return { hoverHighlight, selectionHighlight, ground, raycasterTarget, gridSize };
+  return {
+    hoverHighlight,
+    selectionHighlight,
+    ground,
+    raycasterTarget,
+    gridHelper,
+    gridSize,
+  };
+}
+
+function createGroundMaterial(gridSize: number): THREE.MeshStandardMaterial {
+  return new THREE.MeshStandardMaterial({
+    color: 0xffffff,
+    map: getTiledTexture(
+      "/textures/temperate-grass-albedo.jpg",
+      gridSize / 4,
+      gridSize / 4,
+    ),
+    roughness: 0.94,
+    metalness: 0,
+    vertexColors: false,
+  });
+}
+
+function addTerrainBase(scene: THREE.Scene, gridSize: number, half: number): void {
+  const terrainBase = new THREE.Mesh(
+    new THREE.BoxGeometry(gridSize + 0.5, 0.48, gridSize + 0.5),
+    new THREE.MeshStandardMaterial({ color: COLORS.GROUND_DARK, roughness: 1 }),
+  );
+  terrainBase.position.set(half, -0.28, half);
+  terrainBase.receiveShadow = true;
+  scene.add(terrainBase);
+}
+
+export function setGridVisibility(context: GridContext, visible: boolean): void {
+  context.gridHelper.visible = visible;
+}
+
+function createTerrainGeometry(gridSize: number): THREE.PlaneGeometry {
+  const segments = Math.min(gridSize, 48);
+  const geometry = new THREE.PlaneGeometry(gridSize, gridSize, segments, segments);
+  geometry.rotateX(-Math.PI / 2);
+  const positions = geometry.getAttribute("position");
+  const colors = new Float32Array(positions.count * 3);
+  const color = new THREE.Color();
+  for (let index = 0; index < positions.count; index += 1) {
+    const x = positions.getX(index);
+    const z = positions.getZ(index);
+    positions.setY(index, getTerrainHeight(x, z));
+    color.setHex(getGrassColor(x, z));
+    color.toArray(colors, index * 3);
+  }
+  geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+  geometry.computeVertexNormals();
+  return geometry;
+}
+
+function getTerrainHeight(x: number, z: number): number {
+  const wide = Math.sin(x * 0.16) * Math.cos(z * 0.12) * 0.045;
+  const small = Math.sin((x + z) * 0.7) * 0.012;
+  return wide + small;
+}
+
+function getGrassColor(x: number, z: number): number {
+  const variation = Math.sin(x * 0.27 + z * 0.43) * 0.5 + 0.5;
+  return variation > 0.62 ? 0x5f8b3c : variation < 0.28 ? 0x456c34 : COLORS.GROUND;
 }
 
 export function screenToGrid(

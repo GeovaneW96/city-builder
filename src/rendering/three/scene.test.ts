@@ -2,6 +2,28 @@
 import { describe, expect, it, vi } from "vitest";
 
 vi.mock("three/src/renderers/WebGLRenderer.js", () => ({}));
+vi.mock("three/addons/postprocessing/EffectComposer.js", () => ({
+  EffectComposer: vi.fn().mockImplementation(() => ({
+    addPass: vi.fn(),
+    render: vi.fn(),
+    setPixelRatio: vi.fn(),
+    setSize: vi.fn(),
+  })),
+}));
+vi.mock("three/addons/postprocessing/OutputPass.js", () => ({
+  OutputPass: vi.fn(),
+}));
+vi.mock("three/addons/postprocessing/RenderPass.js", () => ({
+  RenderPass: vi.fn(),
+}));
+vi.mock("three/addons/postprocessing/UnrealBloomPass.js", () => ({
+  UnrealBloomPass: vi.fn().mockImplementation(() => ({
+    enabled: true,
+    radius: 0,
+    strength: 0,
+    threshold: 0,
+  })),
+}));
 vi.mock("three", async (importOriginal) => {
   const actual = await importOriginal<typeof import("three")>();
   return {

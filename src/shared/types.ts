@@ -557,8 +557,10 @@ export interface CameraState {
   rotation: number;
 }
 
+export type GraphicsQuality = "low" | "medium" | "high" | "ultra";
+
 export interface UISettings {
-  graphicsQuality: "low" | "medium" | "high";
+  graphicsQuality: GraphicsQuality;
   soundEnabled: boolean;
   musicVolume: number;
   sfxVolume: number;

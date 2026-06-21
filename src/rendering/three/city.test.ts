@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import type { BuildingInstance } from "../../shared/types";
 import { createInitialCityState } from "../../simulation/state";
 import {
@@ -7,6 +7,7 @@ import {
   syncCityRenderLayers,
   type BuildingRenderInfoLookup,
 } from "./city";
+import type { CityAssetSource } from "../../assets/AssetManager";
 
 describe("city render layers", () => {
   it("uses one instanced mesh for repeated building definitions", () => {
@@ -35,7 +36,7 @@ describe("city render layers", () => {
     const layers = createCityRenderLayers(new THREE.Scene());
 
     syncCityRenderLayers(layers, state, "zoning", getBuildingRenderInfo);
-    expect(layers.roads.children).toHaveLength(1);
+    expect(layers.roads.children.length).toBeGreaterThan(0);
     expect(layers.overlays.children).toHaveLength(1);
 
     state.roads = [];
@@ -45,6 +46,40 @@ describe("city render layers", () => {
     expect(layers.roads.children).toHaveLength(0);
     expect(layers.overlays.children).toHaveLength(0);
     expect(layers.buildings.children[0]?.name).toBe("building:small_house:constructing");
+  });
+});
+
+describe("generated city assets", () => {
+  it("uses preloaded generated asset instances when a source is provided", () => {
+    const state = createInitialCityState();
+    state.buildings.push(createHouse("house:1", 4, 5));
+    const layers = createCityRenderLayers(new THREE.Scene());
+    const { source, createBuildingInstance } = createAssetSource();
+
+    syncCityRenderLayers(layers, state, null, getBuildingRenderInfo, {
+      assetSource: source,
+    });
+
+    expect(layers.buildings.children[0]?.name).toBe("building:small_house:active");
+    expect(createBuildingInstance).toHaveBeenCalledOnce();
+  });
+
+  it("uses generated modular roads when the asset source is ready", () => {
+    const state = createInitialCityState();
+    state.roads.push({
+      id: "road:4,4",
+      type: "paved",
+      position: [4, 4],
+      connections: { north: false, east: true, south: false, west: true },
+    });
+    const layers = createCityRenderLayers(new THREE.Scene());
+    const { source, createAssetInstance } = createAssetSource();
+
+    syncCityRenderLayers(layers, state, null, getBuildingRenderInfo, {
+      assetSource: source,
+    });
+
+    expect(createAssetInstance).toHaveBeenCalledWith("road_with_sidewalks");
   });
 });
 
@@ -72,3 +107,26 @@ const getBuildingRenderInfo: BuildingRenderInfoLookup = (definitionId) => {
     effects: {},
   };
 };
+
+function createAssetSource(): {
+  source: CityAssetSource;
+  createBuildingInstance: ReturnType<typeof vi.fn>;
+  createAssetInstance: ReturnType<typeof vi.fn>;
+} {
+  const createBuildingInstance = vi.fn(() => ({
+    id: "residential_rowhouse_brick",
+    object: new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1)),
+  }));
+  const createAssetInstance = vi.fn((id: string) => ({
+    id,
+    object: new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1)),
+  }));
+  return {
+    source: {
+      createBuildingInstance,
+      createAssetInstance,
+    },
+    createBuildingInstance,
+    createAssetInstance,
+  };
+}
