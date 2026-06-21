@@ -4,14 +4,14 @@ import type { CityState, Tile } from "../../shared/types";
 import { getTiledTexture } from "./textures";
 
 const WATER_COLORS = {
-  deep: 0x0c5574,
-  shallow: 0x258fb5,
-  foam: 0xc6f4ee,
-  rock: 0x74808a,
-  trunk: 0x704b31,
-  foliage: 0x2d713c,
-  foliageLight: 0x4a913f,
-  grassPatch: 0x75a948,
+  deep: 0x041a2e,
+  shallow: 0x0c2a48,
+  foam: 0x9ab8c4,
+  rock: 0x5a6870,
+  trunk: 0x5a3c22,
+  foliage: 0x1a4a2a,
+  foliageLight: 0x2a6a38,
+  grassPatch: 0x3a5e28,
 };
 
 export interface AnimatedWaterMaterial extends THREE.ShaderMaterial {
@@ -92,8 +92,9 @@ function createWaterMaterial(): AnimatedWaterMaterial {
           transformed = instanceMatrix * transformed;
         #endif
         vec4 worldPosition = modelMatrix * transformed;
-        float wave = sin(worldPosition.x * 2.4 + time * 1.2) * 0.018;
-        wave += cos(worldPosition.z * 3.1 + time * 1.6) * 0.012;
+        float wave = sin(worldPosition.x * 1.8 + time * 0.8) * 0.015;
+        wave += cos(worldPosition.z * 2.4 + time * 1.1) * 0.01;
+        wave += sin(worldPosition.x * 0.7 + worldPosition.z * 0.5 + time * 0.4) * 0.008;
         worldPosition.y += wave;
         vWave = wave;
         vWorldPosition = worldPosition.xyz;
@@ -105,12 +106,15 @@ function createWaterMaterial(): AnimatedWaterMaterial {
       varying float vWave;
       varying vec3 vWorldPosition;
       void main() {
-        vec3 deepWater = vec3(0.025, 0.30, 0.47);
-        vec3 shallowWater = vec3(0.13, 0.62, 0.76);
-        float ripple = sin(vWorldPosition.x * 3.6 + vWorldPosition.z * 2.1 + time * 1.9);
-        float highlight = smoothstep(0.015, 0.029, vWave + ripple * 0.004);
-        vec3 color = mix(deepWater, shallowWater, 0.42 + highlight * 0.36);
-        gl_FragColor = vec4(color, 0.97);
+        vec3 deepWater = vec3(0.015, 0.06, 0.16);
+        vec3 shallowWater = vec3(0.04, 0.14, 0.28);
+        float ripple = sin(vWorldPosition.x * 2.8 + vWorldPosition.z * 1.6 + time * 1.4);
+        float highlight = smoothstep(0.012, 0.025, abs(vWave) + ripple * 0.003);
+        float fresnel = 1.0 - abs(vWave) * 2.0;
+        vec3 specular = vec3(0.05, 0.08, 0.15) * pow(max(0.0, fresnel), 3.0) * 0.3;
+        vec3 color = mix(deepWater, shallowWater, 0.3 + highlight * 0.25);
+        color += specular;
+        gl_FragColor = vec4(color, 0.95);
       }
     `,
   }) as AnimatedWaterMaterial;
@@ -236,7 +240,7 @@ function renderGroundCover(group: THREE.Group, state: CityState): void {
     new THREE.MeshBasicMaterial({
       color: WATER_COLORS.grassPatch,
       transparent: true,
-      opacity: 0.07,
+      opacity: 0.06,
       depthWrite: false,
     }),
     tiles.length,
@@ -245,7 +249,7 @@ function renderGroundCover(group: THREE.Group, state: CityState): void {
   tiles.forEach((tile, index) => {
     const offset = getTerrainOffset(tile.x, tile.y);
     matrix.makeRotationX(-Math.PI / 2);
-    matrix.setPosition(tile.x + offset.x, 0.012, tile.y + offset.y);
+    matrix.setPosition(tile.x + offset.x, 0.008, tile.y + offset.y);
     mesh.setMatrixAt(index, matrix);
   });
   mesh.instanceMatrix.needsUpdate = true;
@@ -429,7 +433,7 @@ function createTreeTrunks(trees: NaturePlacement[]): THREE.InstancedMesh {
 function createLowerCanopies(trees: NaturePlacement[]): THREE.InstancedMesh {
   const mesh = new THREE.InstancedMesh(
     new THREE.ConeGeometry(0.34, 0.66, 12, 3),
-    new THREE.MeshStandardMaterial({ color: WATER_COLORS.foliage, roughness: 0.88 }),
+    new THREE.MeshStandardMaterial({ color: WATER_COLORS.foliage, roughness: 0.9 }),
     trees.length,
   );
   setTreeMatrices(mesh, trees, 0.54, 1.12, true);
@@ -439,7 +443,7 @@ function createLowerCanopies(trees: NaturePlacement[]): THREE.InstancedMesh {
 function createUpperCanopies(trees: NaturePlacement[]): THREE.InstancedMesh {
   const mesh = new THREE.InstancedMesh(
     new THREE.ConeGeometry(0.24, 0.52, 12, 2),
-    new THREE.MeshStandardMaterial({ color: WATER_COLORS.foliageLight, roughness: 0.9 }),
+    new THREE.MeshStandardMaterial({ color: WATER_COLORS.foliageLight, roughness: 0.92 }),
     trees.length,
   );
   setTreeMatrices(mesh, trees, 0.9, 0.9, true);
@@ -449,7 +453,7 @@ function createUpperCanopies(trees: NaturePlacement[]): THREE.InstancedMesh {
 function createDeciduousCanopies(trees: NaturePlacement[]): THREE.InstancedMesh {
   const mesh = new THREE.InstancedMesh(
     new THREE.SphereGeometry(0.31, 16, 12),
-    new THREE.MeshStandardMaterial({ color: WATER_COLORS.foliageLight, roughness: 0.88 }),
+    new THREE.MeshStandardMaterial({ color: WATER_COLORS.foliageLight, roughness: 0.9 }),
     trees.length * 3,
   );
   const object = new THREE.Object3D();

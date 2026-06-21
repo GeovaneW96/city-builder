@@ -34,27 +34,35 @@ function clampCameraTarget(target: THREE.Vector3, gridSize: number): void {
 }
 
 function addLighting(scene: THREE.Scene, gridSize: number): void {
-  const ambient = new THREE.AmbientLight(0x223758, 0.32);
+  const ambient = new THREE.AmbientLight(0x1a2a4a, 0.28);
   scene.add(ambient);
 
   const shadowSize = Math.max(50, gridSize * 0.8);
-  const dirLight = new THREE.DirectionalLight(0xb7c8ed, 2.9);
-  dirLight.position.set(gridSize * 0.24, 56, gridSize * 0.16);
+  const dirLight = new THREE.DirectionalLight(0x8899cc, 1.6);
+  dirLight.position.set(gridSize * 0.32, 64, gridSize * 0.22);
   dirLight.castShadow = true;
   dirLight.shadow.mapSize.width = 2048;
   dirLight.shadow.mapSize.height = 2048;
   dirLight.shadow.camera.near = 1;
-  dirLight.shadow.camera.far = 150;
+  dirLight.shadow.camera.far = 160;
   dirLight.shadow.camera.left = -shadowSize;
   dirLight.shadow.camera.right = shadowSize;
   dirLight.shadow.camera.top = shadowSize;
   dirLight.shadow.camera.bottom = -shadowSize;
-  dirLight.shadow.bias = -0.00015;
-  dirLight.shadow.normalBias = 0.025;
+  dirLight.shadow.bias = -0.00008;
+  dirLight.shadow.normalBias = 0.015;
   scene.add(dirLight);
 
-  const hemi = new THREE.HemisphereLight(0x223c68, 0x0b1015, 0.58);
+  const moonFill = new THREE.DirectionalLight(0x6688bb, 0.5);
+  moonFill.position.set(-gridSize * 0.15, 40, -gridSize * 0.1);
+  scene.add(moonFill);
+
+  const hemi = new THREE.HemisphereLight(0x1a2a50, 0x0a0e15, 0.45);
   scene.add(hemi);
+
+  const warmFill = new THREE.DirectionalLight(0xff8844, 0.12);
+  warmFill.position.set(gridSize * -0.2, 10, gridSize * 0.15);
+  scene.add(warmFill);
 }
 
 export function createScene(
@@ -86,8 +94,25 @@ export function createScene(
 
 function createNightScene(gridSize: number): THREE.Scene {
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x07111f);
-  scene.fog = new THREE.Fog(0x0b1b2e, gridSize * 0.72, gridSize * 2.25);
+  const canvas = document.createElement("canvas");
+  canvas.width = 2;
+  canvas.height = 256;
+  const ctx = canvas.getContext("2d");
+  if (ctx) {
+    const gradient = ctx.createLinearGradient(0, 0, 0, 256);
+    gradient.addColorStop(0, "#000510");
+    gradient.addColorStop(0.3, "#040e1e");
+    gradient.addColorStop(0.6, "#0a1a30");
+    gradient.addColorStop(1, "#0f1e2e");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 2, 256);
+    const texture = new THREE.CanvasTexture(canvas);
+    scene.background = texture;
+    scene.backgroundIntensity = 0.7;
+  } else {
+    scene.background = new THREE.Color(0x060e1a);
+  }
+  scene.fog = new THREE.Fog(0x0a1420, gridSize * 0.6, gridSize * 1.6);
   return scene;
 }
 
@@ -111,7 +136,7 @@ function createRenderer(container: HTMLElement): THREE.WebGLRenderer {
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.08;
+  renderer.toneMappingExposure = 0.92;
   container.appendChild(renderer.domElement);
   return renderer;
 }
@@ -181,9 +206,9 @@ function createPostProcessing(
   const composer = new EffectComposer(renderer);
   const bloomPass = new UnrealBloomPass(
     new THREE.Vector2(renderer.domElement.width, renderer.domElement.height),
-    0.55,
-    0.42,
-    0.78,
+    0.35,
+    0.35,
+    0.82,
   );
   composer.addPass(new RenderPass(scene, camera));
   composer.addPass(bloomPass);

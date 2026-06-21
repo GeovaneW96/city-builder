@@ -10,14 +10,22 @@ import type {
   ZoneType,
 } from "../../shared/types";
 import { animateWater, renderTerrain, type AnimatedWaterMaterial } from "./environment";
-import { getTiledTexture } from "./textures";
+import {
+  getTiledTexture,
+  getConcreteTexture,
+  getBrickTexture,
+  getAsphaltTexture,
+  getFacadePanelTexture,
+  getMetalTexture,
+  getRoofTexture,
+} from "./textures";
 
 const TILE_SIZE = 1;
 
 const COLORS = {
-  road: 0x303a40,
-  sidewalk: 0x465158,
-  laneMarking: 0xf4dfae,
+  road: 0x20282e,
+  sidewalk: 0x3a444a,
+  laneMarking: 0xccccb0,
   residential: 0x4caf50,
   commercial: 0x42a5f5,
   industrial: 0xffb547,
@@ -120,6 +128,11 @@ const BUILDING_VARIANT_RANGES: Record<GeneratedBuildingCategory, BuildingVariant
       default: [0, 5],
       medium_house: [2, 7],
       high_apartment: [5, 10],
+      residential_midriser_brick: [0, 5],
+      residential_terrace_wide: [0, 5],
+      residential_tower_wide: [8, 15],
+      residential_small_apt: [0, 4],
+      residential_balcony_tower: [6, 15],
     },
     commercial: {
       default: [0, 4],
@@ -127,13 +140,21 @@ const BUILDING_VARIANT_RANGES: Record<GeneratedBuildingCategory, BuildingVariant
       large_store: [3, 9],
       small_office: [4, 10],
       large_office: [4, 10],
+      commercial_bank: [0, 4],
+      commercial_retail_row: [0, 4],
+      commercial_glass_low: [2, 6],
+      commercial_tower_narrow: [8, 15],
+      commercial_plaza_building: [3, 8],
     },
     industrial: {
       default: [0, 4],
       medium_factory: [1, 5],
       large_plant: [2, 5],
+      industrial_workshop: [0, 4],
+      industrial_factory_large: [2, 8],
+      industrial_storage_yard: [0, 4],
     },
-    civic: { default: [0, 5] },
+    civic: { default: [0, 8] },
   };
 
 interface StreetRun {
@@ -234,6 +255,7 @@ function renderRoads(
   addIntersectionDetails(group, state.roads);
   addStreetLights(group, state.roads);
   addDecorativeTraffic(group, state.roads);
+  addStreetSidewalkDetail(group, state.roads);
 }
 
 function renderGeneratedRoads(
@@ -247,6 +269,8 @@ function renderGeneratedRoads(
   addGeneratedTrafficLights(group, state.roads, assetSource, detailDensity);
   addGeneratedTraffic(group, state.roads, assetSource, detailDensity);
   addGeneratedRoadProps(group, state.roads, assetSource, detailDensity);
+  addGeneratedStreetTrees(group, state.roads, assetSource, detailDensity);
+  addGeneratedStreetFurniture(group, state.roads, assetSource, detailDensity);
 }
 
 function addGeneratedRoad(
@@ -368,6 +392,57 @@ function addGeneratedRoadProps(
     });
 }
 
+function addGeneratedStreetTrees(
+  group: THREE.Group,
+  roads: CityState["roads"],
+  assetSource: CityAssetSource,
+  detailDensity: number,
+): void {
+  roads
+    .filter((road) => shouldPlaceRoadDetail(road, detailDensity, 12))
+    .forEach((road) => {
+      const [x, y] = road.position;
+      const side = getVisualHash(x, y + 7) % 2 === 0 ? -0.6 : 0.6;
+      const treeId =
+        getVisualHash(x, y) % 3 === 0
+          ? "tree_conifer"
+          : getVisualHash(x, y) % 2 === 0
+            ? "tree_oak"
+            : "tree_maple";
+      addGeneratedAsset(group, assetSource, treeId, {
+        position: [x + 0.5 + side, 0, y + 0.5],
+        scale: 0.6 + (getVisualHash(x, y) % 3) * 0.08,
+      });
+    });
+}
+
+function addGeneratedStreetFurniture(
+  group: THREE.Group,
+  roads: CityState["roads"],
+  assetSource: CityAssetSource,
+  detailDensity: number,
+): void {
+  if (detailDensity < 0.75) return;
+  roads
+    .filter((road) => shouldPlaceRoadDetail(road, detailDensity, 20))
+    .forEach((road, index) => {
+      const [x, y] = road.position;
+      const side = getVisualHash(x, y) % 2 === 0 ? -0.6 : 0.6;
+      if (index % 2 === 0) {
+        addGeneratedAsset(group, assetSource, "bench", {
+          position: [x + 0.5 + side, 0, y + 0.5],
+          rotation: side < 0 ? 0 : Math.PI,
+          scale: 0.7,
+        });
+      } else {
+        addGeneratedAsset(group, assetSource, "trash_bin", {
+          position: [x + 0.5 + side, 0, y + 0.5],
+          scale: 0.75,
+        });
+      }
+    });
+}
+
 function addGeneratedAsset(
   group: THREE.Group,
   assetSource: CityAssetSource,
@@ -461,21 +536,20 @@ function createStreetLayer(
   layer: "sidewalk" | "surface" | "curb",
 ): THREE.Group {
   if (layer === "curb") return createStreetCurbs(runs, roadType);
+  const isSurface = layer === "surface";
   const mesh = new THREE.InstancedMesh(
-    new THREE.BoxGeometry(1, layer === "surface" ? 0.055 : 0.04, 1),
+    new THREE.BoxGeometry(1, isSurface ? 0.055 : 0.04, 1),
     new THREE.MeshStandardMaterial({
       color: getStreetLayerColor(roadType, layer),
-      map:
-        layer === "surface"
-          ? getTiledTexture("/textures/urban-asphalt-albedo.jpg", 2, 2)
-          : null,
-      roughness: layer === "surface" ? 0.72 : 0.84,
+      map: isSurface ? getAsphaltTexture(2, 2) : getConcreteTexture(2, 2),
+      roughness: isSurface ? 0.78 : 0.86,
+      metalness: isSurface ? 0.02 : 0,
     }),
     runs.length,
   );
   const object = new THREE.Object3D();
   runs.forEach((run, index) => {
-    setStreetRunTransform(object, run, layer === "surface" ? 0.065 : 0.02, layer);
+    setStreetRunTransform(object, run, isSurface ? 0.065 : 0.02, layer);
     mesh.setMatrixAt(index, object.matrix);
   });
   mesh.receiveShadow = true;
@@ -522,7 +596,10 @@ function getStreetLayerColor(
   layer: "sidewalk" | "surface",
 ): number {
   if (layer === "sidewalk") return COLORS.sidewalk;
-  return roadType === "dirt" ? getRoadColor(roadType) : 0xa0a5a3;
+  if (roadType === "dirt") return getRoadColor(roadType);
+  if (roadType === "arterial") return 0x282e32;
+  if (roadType === "collector") return 0x2c3236;
+  return 0x30383c;
 }
 
 function createStreetCurbs(
@@ -543,7 +620,11 @@ function createContinuousCurbMesh(
 ): THREE.InstancedMesh {
   const mesh = new THREE.InstancedMesh(
     new THREE.BoxGeometry(1, 0.035, 0.045),
-    new THREE.MeshStandardMaterial({ color: 0x747c7c, roughness: 0.86 }),
+    new THREE.MeshStandardMaterial({
+      color: 0x6a7272,
+      map: getConcreteTexture(2, 1),
+      roughness: 0.88,
+    }),
     runs.length,
   );
   const object = new THREE.Object3D();
@@ -618,7 +699,11 @@ function addIntersectionDetails(group: THREE.Group, roads: CityState["roads"]): 
   if (intersections.length === 0) return;
   const plates = new THREE.InstancedMesh(
     new THREE.CircleGeometry(0.48, 24),
-    new THREE.MeshStandardMaterial({ color: 0x2b3439, roughness: 0.73 }),
+    new THREE.MeshStandardMaterial({
+      color: 0x242a2e,
+      map: getAsphaltTexture(1, 1),
+      roughness: 0.78,
+    }),
     intersections.length,
   );
   const matrix = new THREE.Matrix4();
@@ -639,7 +724,7 @@ function createCrosswalks(roads: CityState["roads"]): THREE.InstancedMesh {
   const count = roads.length * 8;
   const mesh = new THREE.InstancedMesh(
     new THREE.BoxGeometry(0.055, 0.013, 0.19),
-    new THREE.MeshStandardMaterial({ color: 0xe4dfcf, roughness: 0.7 }),
+    new THREE.MeshStandardMaterial({ color: 0xccccba, roughness: 0.72 }),
     count,
   );
   const matrix = new THREE.Matrix4();
@@ -675,10 +760,10 @@ function addStreetLights(group: THREE.Group, roads: CityState["roads"]): void {
   const lamps = new THREE.InstancedMesh(
     new THREE.SphereGeometry(0.055, 10, 8),
     new THREE.MeshStandardMaterial({
-      color: 0xffdeb0,
-      emissive: 0xffbf68,
-      emissiveIntensity: 0.45,
-      roughness: 0.4,
+      color: 0xffddaa,
+      emissive: 0xffaa55,
+      emissiveIntensity: 0.28,
+      roughness: 0.35,
     }),
     lights.length,
   );
@@ -748,6 +833,39 @@ function createRoadCar(road: CityState["roads"][number]): DecorativeCar[] {
       ? { x: x + 0.5 + lane, z: y + 0.5, rotation: 0, color }
       : { x: x + 0.5, z: y + 0.5 + lane, rotation: Math.PI / 2, color },
   ];
+}
+
+function addStreetSidewalkDetail(group: THREE.Group, roads: CityState["roads"]): void {
+  const streets = roads.filter(
+    (road) => road.type !== "dirt" && getRoadConnectionCount(road) < 3,
+  );
+  const trees = streets.filter(
+    (road) => getVisualHash(road.position[0], road.position[1]) % 9 === 0,
+  );
+  if (trees.length === 0) return;
+  const trunk = new THREE.InstancedMesh(
+    new THREE.CylinderGeometry(0.025, 0.04, 0.32, 6),
+    new THREE.MeshStandardMaterial({ color: 0x4a3020, roughness: 0.94 }),
+    trees.length,
+  );
+  const canopy = new THREE.InstancedMesh(
+    new THREE.SphereGeometry(0.18, 8, 6),
+    new THREE.MeshStandardMaterial({ color: 0x1a4828, roughness: 0.92 }),
+    trees.length,
+  );
+  const matrix = new THREE.Matrix4();
+  trees.forEach((road, index) => {
+    const [x, y] = road.position;
+    const side = getVisualHash(x, y) % 2 === 0 ? 0.62 : -0.62;
+    matrix.makeTranslation(x + 0.5 + side, 0.16, y + 0.5);
+    trunk.setMatrixAt(index, matrix);
+    matrix.makeTranslation(x + 0.5 + side, 0.4, y + 0.5);
+    canopy.setMatrixAt(index, matrix);
+  });
+  trunk.castShadow = true;
+  trunk.instanceMatrix.needsUpdate = true;
+  canopy.instanceMatrix.needsUpdate = true;
+  group.add(trunk, canopy);
 }
 
 function renderZones(group: THREE.Group, state: CityState): void {
@@ -1090,22 +1208,27 @@ function createBuildingBaseMaterial(
   definitionId: string,
 ): THREE.MeshStandardMaterial[] {
   const wallMap = getBuildingWallMap(category, definitionId);
-  const walls = new THREE.MeshStandardMaterial({
+  const procMap = getBuildingProceduralMap(category, definitionId);
+  const wallMat = new THREE.MeshStandardMaterial({
     color: wallMap ? 0xffffff : getBuildingWallColor(category, definitionId),
-    map: wallMap,
+    map: wallMap ?? procMap,
     roughness: getBuildingWallRoughness(category),
     metalness: getBuildingWallMetalness(category),
+    bumpMap: wallMap ? undefined : procMap,
+    bumpScale: 0.015,
   });
-  const roof = new THREE.MeshStandardMaterial({
+  const roofMat = new THREE.MeshStandardMaterial({
     color: getBuildingRoofColor(category, definitionId),
-    roughness: 0.68,
-    metalness: category === "industrial" || category === "utility" ? 0.24 : 0.08,
+    map: getRoofTexture(2, 2),
+    roughness: 0.72,
+    metalness: category === "industrial" || category === "utility" ? 0.2 : 0.06,
   });
   const foundation = new THREE.MeshStandardMaterial({
-    color: 0x596166,
+    color: 0x505558,
+    map: getConcreteTexture(1, 1),
     roughness: 0.88,
   });
-  return [walls, walls, roof, foundation, walls, walls];
+  return [wallMat, wallMat, roofMat, foundation, wallMat, wallMat];
 }
 
 function getBuildingWallMap(
@@ -1121,6 +1244,29 @@ function getBuildingWallMap(
   if (category === "commercial" || isCivicBuilding(category))
     return getTiledTexture("/textures/commercial-wall-albedo.jpg", 2, 3);
   return null;
+}
+
+function getBuildingProceduralMap(
+  category: BuildingCategory,
+  definitionId: string,
+): THREE.Texture | null {
+  if (category === "residential") {
+    if (definitionId.includes("brick")) return getBrickTexture(2, 4);
+    if (definitionId.includes("stucco")) return getConcreteTexture(2, 2);
+    if (definitionId.includes("tower")) return getFacadePanelTexture(3, 6);
+    return getBrickTexture(2, 3);
+  }
+  if (category === "commercial") {
+    if (definitionId.includes("tower")) return getFacadePanelTexture(4, 8);
+    return getConcreteTexture(3, 4);
+  }
+  if (category === "industrial" || category === "utility") {
+    return getMetalTexture(4, 4);
+  }
+  if (isCivicBuilding(category)) {
+    return getConcreteTexture(3, 4);
+  }
+  return getConcreteTexture(2, 2);
 }
 
 function getBuildingWallColor(category: BuildingCategory, definitionId: string): number {
@@ -1242,7 +1388,11 @@ function createFacadeBands(
     : new THREE.BoxGeometry(0.034, 0.025, span * 0.76);
   return new THREE.InstancedMesh(
     geometry,
-    new THREE.MeshStandardMaterial({ color: 0x35434a, roughness: 0.48, metalness: 0.22 }),
+    new THREE.MeshStandardMaterial({
+      color: 0x2a363c,
+      roughness: 0.52,
+      metalness: 0.18,
+    }),
     count,
   );
 }
@@ -1450,10 +1600,10 @@ function createWindowMaterial(front: boolean): THREE.MeshStandardMaterial {
   return new THREE.MeshStandardMaterial({
     color: curtainWall ? 0xffffff : front ? 0xa4c9d5 : 0x86b7c6,
     map: curtainWall,
-    emissive: front ? 0x2f5261 : 0x234855,
-    emissiveIntensity: front ? 0.18 : 0.14,
-    roughness: front ? 0.28 : 0.3,
-    metalness: front ? 0.24 : 0.22,
+    emissive: front ? 0x1a3848 : 0x142e3a,
+    emissiveIntensity: front ? 0.08 : 0.05,
+    roughness: front ? 0.32 : 0.34,
+    metalness: front ? 0.28 : 0.26,
   });
 }
 
@@ -1501,10 +1651,16 @@ function getWindowColor(
   column: number,
   front: boolean,
 ): THREE.Color {
-  const variation = getVisualHash(buildingIndex * 17 + floor, column + 3) % 11;
-  if (variation === 0) return new THREE.Color(0xe8c16d);
-  if (variation === 1) return new THREE.Color(0x6f9eae);
-  return new THREE.Color(front ? 0xb7d5df : 0x92bdca);
+  const variation = getVisualHash(buildingIndex * 17 + floor, column + 3) % 17;
+  if (variation === 0) return new THREE.Color(0xffcc88);
+  if (variation === 1) return new THREE.Color(0x88bbdd);
+  if (variation === 2) return new THREE.Color(0xffdd99);
+  if (variation === 3) return new THREE.Color(0x6688aa);
+  if (variation === 4) return new THREE.Color(0xeeddaa);
+  if (variation === 5) return new THREE.Color(0x557799);
+  if (variation === 6) return new THREE.Color(0xffaa66);
+  if (variation >= 14) return new THREE.Color(0x080c12);
+  return new THREE.Color(front ? 0xdde8ee : 0xaac0cc);
 }
 
 function addTowerCaps(
@@ -1701,10 +1857,10 @@ function addResidentialFacade(
   const windows = new THREE.InstancedMesh(
     new THREE.BoxGeometry(Math.max(0.12, width * 0.17), height * 0.22, 0.025),
     new THREE.MeshStandardMaterial({
-      color: 0xc1d8db,
-      emissive: 0x38575a,
-      emissiveIntensity: 0.12,
-      roughness: 0.24,
+      color: 0xd0e2e6,
+      emissive: 0x1a3038,
+      emissiveIntensity: 0.07,
+      roughness: 0.28,
     }),
     buildings.length * 2,
   );
@@ -1789,10 +1945,10 @@ function addStorefronts(
   const signs = new THREE.InstancedMesh(
     new THREE.BoxGeometry(width * 0.5, 0.1, 0.045),
     new THREE.MeshStandardMaterial({
-      color: 0x244b59,
-      emissive: 0x17313b,
-      emissiveIntensity: 0.28,
-      roughness: 0.48,
+      color: 0x1a3a4a,
+      emissive: 0x0e2230,
+      emissiveIntensity: 0.12,
+      roughness: 0.52,
     }),
     buildings.length,
   );
@@ -1820,11 +1976,11 @@ function addStorefronts(
 
 function createStorefrontWindowMaterial(): THREE.MeshStandardMaterial {
   return new THREE.MeshStandardMaterial({
-    color: 0x78aab8,
-    emissive: 0x203b42,
-    emissiveIntensity: 0.24,
-    roughness: 0.24,
-    metalness: 0.28,
+    color: 0x88b5c4,
+    emissive: 0x183038,
+    emissiveIntensity: 0.1,
+    roughness: 0.28,
+    metalness: 0.3,
   });
 }
 

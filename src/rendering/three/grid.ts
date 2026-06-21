@@ -5,11 +5,11 @@ const DEFAULT_GRID_SIZE = 64;
 const TILE_SIZE = 1;
 
 const COLORS = {
-  GROUND: 0x527b36,
-  GROUND_DARK: 0x314d2b,
-  HOVER: 0xa7db73,
-  SELECTED: 0x64b8e7,
-  GRID_LINE: 0xc4d9a0,
+  GROUND: 0x2a4522,
+  GROUND_DARK: 0x1a2e18,
+  HOVER: 0x6b9a50,
+  SELECTED: 0x4a8fc0,
+  GRID_LINE: 0x80a060,
   INVALID: 0xef5350,
 };
 
@@ -148,7 +148,11 @@ function getTerrainHeight(x: number, z: number): number {
 
 function getGrassColor(x: number, z: number): number {
   const variation = Math.sin(x * 0.27 + z * 0.43) * 0.5 + 0.5;
-  return variation > 0.62 ? 0x5f8b3c : variation < 0.28 ? 0x456c34 : COLORS.GROUND;
+  const v2 = Math.sin(x * 0.13 + z * 0.22) * 0.5 + 0.5;
+  if (v2 > 0.7) return 0x204018;
+  if (variation > 0.62) return 0x3a5e28;
+  if (variation < 0.28) return 0x2a4a1e;
+  return COLORS.GROUND;
 }
 
 export function screenToGrid(

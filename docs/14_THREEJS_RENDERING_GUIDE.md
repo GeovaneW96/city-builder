@@ -138,9 +138,76 @@ rooftop equipment remain explicit geometry.
 emissive windows, streetlights, and vehicle lights to read cleanly without charging lower-end
 devices for post-processing.
 
-The renderer has `low`, `medium`, `high`, and `ultra` quality profiles. They control device
-pixel-ratio caps, shadow-map size, bloom parameters, and generated city-detail density. The
-quality profile never affects simulation data or player actions.
+### Window Emissive Balance
+
+Window emissive is intentionally subdued -- front windows at 0.08 intensity, side windows at
+0.05. Windows use a 17-way color variation (warm white, yellow, cool white, dim blue) with
+~18% of windows randomly turned dark to avoid the "solid glowing strip" look. Per-building
+and per-floor hash seeds ensure deterministic variety across instances.
+
+### Scene Lighting
+
+The night scene uses layered lighting:
+
+- Ambient: dim blue `0x1a2a4a` at 0.28
+- Moonlight: cool directional `0x6688bb` at 1.6, shadow-casting
+- Moon fill: `0x6688bb` at 0.5 from the opposite side
+- Warm city glow: `0xff8844` at 0.12 from ground level
+- Hemisphere: `0x1a2a50` (sky) / `0x0a0e15` (ground) at 0.45
+
+Background is a gradient texture from near-black to dark blue (`#000510` → `#0f1e2e`) for a
+deep night sky. Fog is a dark haze at `0x0a1420` with range scaled to grid size.
+
+### Procedural Texture Generation
+
+When external texture files are unavailable, the renderer generates procedural textures at
+runtime using Canvas2D:
+
+| Texture      | Use                           | Features                               |
+| ------------ | ----------------------------- | -------------------------------------- |
+| Concrete     | Sidewalks, walls, foundations | Speckled aggregate, random cracks      |
+| Brick        | Residential walls             | Mortar grid, per-brick color variation |
+| Asphalt      | Road surfaces                 | Dark noise, pebble dots, crack lines   |
+| Facade panel | Tower cladding                | Panel grid with gap lines, wear marks  |
+| Metal        | Industrial cladding           | Brushed directional scratch lines      |
+| Roof         | Roof surfaces                 | Dark gravel noise                      |
+
+These textures are cached by key and use `RepeatWrapping` for tiling.
+
+### Quality Profiles
+
+The renderer has `low`, `medium`, `high`, and `ultra` quality profiles. They control:
+
+| Setting        | low | medium | high           | ultra         |
+| -------------- | --- | ------ | -------------- | ------------- |
+| pixelRatioCap  | 1   | 1.5    | 2              | 2             |
+| shadowMapSize  | 512 | 1024   | 2048           | 2048          |
+| bloom          | off | off    | 0.35/0.35/0.82 | 0.45/0.4/0.78 |
+| detailDensity  | 0.3 | 0.55   | 0.8            | 1.0           |
+| propDensity    | 0.2 | 0.4    | 0.7            | 1.0           |
+| vehicleDensity | 0   | 0.3    | 0.6            | 1.0           |
+| treeDensity    | 0.3 | 0.5    | 0.7            | 1.0           |
+| fogDensity     | 0.4 | 0.7    | 1.0            | 1.0           |
+| waterQuality   | 0   | 1      | 1              | 2             |
+
+Bloom is selective with a 0.82 threshold so only the brightest emissive surfaces (streetlights,
+signs, a few windows) contribute. This prevents bloom from washing out building shapes.
+
+The quality profile never affects simulation data or player actions.
+
+### Street-Level Detail
+
+Road rendering includes:
+
+- Streetlights (instanced, one per ~9 road tiles, alternating sides)
+- Traffic lights (at intersections with 3+ connections)
+- Parked cars (on 2-connection road segments)
+- Street trees (oak, maple, conifer alongside roads)
+- Street furniture (benches, trash bins at low density)
+- Road signs and bus stops (at high detail density)
+
+Details are placed deterministically using hash-based selection relative to `detailDensity`,
+ensuring consistent placement across renders without random state.
 
 ### Data Decoupling
 

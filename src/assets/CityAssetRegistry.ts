@@ -54,6 +54,11 @@ export const CITY_ASSET_REGISTRY: readonly GeneratedCityAsset[] = [
     "residential_apartment_balcony",
     "residential_courtyard",
     "residential_tower_slim",
+    "residential_midriser_brick",
+    "residential_terrace_wide",
+    "residential_tower_wide",
+    "residential_small_apt",
+    "residential_balcony_tower",
   ]),
   ...createBuildingAssets("commercial", [
     "commercial_corner_shop",
@@ -66,6 +71,11 @@ export const CITY_ASSET_REGISTRY: readonly GeneratedCityAsset[] = [
     "commercial_hotel",
     "commercial_mall",
     "commercial_office_slab",
+    "commercial_bank",
+    "commercial_retail_row",
+    "commercial_glass_low",
+    "commercial_tower_narrow",
+    "commercial_plaza_building",
   ]),
   ...createBuildingAssets("industrial", [
     "industrial_small_warehouse",
@@ -73,6 +83,9 @@ export const CITY_ASSET_REGISTRY: readonly GeneratedCityAsset[] = [
     "industrial_sawtooth_factory",
     "industrial_logistics_depot",
     "industrial_processing_plant",
+    "industrial_workshop",
+    "industrial_factory_large",
+    "industrial_storage_yard",
   ]),
   ...createBuildingAssets("civic", [
     "civic_clinic",
@@ -80,6 +93,9 @@ export const CITY_ASSET_REGISTRY: readonly GeneratedCityAsset[] = [
     "civic_school",
     "civic_library",
     "civic_city_hall",
+    "civic_police_station",
+    "civic_post_office",
+    "civic_community_center",
   ]),
   ...createAssets("roads", [
     "road_2_lane_straight",

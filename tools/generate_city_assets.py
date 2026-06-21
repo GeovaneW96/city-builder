@@ -63,6 +63,11 @@ RESIDENTIAL_BUILDINGS = (
     BuildingSpec("residential_apartment_balcony", 1.3, 1.08, 3.68, 6, "facade_concrete", "flat", "hvac"),
     BuildingSpec("residential_courtyard", 1.48, 1.26, 2.52, 4, "facade_stucco", "flat", "garden"),
     BuildingSpec("residential_tower_slim", 1.0, 0.92, 5.25, 9, "facade_dark", "flat", "antenna"),
+    BuildingSpec("residential_midriser_brick", 1.2, 1.0, 2.55, 4, "facade_brick", "flat", "water_tank"),
+    BuildingSpec("residential_terrace_wide", 1.4, 0.88, 0.92, 1, "facade_stucco", "hip", "chimney"),
+    BuildingSpec("residential_tower_wide", 1.2, 1.08, 4.85, 8, "facade_concrete", "flat", "hvac"),
+    BuildingSpec("residential_small_apt", 1.1, 0.96, 1.65, 2, "facade_dark", "flat", "solar"),
+    BuildingSpec("residential_balcony_tower", 1.08, 0.98, 4.45, 7, "facade_concrete", "flat", "antenna"),
 )
 
 COMMERCIAL_BUILDINGS = (
@@ -76,6 +81,11 @@ COMMERCIAL_BUILDINGS = (
     BuildingSpec("commercial_hotel", 1.27, 1.08, 3.92, 7, "facade_concrete", "flat", "sign"),
     BuildingSpec("commercial_mall", 1.58, 1.22, 1.48, 2, "facade_concrete", "flat", "skylight"),
     BuildingSpec("commercial_office_slab", 1.46, 0.96, 3.0, 5, "facade_glass", "flat", "hvac"),
+    BuildingSpec("commercial_bank", 1.22, 1.0, 1.48, 2, "facade_concrete", "stepped", "hvac"),
+    BuildingSpec("commercial_retail_row", 1.52, 0.94, 1.04, 1, "facade_brick", "flat", "awning"),
+    BuildingSpec("commercial_glass_low", 1.18, 0.96, 1.88, 3, "facade_glass", "flat", "hvac"),
+    BuildingSpec("commercial_tower_narrow", 0.88, 0.88, 6.2, 11, "facade_glass", "flat", "antenna"),
+    BuildingSpec("commercial_plaza_building", 1.44, 1.12, 2.65, 4, "facade_dark", "flat", "solar"),
 )
 
 INDUSTRIAL_BUILDINGS = (
@@ -84,6 +94,9 @@ INDUSTRIAL_BUILDINGS = (
     BuildingSpec("industrial_sawtooth_factory", 1.58, 1.35, 1.72, 2, "facade_concrete", "sawtooth", "chimney"),
     BuildingSpec("industrial_logistics_depot", 1.72, 1.2, 1.3, 1, "facade_dark", "flat", "loading"),
     BuildingSpec("industrial_processing_plant", 1.48, 1.28, 2.24, 3, "industrial_wall", "flat", "tanks"),
+    BuildingSpec("industrial_workshop", 1.24, 1.0, 0.98, 1, "industrial_wall", "gable", "vents"),
+    BuildingSpec("industrial_factory_large", 1.9, 1.4, 2.05, 2, "facade_concrete", "sawtooth", "chimney"),
+    BuildingSpec("industrial_storage_yard", 1.6, 1.3, 0.85, 1, "industrial_wall", "flat", "loading"),
 )
 
 CIVIC_BUILDINGS = (
@@ -92,6 +105,9 @@ CIVIC_BUILDINGS = (
     BuildingSpec("civic_school", 1.74, 1.18, 1.54, 2, "facade_stucco", "flat", "clock"),
     BuildingSpec("civic_library", 1.24, 1.04, 1.86, 3, "facade_concrete", "flat", "skylight"),
     BuildingSpec("civic_city_hall", 1.34, 1.12, 2.92, 5, "facade_stucco", "stepped", "tower"),
+    BuildingSpec("civic_police_station", 1.42, 1.1, 1.38, 1, "facade_concrete", "flat", "hvac"),
+    BuildingSpec("civic_post_office", 1.28, 1.0, 1.22, 1, "facade_brick", "flat", "sign"),
+    BuildingSpec("civic_community_center", 1.56, 1.18, 1.72, 2, "facade_stucco", "flat", "skylight"),
 )
 
 
@@ -104,8 +120,8 @@ MATERIAL_SPECS: dict[str, tuple[Color, float, float, Color | None, float]] = {
     "industrial_wall": ((0.2, 0.25, 0.27, 1.0), 0.3, 0.72, None, 0.0),
     "foundation_concrete": ((0.16, 0.18, 0.18, 1.0), 0.01, 0.9, None, 0.0),
     "facade_panel": ((0.12, 0.17, 0.19, 1.0), 0.3, 0.58, None, 0.0),
-    "window_emissive_warm": ((0.97, 0.48, 0.16, 1.0), 0.0, 0.32, (1.0, 0.22, 0.04, 1.0), 2.3),
-    "window_emissive_cool": ((0.22, 0.55, 0.76, 1.0), 0.18, 0.24, (0.06, 0.3, 0.68, 1.0), 1.35),
+    "window_emissive_warm": ((0.97, 0.48, 0.16, 1.0), 0.0, 0.32, (1.0, 0.22, 0.04, 1.0), 0.6),
+    "window_emissive_cool": ((0.22, 0.55, 0.76, 1.0), 0.18, 0.24, (0.06, 0.3, 0.68, 1.0), 0.4),
     "roof_metal": ((0.08, 0.11, 0.12, 1.0), 0.7, 0.4, None, 0.0),
     "roof_membrane": ((0.14, 0.15, 0.15, 1.0), 0.0, 0.94, None, 0.0),
     "roof_tile": ((0.16, 0.06, 0.04, 1.0), 0.01, 0.86, None, 0.0),
@@ -115,10 +131,10 @@ MATERIAL_SPECS: dict[str, tuple[Color, float, float, Color | None, float]] = {
     "curb_concrete": ((0.5, 0.52, 0.51, 1.0), 0.0, 0.86, None, 0.0),
     "lane_marking": ((0.94, 0.85, 0.56, 1.0), 0.0, 0.6, None, 0.0),
     "crosswalk_paint": ((0.82, 0.84, 0.81, 1.0), 0.0, 0.7, None, 0.0),
-    "lamp_emissive": ((1.0, 0.6, 0.25, 1.0), 0.0, 0.24, (1.0, 0.22, 0.03, 1.0), 4.0),
-    "signal_red": ((1.0, 0.05, 0.02, 1.0), 0.0, 0.22, (1.0, 0.0, 0.0, 1.0), 3.0),
-    "signal_yellow": ((1.0, 0.45, 0.02, 1.0), 0.0, 0.22, (1.0, 0.18, 0.0, 1.0), 2.2),
-    "signal_green": ((0.05, 0.8, 0.18, 1.0), 0.0, 0.22, (0.0, 0.55, 0.08, 1.0), 2.2),
+    "lamp_emissive": ((1.0, 0.6, 0.25, 1.0), 0.0, 0.24, (1.0, 0.22, 0.03, 1.0), 1.5),
+    "signal_red": ((1.0, 0.05, 0.02, 1.0), 0.0, 0.22, (1.0, 0.0, 0.0, 1.0), 1.5),
+    "signal_yellow": ((1.0, 0.45, 0.02, 1.0), 0.0, 0.22, (1.0, 0.18, 0.0, 1.0), 1.0),
+    "signal_green": ((0.05, 0.8, 0.18, 1.0), 0.0, 0.22, (0.0, 0.55, 0.08, 1.0), 1.0),
     "vehicle_paint": ((0.12, 0.24, 0.38, 1.0), 0.5, 0.3, None, 0.0),
     "vehicle_glass": ((0.03, 0.1, 0.16, 1.0), 0.5, 0.18, None, 0.0),
     "rubber": ((0.012, 0.014, 0.016, 1.0), 0.0, 0.92, None, 0.0),
@@ -544,6 +560,15 @@ def add_roof_detail(
     elif spec.detail == "tanks":
         for x in (-0.22, 0.22):
             add_cylinder(root, cache, materials, "process_tank", 0.11, 0.34, (x, roof_y + 0.17, 0.0), "metal_light", 12)
+    elif spec.detail == "dormer":
+        for x in (-0.14, 0.14):
+            add_box(root, cache, materials, "dormer_box", (0.12, 0.14, 0.18), (x, roof_y + 0.13, 0.0), "facade_stucco", 0.006)
+            add_box(root, cache, materials, "dormer_roof", (0.18, 0.06, 0.22), (x, roof_y + 0.2, 0.0), "roof_tile", 0.004, (0.0, 0.0, math.radians(-20)))
+    elif spec.detail == "garden":
+        for x, z in ((-0.25, 0.0), (0.25, 0.0)):
+            add_uv_sphere(root, cache, materials, "roof_plant", 0.08, (x, roof_y + 0.08, z), "foliage", (1.0, 0.8, 1.0))
+    elif spec.detail == "sign":
+        add_box(root, cache, materials, "roof_sign", (0.4, 0.18, 0.04), (0.0, roof_y + 0.14, 0.0), "sign_blue", 0.006)
     else:
         add_hvac_units(root, cache, materials, spec, roof_y)
 
@@ -686,6 +711,13 @@ def make_civic(root: bpy.types.Object, cache: MeshCache, materials: dict[str, bp
         add_box(root, cache, materials, "civic_tower", (spec.width * 0.26, spec.height * 0.65, spec.depth * 0.26), (0.0, spec.height + spec.height * 0.3, 0.0), "facade_concrete", 0.025)
     if spec.detail == "garage":
         add_box(root, cache, materials, "fire_station_door", (spec.width * 0.45, spec.height * 0.42, 0.03), (0.0, spec.height * 0.26, spec.depth / 2 + 0.025), "facade_dark", 0.004)
+    if spec.detail == "medical":
+        add_box(root, cache, materials, "medical_cross_v", (0.04, 0.22, 0.02), (0.0, spec.height + 0.15, spec.depth / 2 + 0.02), "facade_brick", 0.002)
+        add_box(root, cache, materials, "medical_cross_h", (0.14, 0.04, 0.02), (0.0, spec.height + 0.15, spec.depth / 2 + 0.02), "facade_brick", 0.002)
+    if spec.detail == "clock":
+        add_cylinder(root, cache, materials, "clock_face", 0.08, 0.02, (0.0, spec.height * 0.66, spec.depth / 2 + 0.022), "sidewalk_concrete", 12)
+    if spec.detail == "sign":
+        add_box(root, cache, materials, "civic_sign", (spec.width * 0.35, 0.14, 0.02), (0.0, spec.height * 0.72, spec.depth / 2 + 0.026), "sign_blue", 0.004)
     add_roof_detail(root, cache, materials, spec)
 
 
