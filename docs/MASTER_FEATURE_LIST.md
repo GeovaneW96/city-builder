@@ -760,7 +760,7 @@ This document lists every feature across all four implementation phases. Under e
 | ----- | ------------------------------------------------ | ------ |
 | 4.3.1 | Water tiles are not buildable                    | done   |
 | 4.3.2 | Water tiles affect land value (waterfront bonus) | done   |
-| 4.3.3 | Water can be placed/removed with terrain tools   |        |
+| 4.3.3 | Water can be placed/removed with terrain tools   | done   |
 
 ### 4.4 Resource Deposits
 
