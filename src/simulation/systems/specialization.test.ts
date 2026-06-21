@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { processCityCommand } from "../commands/process";
 import { createInitialCityState } from "../state";
 import { getSpecializationMultiplier } from "./specialization";
+import { getEducationSpecializationMultiplier } from "./specialization";
 
 describe("city specialization", () => {
   it("starts inactive and enforces industrial hub requirements", () => {
@@ -44,6 +45,12 @@ describe("city specialization", () => {
         specializationId: "commercial_hub",
       }).result.success,
     ).toBe(false);
+  });
+
+  it("amplifies education effectiveness for an education center", () => {
+    const state = createInitialCityState();
+    state.specialization.active = "education_center";
+    expect(getEducationSpecializationMultiplier(state)).toBe(1.5);
   });
 });
 

@@ -93,6 +93,8 @@ Requirements:
 
 ## Implementation
 
+Education Center applies its 1.5× education effectiveness to derived workforce quality, capped at 100.
+
 Specialization effects are applied as multipliers to the relevant simulation systems.
 
 ### Data Constants

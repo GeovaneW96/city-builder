@@ -38,3 +38,7 @@ export function getSpecializationMultiplier(
   };
   return effects[state.specialization.active ?? ""]?.[target] ?? 1;
 }
+
+export function getEducationSpecializationMultiplier(state: CityState): number {
+  return state.specialization.active === "education_center" ? 1.5 : 1;
+}

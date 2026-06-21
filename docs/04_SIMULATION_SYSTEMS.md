@@ -14,6 +14,7 @@ Map-dependent systems derive bounds from the active map rather than a fixed grid
 Industrial metrics include resource-deposit productivity when an active industrial building occupies an ore or oil tile.
 Landmark festivals are processed as time-bound city events and apply their happiness modifier through the normal system.
 Extended fire service processing propagates unresolved fires to adjacent unprotected buildings.
+Education Center specialization increases derived workforce quality from education coverage.
 
 ## Purpose
 

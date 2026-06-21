@@ -3,6 +3,7 @@ import { getBuildingById } from "../../data/buildings";
 import type { BuildingInstance, CityState } from "../../shared/types";
 import { getDefinition } from "./metrics";
 import { getServicePriorityBuildings } from "./districts";
+import { getEducationSpecializationMultiplier } from "./specialization";
 
 export function recomputeServices(state: CityState): void {
   const activeBuildings = state.buildings.filter(
@@ -17,8 +18,18 @@ export function recomputeServices(state: CityState): void {
     educationCoverage: calculateCoverage(state, activeBuildings, "educationRadius"),
     healthQuality: calculateQuality(activeBuildings, "health"),
     educationQuality: calculateQuality(activeBuildings, "education"),
-    workforceQuality: calculateQuality(activeBuildings, "education"),
+    workforceQuality: getWorkforceQuality(state, activeBuildings),
   };
+}
+
+function getWorkforceQuality(state: CityState, buildings: BuildingInstance[]): number {
+  return Math.min(
+    100,
+    Math.round(
+      calculateQuality(buildings, "education") *
+        getEducationSpecializationMultiplier(state),
+    ),
+  );
 }
 
 function calculateQuality(
