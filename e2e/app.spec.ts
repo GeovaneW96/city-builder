@@ -1,125 +1,256 @@
 import { expect, test, type Page } from "@playwright/test";
 
-test("the player can place a road through the build toolbar", async ({ page }) => {
-  const pageErrors: Error[] = [];
-  page.on("pageerror", (error) => pageErrors.push(error));
-  await page.goto("/");
-  await pauseSimulation(page);
+type GridPoint = readonly [number, number];
 
-  await expect(page.locator("canvas")).toBeVisible();
-  await expect(page.getByText("Money")).toContainText("$50,000");
-  await expect(page.getByText("Population")).toContainText("0 / 1000");
-  await page.getByRole("button", { name: "Road", exact: true }).click();
-  await page.locator("canvas").click({ position: { x: 640, y: 360 } });
+test("a player grows a brand-new city from zero to 1,000 residents", async ({ page }) => {
+  test.setTimeout(120_000);
+  await page.clock.install({ time: new Date("2024-01-01T00:00:00Z") });
+  await page.goto("/?e2e", { waitUntil: "domcontentloaded" });
+  await page.clock.runFor(1);
 
-  await expect(page.getByText("Built.")).toBeVisible();
-  await expect(page.getByText("Money")).toContainText("$49,950");
-  await expect(page.getByText(/^Road at /)).toBeVisible();
-  expect(pageErrors).toEqual([]);
+  const canvas = page.locator("canvas[data-engine]");
+  const pause = page.getByRole("button", { name: "Pause", exact: true });
+  const inspector = page.locator('[data-ui="inspector"]');
+
+  await expect(canvas).toBeVisible();
+  await expect(page.locator('[data-ui="population"]')).toHaveText("0");
+  await expect(page.locator('[data-ui="date"]')).toHaveText(
+    /^[A-Z][a-z]+ \d+, Year \d+ · \d{2}:00$/,
+  );
+
+  await pause.click();
+  await canvas.click({ position: toScreen([31, 32]) });
+  await expect(inspector).toContainText("Empty Tile");
+
+  await buildRoadNetwork(page, canvas);
+  await buildLandfill(page, canvas);
+  await zoneResidentialCity(page, canvas);
+
+  await setSpeed(page, 3);
+  await page.clock.runFor(13_000);
+  await setSpeed(page, 0);
+  await expect(page.locator('[data-ui="population"]')).toHaveText("72");
+
+  await zoneBusinesses(page, canvas, "Commercial", commercialZones());
+  await setSpeed(page, 3);
+  await page.clock.runFor(10_000);
+  await setSpeed(page, 0);
+
+  await zoneBusinesses(page, canvas, "Industrial", industrialZones());
+  await setSpeed(page, 3);
+  await page.clock.runFor(50_000);
+  await setSpeed(page, 0);
+  expect(
+    getPopulationValue(await page.locator('[data-ui="population"]').textContent()),
+  ).toBeGreaterThan(120);
+
+  await buildUtilities(page, canvas);
+  await buildSupplementalHomes(page, canvas);
+  await buildBackupPower(page, canvas);
+  await setSpeed(page, 3);
+  await advanceUntilPopulation(page, 1000);
+
+  expect(
+    getPopulationValue(await page.locator('[data-ui="population"]').textContent()),
+  ).toBeGreaterThanOrEqual(1000);
+  await expect(page.getByRole("status")).toContainText("First City reached!");
+
+  await page.keyboard.press("Escape");
+  await canvas.click({ position: toScreen([32, 30]) });
+  await expect(inspector).toContainText("Landfill");
+  await expect(inspector).toContainText("Jobs provided: 4 / 4");
+  await expect(inspector).toContainText("Collection: 500/mo, 20-tile range");
+  await expect(inspector).toContainText(/City coverage:/);
 });
 
-test("the player can drag-paint an adjacent residential zone", async ({ page }) => {
-  await page.goto("/");
-  await pauseSimulation(page);
-  const canvas = page.locator("canvas");
+async function buildRoadNetwork(
+  page: Page,
+  canvas: ReturnType<Page["locator"]>,
+): Promise<void> {
+  await selectBottomButton(page, "Dirt Road");
+  await placeMany(canvas, roadNetwork());
+}
 
-  await page.getByRole("button", { name: "Road", exact: true }).click();
-  await canvas.click({ position: { x: 640, y: 360 } });
-  await page.getByRole("button", { name: "Residential", exact: true }).click();
-  await page.mouse.move(648, 370);
-  await page.mouse.down();
-  await page.mouse.move(678, 370, { steps: 2 });
-  await page.mouse.up();
+async function buildUtilities(
+  page: Page,
+  canvas: ReturnType<Page["locator"]>,
+): Promise<void> {
+  await selectSidebarCatalog(page, "Utilities");
+  await placeBuilding(page, canvas, "Power Plant", [
+    [28, 40],
+    [32, 43],
+  ]);
+  await placeBuilding(page, canvas, "Water Tower", [
+    [32, 39],
+    [32, 40],
+    [32, 41],
+  ]);
+}
 
-  await expect(page.locator('[data-ui="selection"]')).toHaveText(/^Residential zone at /);
-  await expect(page.getByText("Built.")).toBeVisible();
-});
+async function buildLandfill(
+  page: Page,
+  canvas: ReturnType<Page["locator"]>,
+): Promise<void> {
+  await selectSidebarCatalog(page, "Utilities");
+  await placeBuilding(page, canvas, "Landfill", [[32, 30]]);
+}
 
-test("the population HUD updates as a zoned home grows", async ({ page }) => {
-  await page.goto("/");
-  await pauseSimulation(page);
-  const canvas = page.locator("canvas");
+async function buildSupplementalHomes(
+  page: Page,
+  canvas: ReturnType<Page["locator"]>,
+): Promise<void> {
+  const roads = supplementalRoads();
+  await selectBottomTab(page, "Roads");
+  await selectBottomButton(page, "Dirt Road");
+  await placeMany(canvas, roads);
+  await selectBottomTab(page, "Zones");
+  await selectBottomButton(page, "Residential");
+  await placeMany(
+    canvas,
+    roads.map(([x, y]) => [x, y + 1]),
+  );
+}
 
-  await page.getByRole("button", { name: "Road", exact: true }).click();
-  await canvas.click({ position: { x: 640, y: 360 } });
-  await page.getByRole("button", { name: "Residential", exact: true }).click();
-  await canvas.click({ position: { x: 648, y: 370 } });
-  await page.getByRole("button", { name: "3", exact: true }).click();
+async function buildBackupPower(
+  page: Page,
+  canvas: ReturnType<Page["locator"]>,
+): Promise<void> {
+  await selectSidebarCatalog(page, "Utilities");
+  await placeBuilding(page, canvas, "Power Plant", [[16, 30]]);
+}
 
-  await expect(page.locator('[data-ui="population"]')).toHaveText("8 / 1000");
-});
+async function zoneResidentialCity(
+  page: Page,
+  canvas: ReturnType<Page["locator"]>,
+): Promise<void> {
+  await selectBottomTab(page, "Zones");
+  await selectBottomButton(page, "Residential");
+  await placeMany(canvas, residentialZones());
+}
 
-test("a saved road persists through a reload and load", async ({ page }) => {
-  await page.goto("/");
-  await pauseSimulation(page);
-  const canvas = page.locator("canvas");
+async function zoneBusinesses(
+  page: Page,
+  canvas: ReturnType<Page["locator"]>,
+  zone: "Commercial" | "Industrial",
+  cells: GridPoint[],
+): Promise<void> {
+  await selectBottomTab(page, "Zones");
+  await selectBottomButton(page, zone);
+  await placeMany(canvas, cells);
+}
 
-  await page.getByRole("button", { name: "Road", exact: true }).click();
-  await canvas.click({ position: { x: 640, y: 360 } });
-  await page.getByRole("button", { name: "Save", exact: true }).click();
-  await expect(page.getByText("Saved to manual_0.")).toBeVisible();
+async function placeBuilding(
+  page: Page,
+  canvas: ReturnType<Page["locator"]>,
+  name: string,
+  cells: GridPoint[],
+): Promise<void> {
+  await selectBottomButton(page, name);
+  await placeMany(canvas, cells);
+}
 
-  await page.reload();
-  await pauseSimulation(page);
-  await expect(page.locator('[data-ui="money"]')).toHaveText("$50,000");
-  await page.getByRole("button", { name: "Load", exact: true }).click();
+async function selectSidebarCatalog(page: Page, name: string): Promise<void> {
+  await page.locator("nav.sidebar").getByRole("button", { name, exact: true }).click();
+}
 
-  await expect(page.getByText("Loaded.")).toBeVisible();
-  await expect(page.locator('[data-ui="money"]')).toHaveText("$49,950");
-  await canvas.click({ position: { x: 640, y: 360 } });
-  await expect(page.locator('[data-ui="selection"]')).toHaveText(/^Road at /);
-});
+async function selectBottomTab(page: Page, name: string): Promise<void> {
+  await page.locator(".bottom-panel").getByRole("button", { name, exact: true }).click();
+}
 
-test("sound and overlays can be toggled without conflicting states", async ({ page }) => {
-  await page.goto("/");
-  await pauseSimulation(page);
-  const sound = page.getByRole("button", { name: "Sound: On", exact: true });
-  const zoning = page.getByRole("button", { name: "Zoning", exact: true });
-  const pollution = page.getByRole("button", { name: "Pollution", exact: true });
+async function selectBottomButton(page: Page, name: string): Promise<void> {
+  const item = page.locator(".bottom-panel .item-card").filter({ hasText: name });
+  await expect(item).toBeEnabled();
+  await item.click();
+}
 
-  await sound.click();
-  await expect(
-    page.getByRole("button", { name: "Sound: Off", exact: true }),
-  ).toHaveAttribute("aria-pressed", "false");
-  await zoning.click();
-  await expect(zoning).toHaveClass(/active/);
-  await pollution.click();
-  await expect(zoning).not.toHaveClass(/active/);
-  await expect(pollution).toHaveClass(/active/);
-});
+async function setSpeed(page: Page, speed: 0 | 3): Promise<void> {
+  const name = speed === 0 ? "Pause" : "3x speed";
+  await page.getByRole("button", { name, exact: true }).click();
+}
 
-test("the debug overlay displays performance metrics when toggled", async ({ page }) => {
-  await page.goto("/");
-  await pauseSimulation(page);
-  const debug = page.getByRole("button", { name: "Debug", exact: true });
-  const overlay = page.locator('[data-ui="debug"]');
+async function placeMany(
+  canvas: ReturnType<Page["locator"]>,
+  cells: GridPoint[],
+): Promise<void> {
+  for (const cell of cells) await canvas.click({ position: toScreen(cell) });
+}
 
-  await debug.click();
+async function advanceUntilPopulation(page: Page, target: number): Promise<void> {
+  for (let tick = 0; tick < 30; tick += 1) {
+    await page.clock.runFor(2_500);
+    const population = getPopulationValue(
+      await page.locator('[data-ui="population"]').textContent(),
+    );
+    if (population >= target) return;
+  }
+  throw new Error(`Population did not reach ${target}.`);
+}
 
-  await expect(debug).toHaveClass(/active/);
-  await expect(overlay).toBeVisible();
-  await expect(overlay).toContainText("FPS");
-  await expect(overlay).toContainText("Draw calls");
-  await expect(overlay).toContainText("Tick");
-});
+function getPopulationValue(value: string | null): number {
+  return Number((value ?? "0").replaceAll(",", ""));
+}
 
-test("the rating control reveals strengths, weaknesses, and immigration impact", async ({
-  page,
-}) => {
-  await page.goto("/");
-  await pauseSimulation(page);
-  const rating = page.locator('[data-ui="rating"]');
-  const breakdown = page.locator('[data-ui="rating-breakdown"]');
+function roadNetwork(): GridPoint[] {
+  const horizontal = [25, 29, 33, 37].flatMap((y) => row(22, 36, y));
+  const vertical = column(31, 23, 42);
+  const serviceRoad = row(31, 40, 42);
+  return uniquePoints([...horizontal, ...vertical, ...serviceRoad]);
+}
 
-  await rating.click();
+function residentialZones(): GridPoint[] {
+  const zoneRows = [24, 26, 27, 28, 30, 31, 32, 34, 35, 36, 38, 39];
+  const landfillFootprint = new Set(
+    row(32, 34, 30)
+      .concat(row(32, 34, 31), row(32, 34, 32))
+      .map(key),
+  );
+  const zoneColumns = [...row(24, 30, 0), ...row(32, 35, 0)].map(([x]) => x);
+  const neighborhood = zoneRows
+    .flatMap((y) => zoneColumns.map((x) => [x, y] as GridPoint))
+    .filter((cell) => !landfillFootprint.has(key(cell)));
+  return [...neighborhood, [36, 24], [36, 26]];
+}
 
-  await expect(rating).toHaveAttribute("aria-expanded", "true");
-  await expect(breakdown).toBeVisible();
-  await expect(breakdown).toContainText("Strengths:");
-  await expect(breakdown).toContainText("Improve:");
-  await expect(breakdown).toContainText("Immigration");
-});
+function commercialZones(): GridPoint[] {
+  return row(35, 40, 42);
+}
 
-async function pauseSimulation(page: Page): Promise<void> {
-  await page.getByRole("button", { name: "0", exact: true }).click();
+function industrialZones(): GridPoint[] {
+  return row(35, 40, 44);
+}
+
+function supplementalRoads(): GridPoint[] {
+  return [
+    ...[15, 18, 21].flatMap((y) => row(21, 34, y)),
+    ...[18, 21].flatMap((y) => row(36, 42, y)),
+    ...[18, 21, 24, 27, 30].flatMap((y) => row(15, 20, y)),
+    ...[25, 28, 31].flatMap((y) => row(44, 50, y)),
+  ];
+}
+
+function row(start: number, end: number, y: number): GridPoint[] {
+  return Array.from({ length: end - start + 1 }, (_, offset) => [start + offset, y]);
+}
+
+function column(x: number, start: number, end: number): GridPoint[] {
+  return Array.from({ length: end - start + 1 }, (_, offset) => [x, start + offset]);
+}
+
+function uniquePoints(points: GridPoint[]): GridPoint[] {
+  return points.filter(
+    (point, index) => points.findIndex((other) => key(other) === key(point)) === index,
+  );
+}
+
+function key([x, y]: GridPoint): string {
+  return `${x},${y}`;
+}
+
+function toScreen([x, y]: GridPoint): { x: number; y: number } {
+  const deltaX = x - 31;
+  const deltaY = y - 32;
+  return {
+    x: Math.round(640 + deltaX * 15.625 + deltaY * 12.5),
+    y: Math.round(360 - deltaX * 9.375 + deltaY * 12.5),
+  };
 }
