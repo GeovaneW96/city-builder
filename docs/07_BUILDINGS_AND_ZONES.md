@@ -12,6 +12,10 @@ Buildings should be data-driven.
 
 ## Zone Types
 
+Commercial zoning grows the zone-grown Small Shop building when the tile is adjacent to a road
+and commercial demand is at least 10. Manual commercial buildings, such as hotels, are selected
+only from the Specials catalog and never occupy zoned tiles.
+
 ### Residential Zone
 
 Purpose:

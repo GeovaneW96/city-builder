@@ -76,6 +76,14 @@ choose shadow-map resolution, enable bloom only at high or ultra, and reduce gen
 vehicle, and nature detail at lower settings. The generated GLB manager preloads each asset once
 and clones cached scenes, avoiding repeat fetches and source-geometry recreation.
 
+The game starts at the `medium` profile. This keeps bloom disabled and caps pixel ratio at 1.5 so
+the initial scenario remains responsive on integrated GPUs; `high` and `ultra` remain available
+for higher-end hardware.
+
+City rendering is synchronized from simulation or UI changes rather than every animation frame.
+Static terrain is rebuilt only when terrain data changes; ordinary road, zoning, and building
+updates leave it intact.
+
 ## Initial Limits
 
 Initial limits:

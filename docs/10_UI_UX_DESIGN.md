@@ -19,7 +19,7 @@ The UI must help the player understand:
 Core stats should always be visible:
 
 - money;
-- monthly income/expenses;
+- net monthly cash flow;
 - population;
 - happiness;
 - demand;
@@ -116,6 +116,26 @@ Progress: 64 / 100
 Reward: Commercial zoning
 ```
 
+The panel also shows the next population unlock. The build palette keeps unavailable zones and
+buildings visible but disabled, with their exact population requirement. Available buildings that
+need road access state that placement requirement before the player selects them.
+
+For population objectives, the panel explains the immediate build action. When happiness falls,
+it shows the strongest active penalty and its remedy (for example, a utility shortage and the
+specific utility to build). Reaching a population milestone produces a five-second status
+notification naming the newly unlocked tool.
+
+Selecting a zoned tile shows whether it can grow. The inspector names a missing adjacent road or
+reports the current zone demand, so an empty zone is never a silent failure. The left sidebar
+opens the matching service, utility, or park catalog rather than a generic empty menu.
+
+The objective panel has a fixed left-rail allocation and scrolls its own long guidance, so it
+never covers build navigation. The default pointer action is inspection; pressing Escape leaves
+any build tool and returns to inspecting. Building inspection shows residents or jobs, cost,
+upkeep, and service-specific capacity/range. The top bar displays the full simulated calendar
+date, year, and hour. It advances independently of Three.js rendering; monthly ticks occur on
+the first day at 08:00.
+
 ### Demand Bars
 
 Show RCI demand:
@@ -149,6 +169,7 @@ When placing something:
 - allow rotate for buildings;
 - drag placement for roads/zones;
 - do not spend money until placement is committed.
+- commit a drag placement on pointer release; Escape cancels its preview without spending money.
 
 ## Camera UX
 

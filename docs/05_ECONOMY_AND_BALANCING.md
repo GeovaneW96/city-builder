@@ -3,6 +3,8 @@
 ## Extended income
 
 Monthly income also includes office, tourism, event, and specialization modifiers. Their source values remain in simulation state so the UI only displays the computed breakdown.
+Tourism requires an actual attraction (a park, landmark, or hotel); a clean empty map does not
+generate passive tourism income.
 
 ## Purpose
 
@@ -107,12 +109,16 @@ residentialDemand =
   + happinessModifier
   + cityRatingImmigrationModifier * 20
   - availableHousing * 0.3
-  - unemployment * 0.4
+  - min(unemployment * 0.4, 12)
 ```
 
 The city rating system supplies `cityRatingImmigrationModifier`: A/B ratings add demand,
 C is neutral, and D/F ratings reduce it. Rating weights, thresholds, and modifiers are
 data-driven in `src/data/balance/rating.ts`.
+
+The unemployment contribution is capped at 12 demand points. Jobs remain important for income
+and happiness, but an early city cannot deadlock before it has earned enough tax income to build
+its first utilities.
 
 ### Commercial Demand
 
@@ -172,6 +178,9 @@ Per active building:
 | Utility     |            2 |            1 |
 
 City hall and parks do not require utilities in the prototype.
+
+The starter power plant supplies 200 MW, covering the first settlement's homes and basic water/
+waste infrastructure before a second plant becomes necessary.
 
 Health and education coverage each provide up to +4 happiness at full residential coverage. Parks provide their building happiness effect up to a +15 citywide cap. A power or water shortage applies a -8 utility happiness penalty.
 
@@ -234,8 +243,9 @@ pollution output.
 ## Extended Service Balance
 
 Police, fire, and garbage rates are defined in `src/data/balance/extendedServices.ts`.
-Coverage reduces existing crime and fire risk, while uncovered targets accumulate risk. Landfill
-collection and passive garbage decay determine the residual happiness penalty.
+Coverage reduces existing crime and fire risk, while uncovered targets accumulate risk. Landfills
+collect current waste and use spare capacity to clear covered backlog; passive decay only reduces
+what remains. One landfill covers a 20-tile Manhattan radius.
 
 ## Public Transport Balance
 
