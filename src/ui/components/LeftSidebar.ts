@@ -53,13 +53,31 @@ export function createLeftSidebar(): SidebarElements {
   return { root, buttons };
 }
 
-export function updateLeftSidebar(els: SidebarElements, activeMode: string | null): void {
+export function updateLeftSidebar(
+  els: SidebarElements,
+  activeMode: string | null,
+  activeCatalog: string,
+): void {
+  const activeId = getActiveSidebarId(activeMode, activeCatalog);
   els.buttons.forEach((btn, id) => {
-    const isActive =
-      (id === "zones" && activeMode === "zone") ||
-      (id === "roads" && activeMode === "road") ||
-      (id === "services" && activeMode === "building") ||
-      (id === "demolish" && activeMode === "demolish");
-    btn.classList.toggle("active", isActive);
+    btn.classList.toggle("active", id === activeId);
   });
+}
+
+function getActiveSidebarId(
+  activeMode: string | null,
+  activeCatalog: string,
+): string | null {
+  if (activeMode === "road") return "roads";
+  if (activeMode === "zone") return "zones";
+  if (activeMode === "demolish") return "demolish";
+  if (activeMode !== "building") return null;
+  return getCatalogSidebarId(activeCatalog);
+}
+
+function getCatalogSidebarId(activeCatalog: string): string | null {
+  if (activeCatalog === "utilities") return "utilities";
+  if (activeCatalog === "decorations") return "decorations";
+  if (activeCatalog === "buildings") return "services";
+  return null;
 }

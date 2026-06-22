@@ -8,6 +8,7 @@ import {
 } from "./components/LeftSidebar";
 import {
   createBottomPanel,
+  getSelectedBottomPanelTab,
   initBottomPanel,
   updateBottomPanel,
   type BottomPanelElements,
@@ -26,6 +27,11 @@ import {
   updateDashboard,
   type DashboardElements,
 } from "./components/Dashboard";
+import {
+  createObjectivePanel,
+  updateObjectivePanel,
+  type ObjectivePanelElements,
+} from "./components/ObjectivePanel";
 
 export interface GameUI {
   root: HTMLElement;
@@ -35,6 +41,7 @@ export interface GameUI {
   rightPanel: RightPanelElements;
   miniMap: MiniMapElements;
   dashboard: DashboardElements;
+  objective: ObjectivePanelElements;
   status: HTMLElement;
   importFile: HTMLInputElement;
 }
@@ -53,6 +60,7 @@ export function createGameUI(container: HTMLElement): GameUI {
   const rightPanel = createRightPanel();
   const miniMap = createMiniMap();
   const dashboard = createDashboard();
+  const objective = createObjectivePanel();
 
   const status = document.createElement("div");
   status.className = "status-bar";
@@ -61,6 +69,7 @@ export function createGameUI(container: HTMLElement): GameUI {
   const importFile = document.createElement("input");
   importFile.type = "file";
   importFile.accept = "application/json,.json";
+  importFile.dataset.ui = "import-file";
   importFile.hidden = true;
 
   root.appendChild(topBar.root);
@@ -69,6 +78,7 @@ export function createGameUI(container: HTMLElement): GameUI {
   root.appendChild(rightPanel.root);
   root.appendChild(miniMap.root);
   root.appendChild(dashboard.root);
+  root.appendChild(objective.root);
   root.appendChild(status);
   root.appendChild(importFile);
 
@@ -85,6 +95,7 @@ export function createGameUI(container: HTMLElement): GameUI {
     rightPanel,
     miniMap,
     dashboard,
+    objective,
     status,
     importFile,
   };
@@ -92,9 +103,10 @@ export function createGameUI(container: HTMLElement): GameUI {
 
 export function updateGameUI(ui: GameUI, state: CityState, uiState: UIState): void {
   updateTopBar(ui.topBar, state, uiState);
-  updateLeftSidebar(ui.sidebar, uiState.buildMode);
+  updateLeftSidebar(ui.sidebar, uiState.buildMode, getSelectedBottomPanelTab());
   updateBottomPanel(ui.bottomPanel, state, uiState);
   updateRightPanel(ui.rightPanel, state, uiState);
+  updateObjectivePanel(ui.objective, state);
   updateMiniMap(ui.miniMap, state);
 
   if (dashboardMode) {

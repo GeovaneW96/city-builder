@@ -1,4 +1,4 @@
-import type { CityState, UIState } from "../../shared/types";
+import type { CityState, TimeState, UIState } from "../../shared/types";
 import { icon } from "./icons";
 
 export interface TopBarElements {
@@ -19,6 +19,9 @@ export interface TopBarElements {
   demandBars: HTMLElement;
   speedControls: HTMLElement;
 }
+
+let lastRenderedSpeed: number | null = null;
+let lastRenderedDate = "";
 
 function formatMoney(value: number): string {
   return `$${Math.round(value).toLocaleString("en-US")}`;
@@ -71,7 +74,7 @@ export function createTopBar(): TopBarElements {
       </div>
     </div>
     <div class="topbar-time">
-      <span class="topbar-date" data-ui="date">Year 1 · Jan</span>
+      <span class="topbar-date" data-ui="date">January 1, Year 1 · 08:00</span>
       <div class="speed-controls" data-ui="speed-controls"></div>
     </div>
     <div class="topbar-right">
@@ -102,9 +105,10 @@ export function createTopBar(): TopBarElements {
 
 function updateMoneyDisplay(els: TopBarElements, state: CityState): void {
   els.money.textContent = formatMoney(state.economy.money);
-  const sign = state.economy.monthlyIncome >= 0 ? "+" : "";
-  els.moneySub.textContent = `${sign}${formatMoney(state.economy.monthlyIncome)} /mo`;
-  const cls = state.economy.monthlyIncome >= 0 ? "positive" : "negative";
+  const cashFlow = state.economy.monthlyIncome - state.economy.monthlyExpenses;
+  const sign = cashFlow >= 0 ? "+" : "";
+  els.moneySub.textContent = `${sign}${formatMoney(cashFlow)} /mo`;
+  const cls = cashFlow >= 0 ? "positive" : "negative";
   els.moneySub.className = `topbar-stat-sub ${cls}`;
 }
 
@@ -142,7 +146,7 @@ export function updateTopBar(
   updateHappyDisplay(els, state);
   updatePowerDisplay(els, state);
 
-  els.date.textContent = `${state.time.year}/${String(state.time.month).padStart(2, "0")}`;
+  updateCalendarClock(els, state.time);
   els.level.textContent = String(state.progression.currentMilestone + 1);
 
   updateDemandMini(els.demandBars, state);
@@ -153,6 +157,23 @@ export function updateTopBar(
     : icon("soundOff", 16);
   els.soundBtn.classList.toggle("active", uiState.settings.soundEnabled);
   els.settingsBtn.innerHTML = icon("stats", 18);
+}
+
+export function updateCalendarClock(els: TopBarElements, time: TimeState): void {
+  const formatted = formatCalendarDate({ time });
+  if (formatted === lastRenderedDate) return;
+  lastRenderedDate = formatted;
+  els.date.textContent = formatted;
+}
+
+function formatCalendarDate(state: { time: TimeState }): string {
+  const date = new Date(Date.UTC(state.time.year, state.time.month - 1, state.time.day));
+  const month = new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    timeZone: "UTC",
+  }).format(date);
+  const hour = String(state.time.hour).padStart(2, "0");
+  return `${month} ${state.time.day}, Year ${state.time.year} · ${hour}:00`;
 }
 
 function updateDemandMini(container: HTMLElement, state: CityState): void {
@@ -171,6 +192,8 @@ function updateDemandMini(container: HTMLElement, state: CityState): void {
 }
 
 function updateSpeedControls(container: HTMLElement, speed: number): void {
+  if (speed === lastRenderedSpeed) return;
+  lastRenderedSpeed = speed;
   const speeds = [
     { label: "\u23F8", speed: 0, title: "Pause" },
     { label: "\u25B6", speed: 1, title: "1x speed" },
@@ -181,7 +204,7 @@ function updateSpeedControls(container: HTMLElement, speed: number): void {
   container.innerHTML = speeds
     .map(
       (s) =>
-        `<button class="speed-btn ${speed === s.speed ? "active" : ""}" data-action="speed" data-speed="${s.speed}" title="${s.title}">${s.label}</button>`,
+        `<button class="speed-btn ${speed === s.speed ? "active" : ""}" data-action="speed" data-speed="${s.speed}" title="${s.title}" aria-label="${s.title}" aria-pressed="${speed === s.speed}">${s.label}</button>`,
     )
     .join("");
 }

@@ -1,4 +1,11 @@
-import type { BuildMode, CityState, UIState } from "../../shared/types";
+import { MILESTONES } from "../../data/unlocks/milestones";
+import type {
+  BuildMode,
+  BuildingDefinition,
+  CityState,
+  UIState,
+  ZoneType,
+} from "../../shared/types";
 import { getManualBuildings } from "../../data/buildings";
 import { icon, type IconName } from "./icons";
 
@@ -9,10 +16,16 @@ export interface BottomPanelElements {
   hint: HTMLElement;
 }
 
-type TabId = "roads" | "zones" | "buildings" | "specials";
+export type BuildCatalogTab =
+  | "roads"
+  | "zones"
+  | "buildings"
+  | "utilities"
+  | "decorations"
+  | "specials";
 
 interface TabDef {
-  id: TabId;
+  id: BuildCatalogTab;
   label: string;
 }
 
@@ -20,6 +33,8 @@ const TABS: TabDef[] = [
   { id: "roads", label: "Roads" },
   { id: "zones", label: "Zones" },
   { id: "buildings", label: "Services" },
+  { id: "utilities", label: "Utilities" },
+  { id: "decorations", label: "Parks" },
   { id: "specials", label: "Specials" },
 ];
 
@@ -105,7 +120,7 @@ export function createBottomPanel(): BottomPanelElements {
     <div class="bottom-hint" data-ui="hint">
       <span><kbd>Drag</kbd> to build</span>
       <span><kbd>R</kbd> to rotate</span>
-      <span><kbd>Esc</kbd> to cancel</span>
+      <span><kbd>Esc</kbd> to inspect</span>
     </div>
   `;
 
@@ -117,32 +132,42 @@ export function createBottomPanel(): BottomPanelElements {
   };
 }
 
-let currentTab: TabId = "roads";
+let currentTab: BuildCatalogTab = "roads";
 let lastBuildMode: BuildMode | null = null;
 let lastStateKey = "";
 let lastUiState: UIState | null = null;
+let lastCityState: CityState | null = null;
 
-function getStateKey(uiState: UIState | null): string {
-  if (!uiState) return "";
+function getStateKey(state: CityState, uiState: UIState | null): string {
+  if (!uiState) return String(state.population.total);
   const { buildMode, selectedRoadType, selectedZoneType, selectedBuildingId } = uiState;
-  return `${currentTab}:${buildMode ?? ""}:${selectedRoadType ?? ""}:${selectedZoneType ?? ""}:${selectedBuildingId ?? ""}`;
+  return `${currentTab}:${buildMode ?? ""}:${selectedRoadType ?? ""}:${selectedZoneType ?? ""}:${selectedBuildingId ?? ""}:${state.population.total}:${state.progression.unlockedFeatures.join(",")}`;
 }
 
 export function initBottomPanel(els: BottomPanelElements): void {
   renderTabs(els);
-  renderContent(els, null);
+  renderContent(els, null, null);
 
   els.tabs.addEventListener("click", (e) => {
     const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(".bottom-tab");
     if (!btn) return;
-    const tabId = (btn.dataset.tab as TabId) ?? "roads";
-    if (tabId === currentTab) return;
-    currentTab = tabId;
-    els.tabs.querySelectorAll(".bottom-tab").forEach((b) => b.classList.remove("active"));
-    btn.classList.add("active");
-    renderContent(els, lastUiState);
-    lastStateKey = "";
+    selectBottomPanelTab(els, (btn.dataset.tab as BuildCatalogTab) ?? "roads");
   });
+}
+
+export function selectBottomPanelTab(
+  els: BottomPanelElements,
+  tab: BuildCatalogTab,
+): void {
+  if (tab === currentTab) return;
+  currentTab = tab;
+  renderTabs(els);
+  renderContent(els, lastCityState, lastUiState);
+  lastStateKey = "";
+}
+
+export function getSelectedBottomPanelTab(): BuildCatalogTab {
+  return currentTab;
 }
 
 function renderTabs(els: BottomPanelElements): void {
@@ -152,7 +177,11 @@ function renderTabs(els: BottomPanelElements): void {
   ).join("");
 }
 
-function renderContent(els: BottomPanelElements, uiState: UIState | null): void {
+function renderContent(
+  els: BottomPanelElements,
+  state: CityState | null,
+  uiState: UIState | null,
+): void {
   let items: ItemDef[] = [];
 
   switch (currentTab) {
@@ -164,37 +193,123 @@ function renderContent(els: BottomPanelElements, uiState: UIState | null): void 
       break;
     case "buildings":
       items = getManualBuildings()
-        .filter((b) => b.id !== "city_hall")
-        .map((b) => ({
-          id: b.id,
-          label: b.name,
-          icon: (SERVICE_ICONS[b.id] ?? "services") as IconName,
-          cost: b.cost,
-          action: "building",
-          data: { building: b.id },
-        }));
+        .filter((building) => isServiceBuilding(building))
+        .map(toBuildingItem);
+      break;
+    case "utilities":
+      items = getManualBuildings()
+        .filter((building) => building.category === "utility")
+        .map(toBuildingItem);
+      break;
+    case "decorations":
+      items = getManualBuildings()
+        .filter((building) => building.category === "decoration")
+        .map(toBuildingItem);
       break;
     case "specials":
-      items = [];
+      items = getManualBuildings()
+        .filter(
+          (building) =>
+            building.category === "civic" || building.category === "commercial",
+        )
+        .filter((building) => building.id !== "city_hall")
+        .map(toBuildingItem);
       break;
   }
 
   els.content.innerHTML = items
     .map((item) => {
       const active = isItemActive(item, uiState);
+      const availability = getItemAvailability(item, state);
       return `
-        <div class="item-card ${active ? "active" : ""}" data-action="${item.action}" ${Object.entries(
+        <button type="button" class="item-card ${active ? "active" : ""} ${availability.locked ? "locked" : ""}" data-action="${item.action}" aria-pressed="${active}" ${availability.locked ? "disabled" : ""} ${Object.entries(
           item.data ?? {},
         )
           .map(([k, v]) => `data-${k.toLowerCase()}="${v}"`)
           .join(" ")}>
           <div class="item-card-icon">${icon(item.icon, 32)}</div>
           <div class="item-card-label">${item.label}</div>
+          ${availability.requirement ? `<div class="item-card-requirement">${availability.requirement}</div>` : ""}
           ${item.cost ? `<div class="item-card-cost">$${item.cost.toLocaleString()}</div>` : ""}
-        </div>
+        </button>
       `;
     })
     .join("");
+}
+
+function isServiceBuilding(building: BuildingDefinition): boolean {
+  return (
+    building.category === "service" ||
+    building.category === "security" ||
+    building.category === "transit"
+  );
+}
+
+function toBuildingItem(building: BuildingDefinition): ItemDef {
+  return {
+    id: building.id,
+    label: building.name,
+    icon: (SERVICE_ICONS[building.id] ?? "services") as IconName,
+    cost: building.cost,
+    action: "building",
+    data: { building: building.id },
+  };
+}
+
+function getItemAvailability(
+  item: ItemDef,
+  state: CityState | null,
+): { locked: boolean; requirement: string | null } {
+  if (!state) return { locked: false, requirement: null };
+  const zone = item.data?.zone as ZoneType | undefined;
+  if (zone) return getZoneAvailability(state, zone);
+  const buildingId = item.data?.building;
+  if (!buildingId) return { locked: false, requirement: null };
+  const building = getManualBuildings().find(
+    (definition) => definition.id === buildingId,
+  );
+  return building
+    ? getBuildingAvailability(state, building)
+    : { locked: false, requirement: null };
+}
+
+function getZoneAvailability(
+  state: CityState,
+  zone: ZoneType,
+): { locked: boolean; requirement: string | null } {
+  const unlocked = state.progression.unlockedFeatures.includes(`${zone}_zoning`);
+  return {
+    locked: !unlocked,
+    requirement: unlocked ? null : getUnlockRequirement(`${zone}_zoning`),
+  };
+}
+
+function getBuildingAvailability(
+  state: CityState,
+  building: BuildingDefinition,
+): { locked: boolean; requirement: string | null } {
+  const unlocked =
+    state.population.total >= building.unlockPopulation ||
+    state.progression.unlockedFeatures.includes(building.id);
+  if (!unlocked) {
+    return { locked: true, requirement: getBuildingUnlockRequirement(building) };
+  }
+  return {
+    locked: false,
+    requirement: building.requirements.roadAccess ? "Requires adjacent road" : null,
+  };
+}
+
+function getUnlockRequirement(feature: string): string {
+  const milestone = MILESTONES.find((item) => item.unlocks.includes(feature));
+  if (milestone) return `Unlock at ${milestone.population} population`;
+  return "Unlock by population";
+}
+
+function getBuildingUnlockRequirement(building: BuildingDefinition): string {
+  const milestoneRequirement = getUnlockRequirement(building.id);
+  if (milestoneRequirement !== "Unlock by population") return milestoneRequirement;
+  return `Unlock at ${building.unlockPopulation} population`;
 }
 
 function getActiveSelection(item: ItemDef, uiState: UIState): string | null {
@@ -215,10 +330,11 @@ function isItemActive(item: ItemDef, uiState: UIState | null): boolean {
 
 export function updateBottomPanel(
   els: BottomPanelElements,
-  _state: CityState,
+  state: CityState,
   uiState: UIState,
 ): void {
   lastUiState = uiState;
+  lastCityState = state;
 
   const { buildMode } = uiState;
 
@@ -234,9 +350,9 @@ export function updateBottomPanel(
     }
   }
 
-  const stateKey = getStateKey(uiState);
+  const stateKey = getStateKey(state, uiState);
   if (stateKey === lastStateKey) return;
   lastStateKey = stateKey;
 
-  renderContent(els, uiState);
+  renderContent(els, state, uiState);
 }

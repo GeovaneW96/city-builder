@@ -1,9 +1,16 @@
-import type { CityState, UIState, Warning } from "../../shared/types";
+import type {
+  BuildingDefinition,
+  BuildingInstance,
+  CityState,
+  UIState,
+  Warning,
+} from "../../shared/types";
 import { getBuildingById } from "../../data/buildings";
 import { icon, type IconName } from "./icons";
 
 export interface RightPanelElements {
   root: HTMLElement;
+  overview: HTMLElement;
   inspector: HTMLElement;
   notifications: HTMLElement;
   projects: HTMLElement;
@@ -23,37 +30,17 @@ export function createRightPanel(): RightPanelElements {
   root.className = "right-panel";
 
   root.innerHTML = `
+    <div class="right-panel-section" data-ui="overview">
+      <div class="right-panel-header">
+        <span class="right-panel-title">City Overview</span>
+      </div>
+      <div class="city-overview-grid"></div>
+    </div>
     <div class="right-panel-section" data-ui="inspector">
       <div class="right-panel-header">
         <span class="right-panel-title">Inspector</span>
       </div>
       <p style="font-size:11px;color:var(--text-muted)">Select a tile</p>
-    </div>
-    <div class="right-panel-section" data-ui="zone-legend">
-      <div class="right-panel-header">
-        <span class="right-panel-title">Zone Legend</span>
-      </div>
-      <div class="zone-legend-item">
-        <div class="zone-legend-dot" style="background:#4ade80"></div>
-        <div>
-          <div class="zone-legend-label">Residential</div>
-          <div class="zone-legend-desc">Houses & apartments</div>
-        </div>
-      </div>
-      <div class="zone-legend-item">
-        <div class="zone-legend-dot" style="background:#60a5fa"></div>
-        <div>
-          <div class="zone-legend-label">Commercial</div>
-          <div class="zone-legend-desc">Shops & services</div>
-        </div>
-      </div>
-      <div class="zone-legend-item">
-        <div class="zone-legend-dot" style="background:#fb923c"></div>
-        <div>
-          <div class="zone-legend-label">Industrial</div>
-          <div class="zone-legend-desc">Factories & warehouses</div>
-        </div>
-      </div>
     </div>
     <div class="right-panel-section" data-ui="notifications">
       <div class="right-panel-header">
@@ -82,6 +69,7 @@ export function createRightPanel(): RightPanelElements {
 
   return {
     root,
+    overview: findEl(root, "overview"),
     inspector: findEl(root, "inspector"),
     notifications: findEl(root, "notifications"),
     projects: findEl(root, "projects"),
@@ -95,8 +83,42 @@ export function updateRightPanel(
   uiState: UIState,
 ): void {
   els.root.classList.toggle("has-selection", uiState.selectedTile !== null);
+  updateCityOverview(els.overview, state);
   updateInspector(els.inspector, state, uiState);
   updateNotifications(els.notifications, state);
+}
+
+function updateCityOverview(container: HTMLElement, state: CityState): void {
+  const cashFlow = state.economy.monthlyIncome - state.economy.monthlyExpenses;
+  const power = state.services.powerCapacity - state.services.powerDemand;
+  const water = state.services.waterCapacity - state.services.waterDemand;
+  const grid = container.querySelector(".city-overview-grid");
+  if (!grid) return;
+  grid.innerHTML = [
+    ["Funds", formatMoney(state.economy.money), ""],
+    [
+      "Cash flow",
+      `${cashFlow >= 0 ? "+" : ""}${formatMoney(cashFlow)}/mo`,
+      cashFlow >= 0 ? "positive" : "negative",
+    ],
+    ["Population", state.population.total.toLocaleString("en-US"), ""],
+    [
+      "Happiness",
+      `${state.happiness.value}%`,
+      state.happiness.value < 40 ? "negative" : "positive",
+    ],
+    [
+      "Power",
+      `${power >= 0 ? "+" : ""}${power} MW`,
+      power >= 0 ? "positive" : "negative",
+    ],
+    ["Water", `${water >= 0 ? "+" : ""}${water}`, water >= 0 ? "positive" : "negative"],
+  ]
+    .map(
+      ([label, value, status]) =>
+        `<div class="city-overview-stat"><span>${label}</span><strong class="${status}">${value}</strong></div>`,
+    )
+    .join("");
 }
 
 function renderBuildingInfo(
@@ -106,7 +128,7 @@ function renderBuildingInfo(
   if (!tile.buildingId) return "";
   const building = state.buildings.find((b) => b.id === tile.buildingId);
   const def = building ? getBuildingById(building.definitionId) : null;
-  if (!def) return "";
+  if (!building || !def) return "";
   return `
     <div style="margin-bottom:6px">
       <div style="font-size:13px;font-weight:700">${def.name}</div>
@@ -115,12 +137,41 @@ function renderBuildingInfo(
     <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px">
       <div>Cost: ${formatMoney(def.cost)}</div>
       <div>Upkeep: ${formatMoney(def.upkeep)}/mo</div>
-      ${def.effects.populationCapacity ? `<div>Capacity: ${def.effects.populationCapacity}</div>` : ""}
-      ${def.effects.jobs ? `<div>Jobs: ${def.effects.jobs}</div>` : ""}
-      ${def.effects.healthRadius ? `<div>Health: ${def.effects.healthRadius} radius</div>` : ""}
-      ${def.effects.educationRadius ? `<div>Education: ${def.effects.educationRadius} radius</div>` : ""}
+      ${renderOccupancyInfo(building, def)}
+      ${renderServiceEffects(def)}
+      ${renderGarbageInfo(def, state)}
     </div>
   `;
+}
+
+function renderServiceEffects(definition: BuildingDefinition): string {
+  const { healthRadius, educationRadius, powerCapacity, waterCapacity } =
+    definition.effects;
+  return [
+    healthRadius ? `<div>Health: ${healthRadius} radius</div>` : "",
+    educationRadius ? `<div>Education: ${educationRadius} radius</div>` : "",
+    powerCapacity ? `<div>Power: ${powerCapacity} MW</div>` : "",
+    waterCapacity ? `<div>Water: ${waterCapacity} units</div>` : "",
+  ].join("");
+}
+
+function renderOccupancyInfo(
+  building: BuildingInstance,
+  definition: BuildingDefinition,
+): string {
+  const active = building.status === "active";
+  const residents = definition.effects.populationCapacity;
+  const jobs = definition.effects.jobs;
+  return [
+    residents ? `<div>Residents: ${active ? residents : 0} / ${residents}</div>` : "",
+    jobs ? `<div>Jobs provided: ${active ? jobs : 0} / ${jobs}</div>` : "",
+  ].join("");
+}
+
+function renderGarbageInfo(definition: BuildingDefinition, state: CityState): string {
+  if (!definition.effects.garbageCapacity) return "";
+  const { garbageCapacity, garbageCollectionRadius } = definition.effects;
+  return `<div>Collection: ${garbageCapacity}/mo, ${garbageCollectionRadius ?? 0}-tile range</div><div>City coverage: ${state.extendedServices.garbageCoverage}%</div>`;
 }
 
 function renderRoadInfo(
@@ -142,6 +193,7 @@ function renderRoadInfo(
 
 function renderZoneInfo(
   tile: { zone: string | null; pollution: number; landValue: number | null },
+  state: CityState,
   x: number,
   y: number,
 ): string {
@@ -152,8 +204,36 @@ function renderZoneInfo(
       <div>Position: ${x}, ${y}</div>
       <div>Pollution: ${Math.round(tile.pollution)}%</div>
       ${tile.landValue != null ? `<div>Land value: ${Math.round(tile.landValue)}</div>` : ""}
+      <div>${getZoneGrowthStatus(state, tile.zone, x, y)}</div>
     </div>
   `;
+}
+
+function getZoneGrowthStatus(
+  state: CityState,
+  zone: string,
+  x: number,
+  y: number,
+): string {
+  if (!hasAdjacentRoad(state, x, y)) return "Growth blocked: needs an adjacent road.";
+  const demand = getZoneDemand(state, zone);
+  if (demand < 10) return `Growth waiting: ${demand}% demand.`;
+  return `Ready to grow: ${demand}% demand.`;
+}
+
+function hasAdjacentRoad(state: CityState, x: number, y: number): boolean {
+  return [
+    state.map[y - 1]?.[x],
+    state.map[y]?.[x + 1],
+    state.map[y + 1]?.[x],
+    state.map[y]?.[x - 1],
+  ].some((tile) => Boolean(tile?.roadId));
+}
+
+function getZoneDemand(state: CityState, zone: string): number {
+  if (zone.includes("residential")) return state.demand.residential;
+  if (zone.includes("commercial") || zone === "office") return state.demand.commercial;
+  return state.demand.industrial;
 }
 
 function renderEmptyInfo(
@@ -217,7 +297,7 @@ function updateInspector(
   } else if (tile.roadId) {
     html += renderRoadInfo(tile, state, x, y);
   } else if (tile.zone) {
-    html += renderZoneInfo(tile, x, y);
+    html += renderZoneInfo(tile, state, x, y);
   } else {
     html += renderEmptyInfo(tile, x, y);
   }
@@ -233,27 +313,39 @@ function updateNotifications(container: HTMLElement, state: CityState): void {
   const listEl = container.querySelector("#notification-list");
   if (!listEl) return;
 
-  const warnings = state.warnings.slice(0, 5);
+  const warnings = groupWarnings(state.warnings).slice(0, 5);
   if (warnings.length === 0) {
     listEl.innerHTML = `<p style="font-size:11px;color:var(--text-muted)">No notifications</p>`;
     return;
   }
 
   listEl.innerHTML = warnings
-    .map((w) => {
+    .map(({ warning, count }) => {
+      const w = warning;
       const severityIcon = getSeverityIcon(w.severity);
       const severityClass = getSeverityClass(w);
       return `
         <div class="notification-item">
           <div class="notification-icon ${severityClass}">${icon(severityIcon, 14)}</div>
           <div class="notification-text">
-            <div class="notification-title">${w.message}</div>
+            <div class="notification-title">${w.message}${count > 1 ? ` (${count})` : ""}</div>
             <div class="notification-desc">${w.suggestedFix}</div>
           </div>
         </div>
       `;
     })
     .join("");
+}
+
+function groupWarnings(warnings: Warning[]): { warning: Warning; count: number }[] {
+  const grouped = new Map<string, { warning: Warning; count: number }>();
+  warnings.forEach((warning) => {
+    const key = `${warning.message}:${warning.suggestedFix}`;
+    const existing = grouped.get(key);
+    if (existing) existing.count += 1;
+    else grouped.set(key, { warning, count: 1 });
+  });
+  return [...grouped.values()];
 }
 
 function getSeverityIcon(severity: Warning["severity"]): IconName {

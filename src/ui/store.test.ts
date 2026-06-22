@@ -6,7 +6,7 @@ describe("UIStore", () => {
     const state = useUIStore.getState();
     expect(state.camera.position).toEqual([32, 40, 32]);
     expect(state.camera.target).toEqual([32, 0, 32]);
-    expect(state.settings.graphicsQuality).toBe("high");
+    expect(state.settings.graphicsQuality).toBe("medium");
   });
 
   it("starts with no selection or hover", () => {
