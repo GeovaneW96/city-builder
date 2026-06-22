@@ -33,8 +33,7 @@ export function calculateDemand(state: CityState, metrics: CityMetrics): DemandS
         happinessModifier +
         state.rating.immigrationModifier * 20 +
         availableHousing * Math.abs(DEMAND_PARAMS.RESIDENTIAL_HOUSING_WEIGHT) -
-        metrics.unemployedWorkers *
-          Math.abs(DEMAND_PARAMS.RESIDENTIAL_UNEMPLOYMENT_WEIGHT),
+        getResidentialUnemploymentPenalty(metrics.unemployedWorkers),
     ),
     commercial: clampDemand(
       DEMAND_PARAMS.COMMERCIAL_BASE +
@@ -53,6 +52,12 @@ export function calculateDemand(state: CityState, metrics: CityMetrics): DemandS
       20 + state.services.workforceQuality * 0.5 - getOfficeCapacity(state) * 0.3,
     ),
   };
+}
+
+function getResidentialUnemploymentPenalty(unemployedWorkers: number): number {
+  const rawPenalty =
+    unemployedWorkers * Math.abs(DEMAND_PARAMS.RESIDENTIAL_UNEMPLOYMENT_WEIGHT);
+  return Math.min(rawPenalty, DEMAND_PARAMS.RESIDENTIAL_UNEMPLOYMENT_PENALTY_CAP);
 }
 
 function getOfficeCapacity(state: CityState): number {

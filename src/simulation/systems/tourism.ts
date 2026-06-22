@@ -34,7 +34,8 @@ export function recomputeTourism(state: CityState): void {
   const pollution =
     state.map.flat().reduce((total, tile) => total + tile.pollution, 0) /
     state.map.flat().length;
-  const lowPollution = pollution < 20 ? 10 : 0;
+  const hasAttraction = parks + landmarks + hotelBonus > 0;
+  const lowPollution = hasAttraction && pollution < 20 ? 10 : 0;
   const score = Math.min(
     100,
     parks + landmarks + hotelBonus + serviceCoverage + lowPollution,

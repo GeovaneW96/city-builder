@@ -11,7 +11,7 @@ export const UTILITY_BUILDINGS: BuildingDefinition[] = [
     upkeep: 500,
     unlockPopulation: 0,
     requirements: { roadAccess: true },
-    effects: { jobs: 10, powerCapacity: 100 },
+    effects: { jobs: 10, powerCapacity: 200 },
   },
   {
     id: "water_tower",

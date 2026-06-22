@@ -166,9 +166,9 @@ function createZoneBuilding(
 }
 
 function getZoneDefinition(zoneType: ZoneType): BuildingDefinition | null {
-  if (zoneType === "residential") return RESIDENTIAL_BUILDINGS[0] ?? null;
-  if (zoneType === "commercial") return COMMERCIAL_BUILDINGS[0] ?? null;
-  if (zoneType === "industrial") return INDUSTRIAL_BUILDINGS[0] ?? null;
+  if (zoneType === "residential") return getStarterZoneBuilding(RESIDENTIAL_BUILDINGS);
+  if (zoneType === "commercial") return getStarterZoneBuilding(COMMERCIAL_BUILDINGS);
+  if (zoneType === "industrial") return getStarterZoneBuilding(INDUSTRIAL_BUILDINGS);
   const definitions: Partial<Record<ZoneType, string>> = {
     medium_residential: "medium_house",
     high_residential: "high_apartment",
@@ -183,6 +183,16 @@ function getZoneDefinition(zoneType: ZoneType): BuildingDefinition | null {
         (building) => building.id === id,
       ) ?? null)
     : null;
+}
+
+function getStarterZoneBuilding(
+  definitions: BuildingDefinition[],
+): BuildingDefinition | null {
+  return (
+    definitions.find(
+      (building) => building.placementType === "zone-grown" && building.densityTier === 1,
+    ) ?? null
+  );
 }
 
 function isZoneUnlocked(state: CityState, zoneType: ZoneType): boolean {

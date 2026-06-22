@@ -263,6 +263,7 @@ export interface ExtendedServicesState {
   totalUncollectedGarbage: number;
   monthlyGarbageProduction: number;
   monthlyGarbageCollected: number;
+  garbageCoverage: number;
   garbageHappinessPenalty: number;
 }
 
@@ -422,6 +423,8 @@ export interface Warning {
 
 export interface TimeState {
   tick: number;
+  day: number;
+  hour: number;
   month: number;
   year: number;
   speed: 0 | 1 | 2 | 3;
@@ -591,6 +594,7 @@ export interface SimulationStore {
   state: CityState;
   tick: () => SimulationTickResult;
   processCommand: (command: GameCommand) => CommandResult;
+  processCommands: (commands: GameCommand[]) => CommandResult;
   loadSave: (save: CityState) => void;
   getSaveData: () => CityState;
 }

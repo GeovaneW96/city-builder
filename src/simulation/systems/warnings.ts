@@ -228,10 +228,18 @@ function getExtendedServiceWarnings(state: CityState): Warning[] {
       id: "city:garbage-buildup",
       severity: "medium",
       message: "Uncollected garbage is building up.",
-      suggestedFix: "Build a landfill near garbage-producing buildings.",
+      suggestedFix: getGarbageFix(state),
     });
   }
   return warnings;
+}
+
+function getGarbageFix(state: CityState): string {
+  if (state.extendedServices.garbageCoverage === 0)
+    return "Place a landfill within range of homes, shops, or industry.";
+  if (state.extendedServices.garbageCoverage < 100)
+    return `Only ${state.extendedServices.garbageCoverage}% is covered. Add or move a landfill closer.`;
+  return "Landfill crews are clearing the backlog; keep it funded and allow a month to pass.";
 }
 
 function hasPoliceTargets(state: CityState): boolean {

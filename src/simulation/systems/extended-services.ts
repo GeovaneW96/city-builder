@@ -102,6 +102,7 @@ function collectGarbage(
   | "totalUncollectedGarbage"
   | "monthlyGarbageProduction"
   | "monthlyGarbageCollected"
+  | "garbageCoverage"
   | "garbageHappinessPenalty"
 > {
   const sources = active.map((building) => ({
@@ -119,24 +120,47 @@ function collectGarbage(
     (total, source) => total + source.amount,
     0,
   );
-  const monthlyGarbageCollected = sources.reduce(
+  const currentWasteCollected = sources.reduce(
     (total, source) =>
       total + collectSource(source.building, source.amount, collectors, capacity),
     0,
   );
-  const totalUncollectedGarbage = Math.max(
+  const garbageCoverage = getCoverage(
+    sources.filter((source) => source.amount > 0).map((source) => source.building),
+    collectors,
+    "garbageCollectionRadius",
+  );
+  const backlog = Math.max(
     0,
     state.extendedServices.totalUncollectedGarbage +
       monthlyGarbageProduction -
-      monthlyGarbageCollected -
-      EXTENDED_SERVICE_BALANCE.GARBAGE_DECAY,
+      currentWasteCollected,
+  );
+  const backlogCollected = collectGarbageBacklog(backlog, garbageCoverage, capacity);
+  const monthlyGarbageCollected = currentWasteCollected + backlogCollected;
+  const totalUncollectedGarbage = Math.max(
+    0,
+    backlog - backlogCollected - EXTENDED_SERVICE_BALANCE.GARBAGE_DECAY,
   );
   return {
     totalUncollectedGarbage,
     monthlyGarbageProduction,
     monthlyGarbageCollected,
+    garbageCoverage,
     garbageHappinessPenalty: -Math.floor(totalUncollectedGarbage / 10),
   };
+}
+
+function collectGarbageBacklog(
+  backlog: number,
+  garbageCoverage: number,
+  capacity: Map<string, number>,
+): number {
+  const availableCapacity = [...capacity.values()].reduce(
+    (total, value) => total + value,
+    0,
+  );
+  return Math.min(backlog * (garbageCoverage / 100), availableCapacity);
 }
 
 function collectSource(

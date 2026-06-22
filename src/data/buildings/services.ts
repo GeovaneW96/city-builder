@@ -69,7 +69,7 @@ export const SERVICE_BUILDINGS: BuildingDefinition[] = [
     size: [2, 2],
     cost: 8000,
     upkeep: 400,
-    unlockPopulation: 0,
+    unlockPopulation: 500,
     requirements: { roadAccess: true },
     effects: {
       jobs: 8,
@@ -125,7 +125,7 @@ export const SERVICE_BUILDINGS: BuildingDefinition[] = [
     upkeep: 300,
     unlockPopulation: 0,
     requirements: { roadAccess: true },
-    effects: { jobs: 4, garbageCollectionRadius: 12, garbageCapacity: 500 },
+    effects: { jobs: 4, garbageCollectionRadius: 20, garbageCapacity: 500 },
   },
   {
     id: "bus_depot",
