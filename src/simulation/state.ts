@@ -58,7 +58,7 @@ export function createInitialCityState(
       scenarioStatus: "active",
     },
     warnings: [],
-    time: { tick: 0, month: 1, year: 1, speed: 1 },
+    time: { tick: 0, day: 1, hour: 8, month: 1, year: 1, speed: 1 },
   };
 }
 
@@ -165,6 +165,7 @@ function createInitialExtendedServicesState() {
     totalUncollectedGarbage: 0,
     monthlyGarbageProduction: 0,
     monthlyGarbageCollected: 0,
+    garbageCoverage: 100,
     garbageHappinessPenalty: 0,
   };
 }

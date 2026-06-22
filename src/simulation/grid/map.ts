@@ -124,8 +124,12 @@ export function cloneCityState(state: CityState): CityState {
       completedObjectives: [...state.progression.completedObjectives],
     },
     warnings: state.warnings.map((warning) => ({ ...warning })),
-    time: { ...state.time },
+    time: cloneTime(state.time),
   };
+}
+
+function cloneTime(time: CityState["time"]): CityState["time"] {
+  return { ...time, day: time.day ?? 1, hour: time.hour ?? 8 };
 }
 
 function getPremium(state: CityState): boolean {
@@ -360,6 +364,7 @@ function createEmptyExtendedServicesState(): CityState["extendedServices"] {
     totalUncollectedGarbage: 0,
     monthlyGarbageProduction: 0,
     monthlyGarbageCollected: 0,
+    garbageCoverage: 100,
     garbageHappinessPenalty: 0,
   };
 }

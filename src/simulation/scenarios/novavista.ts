@@ -306,7 +306,7 @@ function configureShowcaseMetrics(state: CityState): void {
   state.services.powerDemand = 324;
   state.services.waterCapacity = 500;
   state.services.waterDemand = 310;
-  state.time = { tick: 0, month: 5, year: 2025, speed: 0 };
+  state.time = { tick: 0, day: 1, hour: 8, month: 5, year: 2025, speed: 0 };
   state.progression.currentMilestone = 12;
   state.progression.unlockedFeatures = [
     "dirt_road",

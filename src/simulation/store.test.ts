@@ -35,6 +35,7 @@ describe("createInitialCityState", () => {
     expect(state.happiness.value).toBe(70);
     expect(state.progression.unlockedFeatures).toContain("dirt_road");
     expect(state.progression.unlockedFeatures).toContain("residential_zoning");
+    expect(state.time.speed).toBe(1);
   });
 });
 
@@ -67,6 +68,17 @@ describe("SimulationStore road and zone commands", () => {
         error: "Out of bounds",
       },
     );
+  });
+
+  it("commits a batch of placement commands in one store update", () => {
+    const result = useSimulationStore.getState().processCommands([
+      { type: "PLACE_ROAD", x: 10, y: 10, roadType: "dirt" },
+      { type: "PLACE_ROAD", x: 11, y: 10, roadType: "dirt" },
+    ]);
+
+    expect(result.success).toBe(true);
+    expect(useSimulationStore.getState().state.roads).toHaveLength(2);
+    expect(useSimulationStore.getState().state.economy.money).toBe(49900);
   });
 
   it("paints unlocked zones and rejects locked zone types", () => {
@@ -105,6 +117,12 @@ describe("SimulationStore building and tax commands", () => {
     expect(state.buildings[0]?.definitionId).toBe("water_tower");
     expect(state.economy.money).toBe(44950);
     expect(state.map[5]![5]!.buildingId).toBe(state.buildings[0]?.id);
+  });
+
+  it("keeps clinic construction locked until the 500-population milestone", () => {
+    expect(
+      command({ type: "PLACE_BUILDING", definitionId: "clinic", x: 5, y: 5 }),
+    ).toMatchObject({ success: false, error: "Building is locked" });
   });
 
   it("clamps tax rates", () => {
@@ -151,6 +169,15 @@ describe("Simulation growth", () => {
 
 describe("Simulation economy", () => {
   beforeEach(resetStore);
+
+  it("does not award passive income before the player builds an attraction", () => {
+    useSimulationStore.getState().tick();
+    useSimulationStore.getState().tick();
+
+    const state = useSimulationStore.getState().state;
+    expect(state.economy.money).toBe(50000);
+    expect(state.economy.monthlyIncome).toBe(0);
+  });
 
   it("computes utility capacity, demand, warnings, and monthly expenses", () => {
     const state = createInitialCityState();
@@ -229,13 +256,18 @@ describe("Simulation progression", () => {
       addActiveBuilding(state, "small_house", index, 1);
     }
     useSimulationStore.getState().loadSave(state);
-    useSimulationStore.getState().tick();
+    const result = useSimulationStore.getState().tick();
 
     const next = useSimulationStore.getState().state;
     expect(next.population.total).toBe(56);
     expect(next.progression.currentMilestone).toBe(50);
     expect(next.progression.unlockedFeatures).toContain("commercial_zoning");
     expect(next.economy.money).toBe(52000);
+    expect(result.events).toContainEqual({
+      type: "MILESTONE_REACHED",
+      milestone: "Hamlet",
+      population: 50,
+    });
 
     useSimulationStore.getState().tick();
     expect(useSimulationStore.getState().state.economy.money).not.toBe(54000);
