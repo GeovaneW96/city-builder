@@ -62,6 +62,7 @@ export interface BuildingRenderInfo {
 export interface CityRenderOptions {
   assetSource?: CityAssetSource;
   detailDensity?: number;
+  refreshTerrain?: boolean;
 }
 
 export type BuildingRenderInfoLookup = (
@@ -188,19 +189,21 @@ export function syncCityRenderLayers(
 ): void {
   const detailDensity = options.detailDensity ?? 1;
   clearGroup(layers.roads);
-  clearGroup(layers.terrain);
   clearGroup(layers.zones);
   clearGroup(layers.buildings);
   clearGroup(layers.overlays);
   clearGroup(layers.warnings);
-  layers.waterMaterials = [];
-  renderTerrain(
-    layers.terrain,
-    state,
-    layers.waterMaterials,
-    options.assetSource,
-    detailDensity,
-  );
+  if (options.refreshTerrain ?? true) {
+    clearGroup(layers.terrain);
+    layers.waterMaterials = [];
+    renderTerrain(
+      layers.terrain,
+      state,
+      layers.waterMaterials,
+      options.assetSource,
+      detailDensity,
+    );
+  }
   renderZones(layers.zones, state);
   renderRoads(layers.roads, state, options.assetSource, detailDensity);
   renderBuildings(layers.buildings, state, getBuildingRenderInfo, options.assetSource);

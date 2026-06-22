@@ -2,6 +2,7 @@ import { Vector2 } from "three";
 import { CityAssetManager } from "./assets/AssetManager";
 import { CONSTRUCTION_COSTS } from "./data/balance";
 import { getBuildingById } from "./data/buildings";
+import { MILESTONES } from "./data/unlocks/milestones";
 import {
   createCityRenderLayers,
   animateCityRenderLayers,
@@ -18,6 +19,7 @@ import {
 } from "./rendering/three/grid";
 import { createScene, renderFrame, setSceneQuality } from "./rendering/three/scene";
 import { getRenderQualityProfile } from "./rendering/three/quality";
+import { getCalendarTimeAfterHours, HOURS_PER_MONTH } from "./simulation/systems/time";
 import {
   AUTOSAVE_INTERVAL_MS,
   AUTOSAVE_SLOT_ID,
@@ -34,15 +36,19 @@ import { useSimulationStore } from "./simulation/store";
 import type {
   BuildMode,
   CityState,
+  GameEvent,
   GameCommand,
   PlacementPreview,
   UIState,
 } from "./shared/types";
 import { createAudioFeedback } from "./ui/audio";
+import { selectBottomPanelTab, type BuildCatalogTab } from "./ui/components/BottomPanel";
+import { updateCalendarClock } from "./ui/components/TopBar";
 import { useUIStore } from "./ui/store";
 import { createGameUI, updateGameUI, toggleDashboardMode, showStatus } from "./ui/ui";
 
-const TICK_INTERVALS: Record<1 | 2 | 3, number> = { 1: 250, 2: 83, 3: 42 };
+const TICK_INTERVALS: Record<1 | 2 | 3, number> = { 1: 10000, 2: 5000, 3: 2500 };
+const isE2ETest = new URLSearchParams(window.location.search).has("e2e");
 
 const app = document.getElementById("app");
 if (!app) throw new Error("No #app element found");
@@ -59,12 +65,15 @@ const audioFeedback = createAudioFeedback(
 );
 const saveSlots = new SaveSlotManager(localStorage);
 let isDragging = false;
-let placedDuringDrag = new Set<string>();
+let dragStart: [number, number] | null = null;
+let activePointerId: number | null = null;
 let lastTickAt = performance.now();
 let lastAutosaveAt = performance.now();
 let selectedSaveSlot: SaveSlotId = "manual_0";
-let lastRenderedCityState: CityState | null = null;
-let lastRenderedOverlay: UIState["activeOverlay"] = null;
+let lastCityRenderKey: string | null = null;
+let lastTerrainRenderKey: string | null = null;
+let lastEvaluatedCityState: CityState | null = null;
+let lastEvaluatedOverlay: UIState["activeOverlay"] = null;
 let lastRenderQuality = useUIStore.getState().settings.graphicsQuality;
 let generatedAssetsReady = false;
 
@@ -74,7 +83,9 @@ const GLOBAL_ACTIONS: Record<string, (target: HTMLElement) => void> = {
   stats: () => toggleDashboardMode(ui),
   zones: () => useUIStore.getState().setBuildMode("zone"),
   roads: () => useUIStore.getState().setRoadTool("dirt"),
-  services: () => useUIStore.getState().setBuildMode("building"),
+  services: () => openBuildCatalog("buildings"),
+  utilities: () => openBuildCatalog("utilities"),
+  decorations: () => openBuildCatalog("decorations"),
   demolish: () => useUIStore.getState().setBuildMode("demolish"),
   save: () => saveGame(),
   load: () => loadGame(),
@@ -88,16 +99,37 @@ bindInterface();
 bindPointerInput();
 bindKeyboard();
 syncAll();
-useSimulationStore.subscribe(syncAll);
-useUIStore.subscribe(syncAll);
-void preloadGeneratedCityAssets();
+useSimulationStore.subscribe(() => syncAll());
+useUIStore.subscribe(() => syncAll());
+if (!isE2ETest) void preloadGeneratedCityAssets();
 requestAnimationFrame(animate);
 
 function animate(now: number): void {
   runSimulationClock(now);
-  animateCityRenderLayers(cityLayers, now / 1000);
-  renderFrame(scene);
+  updateGameClock(now);
+  if (!isE2ETest) {
+    animateCityRenderLayers(cityLayers, now / 1000);
+    renderFrame(scene);
+  } else {
+    scene.controls.update();
+    scene.scene.updateMatrixWorld();
+  }
   requestAnimationFrame(animate);
+}
+
+function updateGameClock(now: number): void {
+  const state = useSimulationStore.getState().state;
+  if (state.time.speed === 0) {
+    updateCalendarClock(ui.topBar, state.time);
+    return;
+  }
+  const interval = TICK_INTERVALS[state.time.speed];
+  const elapsed = Math.max(0, now - lastTickAt);
+  const elapsedHours = Math.min(
+    HOURS_PER_MONTH - 1,
+    Math.floor((elapsed / interval) * HOURS_PER_MONTH),
+  );
+  updateCalendarClock(ui.topBar, getCalendarTimeAfterHours(state.time, elapsedHours));
 }
 
 function runSimulationClock(now: number): void {
@@ -107,54 +139,83 @@ function runSimulationClock(now: number): void {
     return;
   }
   const interval = TICK_INTERVALS[speed];
-  while (now - lastTickAt >= interval) {
-    const result = useSimulationStore.getState().tick();
-    audioFeedback.playEvents(result.events);
-    lastTickAt += interval;
-  }
+  if (now - lastTickAt < interval) return;
+  const result = useSimulationStore.getState().tick();
+  audioFeedback.playEvents(result.events);
+  showMilestoneNotification(result.events);
+  lastTickAt += interval;
   if (now - lastAutosaveAt >= AUTOSAVE_INTERVAL_MS) {
     saveSlots.save(AUTOSAVE_SLOT_ID, useSimulationStore.getState().getSaveData());
     lastAutosaveAt = now;
   }
 }
 
-function syncAll(): void {
+function showMilestoneNotification(events: GameEvent[]): void {
+  const event = events.find((item) => item.type === "MILESTONE_REACHED");
+  if (!event || event.type !== "MILESTONE_REACHED") return;
+  const milestone = MILESTONES.find((item) => item.population === event.population);
+  const unlocks = milestone?.unlocks.map(formatFeatureName).join(", ") ?? "";
+  const message = unlocks
+    ? `${event.milestone} reached — unlocked: ${unlocks}.`
+    : `${event.milestone} reached!`;
+  showStatus(ui, message, 5000);
+}
+
+function formatFeatureName(feature: string): string {
+  return feature.replace("_zoning", " zoning").replace(/_/g, " ");
+}
+
+function syncAll(force = false): void {
   const state = useSimulationStore.getState().state;
   const uiState = useUIStore.getState();
-  syncRenderQuality(uiState.settings.graphicsQuality);
-  if (shouldSyncCityLayers(state, uiState.activeOverlay)) {
-    syncCityRenderLayers(
-      cityLayers,
-      state,
-      uiState.activeOverlay,
-      getBuildingRenderInfo,
-      {
-        assetSource: generatedAssetsReady ? cityAssets : undefined,
-        detailDensity: getRenderQualityProfile(uiState.settings.graphicsQuality)
-          .detailDensity,
-      },
-    );
-    lastRenderedCityState = state;
-    lastRenderedOverlay = uiState.activeOverlay;
-  }
+  const qualityChanged = syncRenderQuality(uiState.settings.graphicsQuality);
+  evaluateCityRender(state, uiState.activeOverlay, force || qualityChanged);
   syncPlacementPreview(cityLayers.preview, uiState.placementPreview);
   updateGameUI(ui, state, uiState);
   updateSelectionHighlight(grid.selectionHighlight, uiState.selectedTile);
   setGridVisibility(grid, uiState.placementPreview !== null);
 }
 
-function syncRenderQuality(quality: UIState["settings"]["graphicsQuality"]): void {
-  if (quality === lastRenderQuality) return;
+function evaluateCityRender(
+  state: CityState,
+  activeOverlay: UIState["activeOverlay"],
+  force: boolean,
+): void {
+  if (isE2ETest) return;
+  const stateChanged = state !== lastEvaluatedCityState;
+  const overlayChanged = activeOverlay !== lastEvaluatedOverlay;
+  if (!force && !stateChanged && !overlayChanged) return;
+
+  const cityRenderKey = getCityRenderKey(state, activeOverlay);
+  const terrainRenderKey = getTerrainRenderKey(state);
+  const refreshTerrain = force || terrainRenderKey !== lastTerrainRenderKey;
+  if (force || refreshTerrain || cityRenderKey !== lastCityRenderKey) {
+    syncCityRenderLayers(cityLayers, state, activeOverlay, getBuildingRenderInfo, {
+      assetSource: generatedAssetsReady ? cityAssets : undefined,
+      detailDensity: getRenderQualityProfile(
+        useUIStore.getState().settings.graphicsQuality,
+      ).detailDensity,
+      refreshTerrain,
+    });
+    lastCityRenderKey = cityRenderKey;
+    lastTerrainRenderKey = terrainRenderKey;
+  }
+  lastEvaluatedCityState = state;
+  lastEvaluatedOverlay = activeOverlay;
+}
+
+function syncRenderQuality(quality: UIState["settings"]["graphicsQuality"]): boolean {
+  if (quality === lastRenderQuality) return false;
   setSceneQuality(scene, quality);
   lastRenderQuality = quality;
+  return true;
 }
 
 async function preloadGeneratedCityAssets(): Promise<void> {
   showStatus(ui, "Loading generated city assets…");
   const result = await cityAssets.preloadAll();
   generatedAssetsReady = result.loaded.length > 0;
-  lastRenderedCityState = null;
-  syncAll();
+  syncAll(true);
   if (result.failed.length === 0) {
     showStatus(ui, `Generated city assets ready (${result.loaded.length}).`);
     return;
@@ -165,17 +226,70 @@ async function preloadGeneratedCityAssets(): Promise<void> {
   );
 }
 
-function shouldSyncCityLayers(
+function getCityRenderKey(
   state: CityState,
   activeOverlay: UIState["activeOverlay"],
-): boolean {
-  return lastRenderedCityState !== state || lastRenderedOverlay !== activeOverlay;
+): string {
+  return [
+    activeOverlay,
+    getRoadRenderKey(state),
+    getBuildingRenderKey(state),
+    getZoneRenderKey(state),
+    getOverlayRenderKey(state, activeOverlay),
+  ].join("|");
+}
+
+function getRoadRenderKey(state: CityState): string {
+  return state.roads
+    .map((road) => `${road.id}:${road.type}:${Object.values(road.connections).join("")}`)
+    .join(",");
+}
+
+function getBuildingRenderKey(state: CityState): string {
+  return state.buildings
+    .map(
+      (building) =>
+        `${building.id}:${building.definitionId}:${building.position.join(",")}:${building.rotation}:${building.status}`,
+    )
+    .join(",");
+}
+
+function getZoneRenderKey(state: CityState): string {
+  return state.map
+    .flat()
+    .filter((tile) => tile.zone)
+    .map((tile) => `${tile.x},${tile.y}:${tile.zone}:${tile.buildingId ?? ""}`)
+    .join(",");
+}
+
+function getOverlayRenderKey(
+  state: CityState,
+  activeOverlay: UIState["activeOverlay"],
+): string {
+  const warnings = state.warnings
+    .map((warning) => `${warning.id}:${warning.targetTile?.join(",") ?? ""}`)
+    .join(",");
+  if (activeOverlay === "pollution") {
+    return state.map
+      .flat()
+      .map((tile) => tile.pollution)
+      .join(",");
+  }
+  if (activeOverlay === "districts") return JSON.stringify(state.districts);
+  return warnings;
+}
+
+function getTerrainRenderKey(state: CityState): string {
+  return state.map
+    .flat()
+    .map((tile) => `${tile.terrain}:${tile.elevation}`)
+    .join(",");
 }
 
 function bindPointerInput(): void {
   const canvas = scene.renderer.domElement;
-  canvas.addEventListener("pointermove", handlePointerMove);
-  canvas.addEventListener("pointerdown", handlePointerDown);
+  canvas.addEventListener("pointermove", handlePointerMove, { capture: true });
+  canvas.addEventListener("pointerdown", handlePointerDown, { capture: true });
   canvas.addEventListener("pointerup", stopDragging);
   canvas.addEventListener("pointerleave", handlePointerLeave);
 }
@@ -183,37 +297,50 @@ function bindPointerInput(): void {
 function handlePointerMove(event: PointerEvent): void {
   const gridPos = pickGridPosition(event);
   useUIStore.getState().setHoveredTile(gridPos);
-  updatePlacementPreview(gridPos);
+  updatePlacementPreview(getPreviewPositions(gridPos));
   updateHoverHighlight(grid.hoverHighlight, gridPos, getPreviewValidity());
-  if (isDragging && gridPos && isDragBuildMode(useUIStore.getState().buildMode)) {
-    applyToolAt(gridPos);
-  }
 }
 
 function handlePointerDown(event: PointerEvent): void {
+  if (event.button !== 0) return;
   const gridPos = pickGridPosition(event);
   useUIStore.getState().setSelectedTile(gridPos);
   updateSelectionHighlight(grid.selectionHighlight, gridPos);
-  if (!gridPos) return;
+  if (!gridPos || !useUIStore.getState().buildMode) return;
   isDragging = true;
-  placedDuringDrag = new Set<string>();
+  dragStart = gridPos;
+  activePointerId = event.pointerId;
+  scene.controls.enabled = false;
   scene.renderer.domElement.setPointerCapture(event.pointerId);
-  applyToolAt(gridPos);
+  updatePlacementPreview(getPreviewPositions(gridPos));
 }
 
 function stopDragging(event: PointerEvent): void {
+  if (!isDragging) return;
+  const positions = getPreviewPositions(pickGridPosition(event));
+  commitPlacement(positions);
+  cancelPlacement(event.pointerId);
+}
+
+function cancelPlacement(pointerId?: number): void {
   isDragging = false;
-  placedDuringDrag.clear();
-  if (scene.renderer.domElement.hasPointerCapture(event.pointerId)) {
-    scene.renderer.domElement.releasePointerCapture(event.pointerId);
+  dragStart = null;
+  scene.controls.enabled = true;
+  const capturedPointerId = pointerId ?? activePointerId;
+  if (
+    capturedPointerId != null &&
+    scene.renderer.domElement.hasPointerCapture(capturedPointerId)
+  ) {
+    scene.renderer.domElement.releasePointerCapture(capturedPointerId);
   }
+  activePointerId = null;
 }
 
 function handlePointerLeave(): void {
+  if (isDragging) return;
   useUIStore.getState().setHoveredTile(null);
   useUIStore.getState().setPlacementPreview(null);
   grid.hoverHighlight.visible = false;
-  isDragging = false;
 }
 
 function pickGridPosition(event: PointerEvent): [number, number] | null {
@@ -223,16 +350,53 @@ function pickGridPosition(event: PointerEvent): [number, number] | null {
   return screenToGrid(mouse, scene.camera, grid.raycasterTarget, scene.gridSize);
 }
 
-function applyToolAt(position: [number, number]): void {
-  const command = buildCommand(position);
-  if (!command) return;
-  const key = `${command.type}:${position[0]},${position[1]}`;
-  if (placedDuringDrag.has(key)) return;
-  placedDuringDrag.add(key);
-  const result = useSimulationStore.getState().processCommand(command);
+function commitPlacement(positions: [number, number][]): void {
+  const preview = createPlacementPreview(positions);
+  if (!preview?.valid) {
+    showStatus(ui, "Invalid placement.");
+    return;
+  }
+  const commands = positions.map(buildCommand).filter((command) => command !== null);
+  if (commands.length === 0) return;
+  const result = useSimulationStore.getState().processCommands(commands);
   audioFeedback.playEvents(result.events);
-  audioFeedback.playFailure(result.error);
+  if (!result.success) audioFeedback.playFailure(result.error);
   showStatus(ui, result.success ? "Built." : (result.error ?? "Command failed."));
+}
+
+function getPreviewPositions(end: [number, number] | null): [number, number][] {
+  if (!end) return [];
+  const mode = useUIStore.getState().buildMode;
+  if (!isDragging || !dragStart || !isDragBuildMode(mode)) return [end];
+  return getGridLine(dragStart, end);
+}
+
+function getGridLine(
+  [startX, startY]: [number, number],
+  [endX, endY]: [number, number],
+): [number, number][] {
+  const positions: [number, number][] = [];
+  const deltaX = Math.abs(endX - startX);
+  const deltaY = Math.abs(endY - startY);
+  const stepX = startX < endX ? 1 : -1;
+  const stepY = startY < endY ? 1 : -1;
+  let x = startX;
+  let y = startY;
+  let error = deltaX - deltaY;
+
+  while (true) {
+    positions.push([x, y]);
+    if (x === endX && y === endY) return positions;
+    const doubledError = error * 2;
+    if (doubledError > -deltaY) {
+      error -= deltaY;
+      x += stepX;
+    }
+    if (doubledError < deltaX) {
+      error += deltaX;
+      y += stepY;
+    }
+  }
 }
 
 function buildCommand([x, y]: [number, number]): GameCommand | null {
@@ -250,34 +414,36 @@ function buildCommand([x, y]: [number, number]): GameCommand | null {
   return null;
 }
 
-function updatePlacementPreview(position: [number, number] | null): void {
-  useUIStore.getState().setPlacementPreview(createPlacementPreview(position));
+function updatePlacementPreview(positions: [number, number][]): void {
+  useUIStore.getState().setPlacementPreview(createPlacementPreview(positions));
 }
 
-function createPlacementPreview(
-  position: [number, number] | null,
-): PlacementPreview | null {
+function createPlacementPreview(positions: [number, number][]): PlacementPreview | null {
   const uiState = useUIStore.getState();
-  if (!position || !uiState.buildMode) return null;
+  if (positions.length === 0 || !uiState.buildMode) return null;
   const state = useSimulationStore.getState().state;
   if (uiState.buildMode === "building" && uiState.selectedBuildingId) {
-    return createBuildingPreview(state, position, uiState.selectedBuildingId);
+    const position = positions.at(-1);
+    return position
+      ? createBuildingPreview(state, position, uiState.selectedBuildingId)
+      : null;
   }
-  return createTilePreview(state, position, uiState);
+  return createTilePreview(state, positions, uiState);
 }
 
 function createTilePreview(
   state: CityState,
-  position: [number, number],
+  positions: [number, number][],
   uiState: UIState,
 ): PlacementPreview {
-  const [x, y] = position;
-  const tile = getTile(state, x, y);
-  const valid = isTileToolValid(state, tile, uiState);
+  const cost = uiState.buildMode === "road" ? getRoadCost(uiState.selectedRoadType) : 0;
+  const valid =
+    positions.every(([x, y]) => isTileToolValid(state, getTile(state, x, y), uiState)) &&
+    state.economy.money >= cost * positions.length;
   return {
-    positions: [position],
+    positions,
     valid,
-    cost: uiState.buildMode === "road" ? getRoadCost(uiState.selectedRoadType) : 0,
+    cost: cost * positions.length,
     label: getModeLabel(uiState),
   };
 }
@@ -353,7 +519,10 @@ function isDragBuildMode(mode: BuildMode): boolean {
 
 function bindKeyboard(): void {
   window.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") useUIStore.getState().setBuildMode(null);
+    if (event.key === "Escape") {
+      cancelPlacement();
+      useUIStore.getState().setBuildMode(null);
+    }
     if (event.key === " ") togglePause();
     if (event.key === "1") setSpeed(1);
     if (event.key === "2") setSpeed(2);
@@ -396,12 +565,8 @@ function bindInterface(): void {
 }
 
 function findActionTarget(raw: EventTarget | null): HTMLElement | null {
-  let el = raw instanceof HTMLElement ? raw : null;
-  while (el && el !== ui.root) {
-    if (el.dataset.action) return el;
-    el = el.parentElement;
-  }
-  return null;
+  if (!(raw instanceof Element)) return null;
+  return raw.closest<HTMLElement>("[data-action]");
 }
 
 function handleToolbarClick(target: HTMLElement): void {
@@ -433,6 +598,11 @@ function setBuildingTool(buildingId: string | undefined): void {
   if (buildingId) useUIStore.getState().setBuildingTool(buildingId);
 }
 
+function openBuildCatalog(tab: BuildCatalogTab): void {
+  useUIStore.getState().setBuildMode("building");
+  selectBottomPanelTab(ui.bottomPanel, tab);
+}
+
 function setTaxRate(taxType: string, rate: number): void {
   if (taxType !== "residential" && taxType !== "commercial" && taxType !== "industrial")
     return;
@@ -461,6 +631,7 @@ function loadGame(): void {
     return;
   }
   useSimulationStore.getState().loadSave(save.state);
+  syncAll(true);
   showStatus(ui, "Loaded.");
 }
 
@@ -486,6 +657,7 @@ async function importSaveFile(file: File | undefined): Promise<void> {
     const save = saveSlots.import(destination, await file.text());
     selectedSaveSlot = destination;
     useSimulationStore.getState().loadSave(save.state);
+    syncAll(true);
     showStatus(ui, `Imported into ${destination}.`);
   } catch (error) {
     showStatus(ui, getErrorMessage(error));
