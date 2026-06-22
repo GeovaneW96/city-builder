@@ -3,10 +3,12 @@ import { getTiledTexture } from "./textures";
 
 const DEFAULT_GRID_SIZE = 64;
 const TILE_SIZE = 1;
+const VISUAL_TERRAIN_SCALE = 7;
 
 const COLORS = {
   GROUND: 0x2a4522,
-  GROUND_DARK: 0x1a2e18,
+  OUTER_GROUND: 0x6f8f45,
+  BUILD_AREA_EDGE: 0xb6d78c,
   HOVER: 0x6b9a50,
   SELECTED: 0x4a8fc0,
   GRID_LINE: 0x80a060,
@@ -48,7 +50,7 @@ export function createGrid(
   gridSize = DEFAULT_GRID_SIZE,
 ): GridContext {
   const half = gridSize / 2;
-  addTerrainBase(scene, gridSize, half);
+  addInfiniteTerrain(scene, gridSize, half);
   const ground = new THREE.Mesh(
     createTerrainGeometry(gridSize),
     createGroundMaterial(gridSize),
@@ -78,6 +80,7 @@ export function createGrid(
   gridMaterial.opacity = 0.13;
   gridHelper.visible = false;
   scene.add(gridHelper);
+  addBuildAreaBoundary(scene, gridSize);
 
   const hoverHighlight = createHighlightMesh(scene, COLORS.HOVER, 0.5, 0.002);
 
@@ -96,25 +99,64 @@ export function createGrid(
 function createGroundMaterial(gridSize: number): THREE.MeshStandardMaterial {
   return new THREE.MeshStandardMaterial({
     color: 0xffffff,
-    map: getTiledTexture(
-      "/textures/temperate-grass-albedo.jpg",
-      gridSize / 4,
-      gridSize / 4,
-    ),
+    map: createGrassTexture(gridSize / 4, gridSize / 4),
     roughness: 0.94,
     metalness: 0,
     vertexColors: false,
   });
 }
 
-function addTerrainBase(scene: THREE.Scene, gridSize: number, half: number): void {
-  const terrainBase = new THREE.Mesh(
-    new THREE.BoxGeometry(gridSize + 0.5, 0.48, gridSize + 0.5),
-    new THREE.MeshStandardMaterial({ color: COLORS.GROUND_DARK, roughness: 1 }),
+function addInfiniteTerrain(scene: THREE.Scene, gridSize: number, half: number): void {
+  const size = gridSize * VISUAL_TERRAIN_SCALE;
+  const terrain = new THREE.Mesh(
+    new THREE.PlaneGeometry(size, size, 1, 1),
+    new THREE.MeshStandardMaterial({
+      color: COLORS.OUTER_GROUND,
+      map: createGrassTexture(size / 4, size / 4),
+      roughness: 0.96,
+      metalness: 0,
+    }),
   );
-  terrainBase.position.set(half, -0.28, half);
-  terrainBase.receiveShadow = true;
-  scene.add(terrainBase);
+  terrain.rotation.x = -Math.PI / 2;
+  terrain.position.set(half, -0.03, half);
+  terrain.receiveShadow = true;
+  scene.add(terrain);
+}
+
+function createGrassTexture(repeatX: number, repeatY: number): THREE.Texture | null {
+  const texture = getTiledTexture(
+    "/textures/temperate-grass-albedo.jpg",
+    repeatX,
+    repeatY,
+  );
+  if (!texture) return null;
+  const clone = texture.clone();
+  clone.repeat.set(repeatX, repeatY);
+  clone.needsUpdate = true;
+  return clone;
+}
+
+function addBuildAreaBoundary(scene: THREE.Scene, gridSize: number): void {
+  const geometry = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(0, 0.025, 0),
+    new THREE.Vector3(gridSize, 0.025, 0),
+    new THREE.Vector3(gridSize, 0.025, 0),
+    new THREE.Vector3(gridSize, 0.025, gridSize),
+    new THREE.Vector3(gridSize, 0.025, gridSize),
+    new THREE.Vector3(0, 0.025, gridSize),
+    new THREE.Vector3(0, 0.025, gridSize),
+    new THREE.Vector3(0, 0.025, 0),
+  ]);
+  const boundary = new THREE.LineSegments(
+    geometry,
+    new THREE.LineBasicMaterial({
+      color: COLORS.BUILD_AREA_EDGE,
+      transparent: true,
+      opacity: 0.52,
+    }),
+  );
+  boundary.name = "build-area-boundary";
+  scene.add(boundary);
 }
 
 export function setGridVisibility(context: GridContext, visible: boolean): void {

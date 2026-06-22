@@ -34,11 +34,11 @@ function clampCameraTarget(target: THREE.Vector3, gridSize: number): void {
 }
 
 function addLighting(scene: THREE.Scene, gridSize: number): void {
-  const ambient = new THREE.AmbientLight(0x2a3a5a, 0.45);
+  const ambient = new THREE.AmbientLight(0xcfe6ff, 0.72);
   scene.add(ambient);
 
   const shadowSize = Math.max(50, gridSize * 0.8);
-  const dirLight = new THREE.DirectionalLight(0xaabbdd, 1.2);
+  const dirLight = new THREE.DirectionalLight(0xfff4d8, 1.75);
   dirLight.position.set(gridSize * 0.32, 64, gridSize * 0.22);
   dirLight.castShadow = true;
   dirLight.shadow.mapSize.width = 2048;
@@ -53,18 +53,18 @@ function addLighting(scene: THREE.Scene, gridSize: number): void {
   dirLight.shadow.normalBias = 0.015;
   scene.add(dirLight);
 
-  const moonFill = new THREE.DirectionalLight(0x7799cc, 0.8);
+  const moonFill = new THREE.DirectionalLight(0x9fc3ff, 0.75);
   moonFill.position.set(-gridSize * 0.15, 40, -gridSize * 0.1);
   scene.add(moonFill);
 
-  const blueFill = new THREE.DirectionalLight(0x4466aa, 0.4);
+  const blueFill = new THREE.DirectionalLight(0x7aa0d8, 0.32);
   blueFill.position.set(-gridSize * 0.1, 20, gridSize * 0.3);
   scene.add(blueFill);
 
-  const hemi = new THREE.HemisphereLight(0x1a2a50, 0x0a0e15, 0.55);
+  const hemi = new THREE.HemisphereLight(0xc8ecff, 0x627746, 1.05);
   scene.add(hemi);
 
-  const warmFill = new THREE.DirectionalLight(0xff8844, 0.18);
+  const warmFill = new THREE.DirectionalLight(0xffb86c, 0.22);
   warmFill.position.set(gridSize * -0.2, 10, gridSize * 0.15);
   scene.add(warmFill);
 }
@@ -104,19 +104,18 @@ function createNightScene(gridSize: number): THREE.Scene {
   const ctx = canvas.getContext("2d");
   if (ctx) {
     const gradient = ctx.createLinearGradient(0, 0, 0, 512);
-    gradient.addColorStop(0, "#000814");
-    gradient.addColorStop(0.15, "#020e1e");
-    gradient.addColorStop(0.4, "#06142a");
-    gradient.addColorStop(0.7, "#0a1a30");
-    gradient.addColorStop(1, "#0a1624");
+    gradient.addColorStop(0, "#9fc9f3");
+    gradient.addColorStop(0.25, "#b8d9f5");
+    gradient.addColorStop(0.58, "#d4e7f1");
+    gradient.addColorStop(1, "#f1d0a0");
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, 512, 512);
-    for (let i = 0; i < 300; i++) {
+    for (let i = 0; i < 28; i++) {
       const sx = Math.random() * 512;
-      const sy = Math.random() * 512;
-      const rad = 0.3 + Math.random() * 1.6;
-      const alpha = 0.15 + Math.random() * 0.7;
-      ctx.fillStyle = `rgba(220, 230, 255, ${alpha})`;
+      const sy = 42 + Math.random() * 240;
+      const rad = 18 + Math.random() * 44;
+      const alpha = 0.08 + Math.random() * 0.12;
+      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
       ctx.beginPath();
       ctx.arc(sx, sy, rad, 0, Math.PI * 2);
       ctx.fill();
@@ -125,9 +124,9 @@ function createNightScene(gridSize: number): THREE.Scene {
     scene.background = texture;
     scene.backgroundIntensity = 1.0;
   } else {
-    scene.background = new THREE.Color(0x060e1a);
+    scene.background = new THREE.Color(0xb8d9f5);
   }
-  scene.fog = new THREE.Fog(0x081018, gridSize * 0.5, gridSize * 1.2);
+  scene.fog = new THREE.Fog(0xc8dceb, gridSize * 2.4, gridSize * 5.5);
   return scene;
 }
 
@@ -151,7 +150,7 @@ function createRenderer(container: HTMLElement): THREE.WebGLRenderer {
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 0.85;
+  renderer.toneMappingExposure = 1.08;
   container.appendChild(renderer.domElement);
   return renderer;
 }

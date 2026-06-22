@@ -24,10 +24,6 @@ export function advanceCommandObjectives(state: CityState, command: GameCommand)
   }
 }
 
-export function getCurrentObjectiveLabel(state: CityState): string {
-  return getCurrentObjective(state)?.label ?? "Scenario complete";
-}
-
 function applyMilestones(state: CityState): GameEvent[] {
   const events: GameEvent[] = [];
   MILESTONES.forEach((milestone) => {

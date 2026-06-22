@@ -167,7 +167,7 @@ When placing something:
 - show footprint;
 - allow cancel;
 - allow rotate for buildings;
-- drag placement for roads/zones;
+- drag placement for roads and rectangular/square zone areas;
 - do not spend money until placement is committed.
 - commit a drag placement on pointer release; Escape cancels its preview without spending money.
 

@@ -29,16 +29,18 @@ This document lists every feature across all four implementation phases. Under e
 
 **Docs:** `13_TECHNICAL_ARCHITECTURE.md`, `src/shared/types.ts`, `src/shared/event-bus.ts`
 
-| #     | Testable Logic                                                                                      | Status |
-| ----- | --------------------------------------------------------------------------------------------------- | ------ |
-| 1.2.1 | Event bus subscribes and receives emitted events                                                    | done   |
-| 1.2.2 | Event bus `unsubscribe` stops receiving events                                                      | done   |
-| 1.2.3 | Event bus supports multiple subscribers per event                                                   | done   |
-| 1.2.4 | Event bus emits correct event types (TileChanged, RoadPlaced, etc.)                                 | done   |
-| 1.2.5 | CityState default values match `05_ECONOMY_AND_BALANCING.md` (starting money, base happiness, etc.) | done   |
-| 1.2.6 | Tile default state is grass terrain, no road, no zone, no building                                  | done   |
-| 1.2.7 | GameCommand union accepts all command types                                                         | done   |
-| 1.2.8 | BuildingDefinition fields serialize as expected                                                     | done   |
+| #      | Testable Logic                                                                                      | Status |
+| ------ | --------------------------------------------------------------------------------------------------- | ------ |
+| 1.2.1  | Event bus subscribes and receives emitted events                                                    | done   |
+| 1.2.2  | Event bus `unsubscribe` stops receiving events                                                      | done   |
+| 1.2.3  | Event bus supports multiple subscribers per event                                                   | done   |
+| 1.2.4  | Event bus emits correct event types (TileChanged, RoadPlaced, etc.)                                 | done   |
+| 1.2.5  | CityState default values match `05_ECONOMY_AND_BALANCING.md` (starting money, base happiness, etc.) | done   |
+| 1.2.6  | Tile default state is grass terrain, no road, no zone, no building                                  | done   |
+| 1.2.7  | GameCommand union accepts all command types                                                         | done   |
+| 1.2.8  | BuildingDefinition fields serialize as expected                                                     | done   |
+| 1.2.9  | Grid selection produces correct Bresenham line between two tile coordinates                         | done   |
+| 1.2.10 | Grid selection produces correct rectangle bounds between two tile coordinates                       | done   |
 
 ### 1.3 64Ã—64 Flat Grid Map
 

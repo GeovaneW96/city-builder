@@ -19,8 +19,8 @@ the UI layer: the renderer owns the city image, while the UI owns the city ident
 centered city metrics, build rail, minimap, contextual inspector, and build/dashboard
 drawers. This keeps the reference-inspired presentation independent of simulation state.
 
-The production visual path is a cinematic night scene: a dark-blue environment and fog, cool
-moon-like directional lighting, warm emissive practicals, ACES filmic tone mapping, and sRGB
+The production visual path is a bright readable golden-hour scene: a large soft sky gradient,
+warm sun, cool fill, broad hemisphere light, restrained fog, ACES filmic tone mapping, and sRGB
 output. These settings remain entirely inside the rendering layer.
 
 Use natural atmospheric fog, blended terrain colors, textured-looking procedural materials,
@@ -92,6 +92,10 @@ The renderer should join contiguous, same-class road tiles into long visual corr
 adding asphalt, sidewalks, curbs, and lane markings. This avoids the checkerboard look caused
 by drawing every simulation tile as a separate road mesh. Road corridor assembly is purely a
 rendering optimization and must not change the simulation road graph.
+Generated road GLBs should not be used as the primary road surface because per-tile modular
+pieces create visible seams at T and four-way intersections. Use the continuous corridor
+renderer for asphalt, sidewalks, curbs, lane markings, and intersection plates, then layer
+generated assets on top for streetlights, traffic lights, cars, signs, trees, and furniture.
 
 ## Buildings
 
@@ -115,8 +119,10 @@ buildings efficient while still updating the visual when a building changes stat
 Density upgrades replace the instance's definition ID, so the next renderer synchronization
 automatically moves it into the appropriate mesh group and visual dimensions.
 
-Terrain and water rendering should also be data-driven visualizations of tile state. Terrain
-height, grass color variation, rocks, and trees must never change tile simulation data.
+Terrain and water rendering should also be data-driven visualizations of tile state. The
+renderer can draw a larger surrounding landscape so the map feels continuous, but only the
+active tile rectangle is pickable and buildable. Terrain height, grass color variation, rocks,
+and trees must never change tile simulation data.
 Water animation, foam, and reflections are render-time effects only.
 
 Small authored albedo textures are stored under `public/textures/` and loaded through the

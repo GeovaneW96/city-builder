@@ -33,6 +33,7 @@ import {
   isInBounds,
 } from "./simulation/grid/map";
 import { useSimulationStore } from "./simulation/store";
+import { getGridLine, getGridRectangle } from "./shared/grid-selection";
 import type {
   BuildMode,
   CityState,
@@ -368,40 +369,14 @@ function getPreviewPositions(end: [number, number] | null): [number, number][] {
   if (!end) return [];
   const mode = useUIStore.getState().buildMode;
   if (!isDragging || !dragStart || !isDragBuildMode(mode)) return [end];
+  if (mode === "zone") return getGridRectangle(dragStart, end);
   return getGridLine(dragStart, end);
-}
-
-function getGridLine(
-  [startX, startY]: [number, number],
-  [endX, endY]: [number, number],
-): [number, number][] {
-  const positions: [number, number][] = [];
-  const deltaX = Math.abs(endX - startX);
-  const deltaY = Math.abs(endY - startY);
-  const stepX = startX < endX ? 1 : -1;
-  const stepY = startY < endY ? 1 : -1;
-  let x = startX;
-  let y = startY;
-  let error = deltaX - deltaY;
-
-  while (true) {
-    positions.push([x, y]);
-    if (x === endX && y === endY) return positions;
-    const doubledError = error * 2;
-    if (doubledError > -deltaY) {
-      error -= deltaY;
-      x += stepX;
-    }
-    if (doubledError < deltaX) {
-      error += deltaX;
-      y += stepY;
-    }
-  }
 }
 
 function buildCommand([x, y]: [number, number]): GameCommand | null {
   const uiState = useUIStore.getState();
   if (uiState.buildMode === "road") {
+    if (getTile(useSimulationStore.getState().state, x, y)?.roadId) return null;
     return { type: "PLACE_ROAD", x, y, roadType: uiState.selectedRoadType };
   }
   if (uiState.buildMode === "zone" && uiState.selectedZoneType) {
@@ -436,14 +411,19 @@ function createTilePreview(
   positions: [number, number][],
   uiState: UIState,
 ): PlacementPreview {
-  const cost = uiState.buildMode === "road" ? getRoadCost(uiState.selectedRoadType) : 0;
+  const roadCost =
+    uiState.buildMode === "road" ? getRoadCost(uiState.selectedRoadType) : 0;
+  const paidPositions =
+    uiState.buildMode === "road"
+      ? positions.filter(([x, y]) => !getTile(state, x, y)?.roadId)
+      : positions;
   const valid =
     positions.every(([x, y]) => isTileToolValid(state, getTile(state, x, y), uiState)) &&
-    state.economy.money >= cost * positions.length;
+    state.economy.money >= roadCost * paidPositions.length;
   return {
     positions,
     valid,
-    cost: cost * positions.length,
+    cost: roadCost * paidPositions.length,
     label: getModeLabel(uiState),
   };
 }
@@ -492,7 +472,8 @@ function isRoadPreviewValid(
   uiState: UIState,
 ): boolean {
   const canAfford = state.economy.money >= getRoadCost(uiState.selectedRoadType);
-  return !tile.roadId && !tile.buildingId && canAfford;
+  if (tile.roadId) return true;
+  return tile.terrain === "grass" && !tile.buildingId && canAfford;
 }
 
 function isZonePreviewValid(

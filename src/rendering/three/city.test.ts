@@ -64,7 +64,7 @@ describe("generated city assets", () => {
     expect(createBuildingInstance).toHaveBeenCalledOnce();
   });
 
-  it("uses generated modular roads when the asset source is ready", () => {
+  it("uses continuous road corridors when generated assets are ready", () => {
     const state = createInitialCityState();
     state.roads.push({
       id: "road:4,4",
@@ -79,7 +79,27 @@ describe("generated city assets", () => {
       assetSource: source,
     });
 
-    expect(createAssetInstance).toHaveBeenCalledWith("road_with_sidewalks");
+    expect(layers.roads.children.length).toBeGreaterThan(0);
+    expect(createAssetInstance).not.toHaveBeenCalledWith("road_with_sidewalks");
+  });
+
+  it("renders generated-mode T intersections without modular road seams", () => {
+    const state = createInitialCityState();
+    state.roads.push({
+      id: "road:4,4",
+      type: "paved",
+      position: [4, 4],
+      connections: { north: true, east: false, south: true, west: true },
+    });
+    const layers = createCityRenderLayers(new THREE.Scene());
+    const { source, createAssetInstance } = createAssetSource();
+
+    syncCityRenderLayers(layers, state, null, getBuildingRenderInfo, {
+      assetSource: source,
+    });
+
+    expect(layers.roads.children.length).toBeGreaterThan(1);
+    expect(createAssetInstance).not.toHaveBeenCalledWith("road_t_intersection");
   });
 });
 

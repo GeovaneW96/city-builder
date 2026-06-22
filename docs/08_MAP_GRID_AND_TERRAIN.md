@@ -23,6 +23,7 @@ The map should be simple and reliable.
 - No terrain editing.
 - No water bodies.
 - No elevation.
+- The rendered landscape extends beyond the map for atmosphere, but placement, picking, simulation, save data, and camera target bounds stay limited to the active tile dimensions.
 
 ## Tile Coordinates
 
@@ -93,6 +94,7 @@ resume density-transition cooldowns correctly.
 ### Zones
 
 - can be painted on empty tiles;
+- drag placement always paints the rectangular bounds between drag start and end;
 - cannot overlap roads or buildings;
 - can be removed.
 

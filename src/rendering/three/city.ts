@@ -258,41 +258,16 @@ function renderGeneratedRoads(
   assetSource: CityAssetSource,
   detailDensity: number,
 ): void {
-  state.roads.forEach((road) => addGeneratedRoad(group, assetSource, road));
+  const streetRuns = getStreetRuns(state.roads);
+  group.add(createStreetCorridors(streetRuns));
+  addContinuousLaneMarkings(group, streetRuns);
+  addIntersectionDetails(group, state.roads);
   addGeneratedStreetlights(group, state.roads, assetSource, detailDensity);
   addGeneratedTrafficLights(group, state.roads, assetSource, detailDensity);
   addGeneratedTraffic(group, state.roads, assetSource, detailDensity);
   addGeneratedRoadProps(group, state.roads, assetSource, detailDensity);
   addGeneratedStreetTrees(group, state.roads, assetSource, detailDensity);
   addGeneratedStreetFurniture(group, state.roads, assetSource, detailDensity);
-}
-
-function addGeneratedRoad(
-  group: THREE.Group,
-  assetSource: CityAssetSource,
-  road: CityState["roads"][number],
-): void {
-  addGeneratedAsset(group, assetSource, getRoadAssetId(road), {
-    position: [road.position[0] + 0.5, 0, road.position[1] + 0.5],
-    rotation: getRoadRotation(road),
-  });
-}
-
-function getRoadAssetId(road: CityState["roads"][number]): string {
-  const connections = getRoadConnectionCount(road);
-  if (connections >= 4) return "road_4_way_intersection";
-  if (connections === 3) return "road_t_intersection";
-  if (road.type === "arterial" || road.type === "collector")
-    return "road_4_lane_straight";
-  if (road.type === "paved") return "road_with_sidewalks";
-  return "road_2_lane_straight";
-}
-
-function getRoadRotation(road: CityState["roads"][number]): number {
-  const { north, east, south, west } = road.connections;
-  if (north || south) return 0;
-  if (east || west) return Math.PI / 2;
-  return 0;
 }
 
 function addGeneratedStreetlights(
