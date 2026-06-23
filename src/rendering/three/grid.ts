@@ -56,7 +56,7 @@ export function createGrid(
     createGroundMaterial(gridSize),
   );
   ground.position.set(half, -0.015, half);
-  ground.receiveShadow = true;
+  ground.receiveShadow = false;
   scene.add(ground);
 
   const raycasterTarget = new THREE.Mesh(
@@ -119,21 +119,12 @@ function addInfiniteTerrain(scene: THREE.Scene, gridSize: number, half: number):
   );
   terrain.rotation.x = -Math.PI / 2;
   terrain.position.set(half, -0.03, half);
-  terrain.receiveShadow = true;
+  terrain.receiveShadow = false;
   scene.add(terrain);
 }
 
 function createGrassTexture(repeatX: number, repeatY: number): THREE.Texture | null {
-  const texture = getTiledTexture(
-    "/textures/temperate-grass-albedo.jpg",
-    repeatX,
-    repeatY,
-  );
-  if (!texture) return null;
-  const clone = texture.clone();
-  clone.repeat.set(repeatX, repeatY);
-  clone.needsUpdate = true;
-  return clone;
+  return getTiledTexture("/textures/temperate-grass-albedo.jpg", repeatX, repeatY);
 }
 
 function addBuildAreaBoundary(scene: THREE.Scene, gridSize: number): void {

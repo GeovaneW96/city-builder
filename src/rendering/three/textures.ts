@@ -9,18 +9,19 @@ export function getTiledTexture(
   repeatY: number,
 ): THREE.Texture | null {
   if (typeof document === "undefined") return null;
-  const texture = textureCache.get(path) ?? createTexture(path);
-  texture.repeat.set(repeatX, repeatY);
+  const cacheKey = `${path}:${repeatX}:${repeatY}`;
+  const texture = textureCache.get(cacheKey) ?? createTexture(path, repeatX, repeatY);
+  textureCache.set(cacheKey, texture);
   return texture;
 }
 
-function createTexture(path: string): THREE.Texture {
+function createTexture(path: string, repeatX: number, repeatY: number): THREE.Texture {
   const texture = new THREE.TextureLoader().load(path);
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(repeatX, repeatY);
   texture.anisotropy = 4;
-  textureCache.set(path, texture);
   return texture;
 }
 

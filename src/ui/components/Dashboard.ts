@@ -45,6 +45,7 @@ export function createDashboard(): DashboardElements {
 }
 
 let activeTab: DashboardTab = "overview";
+let lastState: CityState | null = null;
 
 export function initDashboard(
   els: DashboardElements,
@@ -62,6 +63,7 @@ export function initDashboard(
         .querySelectorAll(".bottom-tab")
         .forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
+      if (lastState) renderActiveTab(els.content, lastState);
     });
   });
 }
@@ -75,30 +77,39 @@ export function hideDashboard(els: DashboardElements): void {
 }
 
 export function updateDashboard(els: DashboardElements, state: CityState): void {
+  lastState = state;
+  renderActiveTab(els.content, state);
+}
+
+function renderActiveTab(container: HTMLElement, state: CityState): void {
   switch (activeTab) {
     case "overview":
-      renderOverviewTab(els.content, state);
+      renderOverviewTab(container, state);
       break;
     case "finances":
-      renderFinancesTab(els.content, state);
+      renderFinancesTab(container, state);
       break;
     case "population":
-      renderPopulationTab(els.content, state);
+      renderPopulationTab(container, state);
       break;
     case "transport":
-      renderTransportTab(els.content, state);
+      renderTransportTab(container, state);
       break;
     case "environment":
-      renderEnvironmentTab(els.content, state);
+      renderEnvironmentTab(container, state);
       break;
     case "energy":
-      renderEnergyTab(els.content, state);
+      renderEnergyTab(container, state);
       break;
   }
 }
 
 function formatMoney(value: number): string {
   return `$${Math.round(value).toLocaleString("en-US")}`;
+}
+
+function formatQuantity(value: number): string {
+  return Math.round(value).toLocaleString("en-US");
 }
 
 function sparkline(data: number[], color: string, width = 120, height = 36): string {
@@ -339,10 +350,10 @@ function renderEnvironmentTab(container: HTMLElement, state: CityState): void {
       <div class="stat-card-header">
         <span class="stat-card-title">Garbage</span>
       </div>
-      <div class="stat-card-value">${state.extendedServices.totalUncollectedGarbage}</div>
+      <div class="stat-card-value">${formatQuantity(state.extendedServices.totalUncollectedGarbage)}</div>
       <div class="stat-card-sub">Uncollected</div>
-      <div class="stat-card-detail"><span>Produced</span><span>${state.extendedServices.monthlyGarbageProduction}/mo</span></div>
-      <div class="stat-card-detail"><span>Collected</span><span>${state.extendedServices.monthlyGarbageCollected}/mo</span></div>
+      <div class="stat-card-detail"><span>Produced</span><span>${formatQuantity(state.extendedServices.monthlyGarbageProduction)}/mo</span></div>
+      <div class="stat-card-detail"><span>Collected</span><span>${formatQuantity(state.extendedServices.monthlyGarbageCollected)}/mo</span></div>
     </div>
     <div class="stat-card">
       <div class="stat-card-header">

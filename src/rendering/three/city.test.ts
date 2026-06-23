@@ -47,6 +47,35 @@ describe("city render layers", () => {
     expect(layers.overlays.children).toHaveLength(0);
     expect(layers.buildings.children[0]?.name).toBe("building:small_house:constructing");
   });
+
+  it("keeps unchanged layer objects when only one layer is dirty", () => {
+    const state = createInitialCityState();
+    state.roads.push({
+      id: "road:4,4",
+      type: "local",
+      position: [4, 4],
+      connections: { north: false, east: true, south: false, west: true },
+    });
+    state.map[4]![4]!.roadId = "road:4,4";
+    state.map[5]![4]!.zone = "residential";
+    state.buildings.push(createHouse("house:1", 4, 5));
+    const layers = createCityRenderLayers(new THREE.Scene());
+
+    syncCityRenderLayers(layers, state, null, getBuildingRenderInfo);
+    const roadLayer = layers.roads.children[0];
+    const zoneLayer = layers.zones.children[0];
+    const buildingLayer = layers.buildings.children[0];
+
+    state.roads[0]!.type = "collector";
+    syncCityRenderLayers(layers, state, null, getBuildingRenderInfo, {
+      dirtyLayers: ["roads"],
+      refreshTerrain: false,
+    });
+
+    expect(layers.roads.children[0]).not.toBe(roadLayer);
+    expect(layers.zones.children[0]).toBe(zoneLayer);
+    expect(layers.buildings.children[0]).toBe(buildingLayer);
+  });
 });
 
 describe("generated city assets", () => {

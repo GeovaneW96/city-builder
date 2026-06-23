@@ -13,6 +13,8 @@ export interface TopBarElements {
   happinessSub: HTMLElement;
   power: HTMLElement;
   powerSub: HTMLElement;
+  water: HTMLElement;
+  waterSub: HTMLElement;
   date: HTMLElement;
   soundBtn: HTMLElement;
   settingsBtn: HTMLElement;
@@ -34,54 +36,7 @@ function findEl(root: HTMLElement, key: string): HTMLElement {
 export function createTopBar(): TopBarElements {
   const root = document.createElement("div");
   root.className = "topbar";
-
-  root.innerHTML = `
-    <div class="topbar-city">
-      <div class="topbar-level" data-ui="level">1</div>
-      <div class="topbar-city-details">
-        <div class="topbar-city-name" data-ui="city-name">NOVAVISTA</div>
-        <div class="topbar-city-progress"><span></span></div>
-      </div>
-    </div>
-    <div class="topbar-stats">
-      <div class="topbar-stat">
-        <div class="topbar-stat-main">
-          <span class="topbar-stat-icon positive">$</span>
-          <span data-ui="money">0</span>
-        </div>
-        <div class="topbar-stat-sub positive" data-ui="money-sub">+$0 /h</div>
-      </div>
-      <div class="topbar-stat">
-        <div class="topbar-stat-main">
-          <span class="topbar-stat-icon population">\u{1F464}</span>
-          <span data-ui="population">0</span>
-        </div>
-        <div class="topbar-stat-sub positive" data-ui="population-sub">+0 /h</div>
-      </div>
-      <div class="topbar-stat">
-        <div class="topbar-stat-main">
-          <span class="topbar-stat-icon gold">\u{1F60A}</span>
-          <span data-ui="happiness">0%</span>
-        </div>
-        <div class="topbar-stat-sub" data-ui="happiness-sub">HAPPY</div>
-      </div>
-      <div class="topbar-stat">
-        <div class="topbar-stat-main">
-          <span class="topbar-stat-icon gold">\u26A1</span>
-          <span data-ui="power">0 MW</span>
-        </div>
-        <div class="topbar-stat-sub positive" data-ui="power-sub">+0 /h</div>
-      </div>
-    </div>
-    <div class="topbar-time">
-      <span class="topbar-date" data-ui="date">January 1, Year 1 · 08:00</span>
-      <div class="speed-controls" data-ui="speed-controls"></div>
-    </div>
-    <div class="topbar-right">
-      <button class="icon-btn" data-action="sound" data-ui="sound-btn" aria-pressed="true" title="Toggle sound"></button>
-      <button class="icon-btn" data-action="stats" data-ui="settings-btn" title="Statistics"></button>
-    </div>
-  `;
+  root.innerHTML = renderTopBarMarkup();
 
   return {
     root,
@@ -95,12 +50,64 @@ export function createTopBar(): TopBarElements {
     happinessSub: findEl(root, "happiness-sub"),
     power: findEl(root, "power"),
     powerSub: findEl(root, "power-sub"),
+    water: findEl(root, "water"),
+    waterSub: findEl(root, "water-sub"),
     date: findEl(root, "date"),
     soundBtn: findEl(root, "sound-btn"),
     settingsBtn: findEl(root, "settings-btn"),
     demandBars: findEl(root, "demand-mini"),
     speedControls: findEl(root, "speed-controls"),
   };
+}
+
+function renderTopBarMarkup(): string {
+  return `
+    <div class="topbar-shell">
+      <div class="topbar-stats">
+        <div class="topbar-stat">
+          <div class="topbar-stat-main">
+            <span class="topbar-stat-icon money">$</span>
+            <span data-ui="money">0</span>
+          </div>
+          <div class="topbar-stat-sub positive" data-ui="money-sub">+$0 /mo</div>
+        </div>
+        <div class="topbar-stat">
+          <div class="topbar-stat-main">
+            <span class="topbar-stat-icon population">\u{1F464}</span>
+            <span data-ui="population">0</span>
+          </div>
+          <div class="topbar-stat-sub positive" data-ui="population-sub">+0 /mo</div>
+        </div>
+        <div class="topbar-stat">
+          <div class="topbar-stat-main">
+            <span class="topbar-stat-icon happiness">\u{1F60A}</span>
+            <span data-ui="happiness">0%</span>
+          </div>
+          <div class="topbar-stat-sub" data-ui="happiness-sub">Happy</div>
+        </div>
+        <div class="topbar-stat">
+          <div class="topbar-stat-main">
+            <span class="topbar-stat-icon power">\u26A1</span>
+            <span data-ui="power">0 MW</span>
+          </div>
+          <div class="topbar-stat-sub positive" data-ui="power-sub">+0 MW</div>
+        </div>
+        <div class="topbar-stat">
+          <div class="topbar-stat-main">
+            <span class="topbar-stat-icon water">${icon("water", 20)}</span>
+            <span data-ui="water">0</span>
+          </div>
+          <div class="topbar-stat-sub positive" data-ui="water-sub">+0</div>
+        </div>
+      </div>
+      <div class="topbar-time">
+        <span class="topbar-date" data-ui="date">Jan 1, Year 1<br>08:00</span>
+        <button class="topbar-sound-btn" data-action="sound" data-ui="sound-btn" aria-pressed="true" title="Toggle sound"></button>
+        <div class="speed-controls" data-ui="speed-controls"></div>
+      </div>
+      <button class="topbar-stats-btn" data-action="stats" data-ui="settings-btn" title="Statistics"></button>
+    </div>
+  `;
 }
 
 function updateMoneyDisplay(els: TopBarElements, state: CityState): void {
@@ -123,7 +130,7 @@ function updatePopDisplay(els: TopBarElements, state: CityState): void {
 function updateHappyDisplay(els: TopBarElements, state: CityState): void {
   els.happiness.textContent = `${state.happiness.value}%`;
   const h = state.happiness.value;
-  els.happinessSub.textContent = h >= 70 ? "HAPPY" : h >= 40 ? "NEUTRAL" : "UNHAPPY";
+  els.happinessSub.textContent = h >= 70 ? "Happy" : h >= 40 ? "Neutral" : "Unhappy";
   const cls = h >= 70 ? "positive" : h < 40 ? "negative" : "";
   els.happinessSub.className = `topbar-stat-sub ${cls}`;
 }
@@ -136,6 +143,14 @@ function updatePowerDisplay(els: TopBarElements, state: CityState): void {
   els.powerSub.className = `topbar-stat-sub ${net >= 0 ? "positive" : "negative"}`;
 }
 
+function updateWaterDisplay(els: TopBarElements, state: CityState): void {
+  const net = state.services.waterCapacity - state.services.waterDemand;
+  els.water.textContent = String(state.services.waterCapacity);
+  const sign = net >= 0 ? "+" : "";
+  els.waterSub.textContent = `${sign}${net}`;
+  els.waterSub.className = `topbar-stat-sub ${net >= 0 ? "positive" : "negative"}`;
+}
+
 export function updateTopBar(
   els: TopBarElements,
   state: CityState,
@@ -145,6 +160,7 @@ export function updateTopBar(
   updatePopDisplay(els, state);
   updateHappyDisplay(els, state);
   updatePowerDisplay(els, state);
+  updateWaterDisplay(els, state);
 
   updateCalendarClock(els, state.time);
   els.level.textContent = String(state.progression.currentMilestone + 1);
@@ -163,7 +179,7 @@ export function updateCalendarClock(els: TopBarElements, time: TimeState): void 
   const formatted = formatCalendarDate({ time });
   if (formatted === lastRenderedDate) return;
   lastRenderedDate = formatted;
-  els.date.textContent = formatted;
+  els.date.innerHTML = formatted;
 }
 
 function formatCalendarDate(state: { time: TimeState }): string {
@@ -173,7 +189,7 @@ function formatCalendarDate(state: { time: TimeState }): string {
     timeZone: "UTC",
   }).format(date);
   const hour = String(state.time.hour).padStart(2, "0");
-  return `${month} ${state.time.day}, Year ${state.time.year} · ${hour}:00`;
+  return `${month.slice(0, 3)} ${state.time.day}, Year ${state.time.year}<br>${hour}:00`;
 }
 
 function updateDemandMini(container: HTMLElement, state: CityState): void {
@@ -195,10 +211,10 @@ function updateSpeedControls(container: HTMLElement, speed: number): void {
   if (speed === lastRenderedSpeed) return;
   lastRenderedSpeed = speed;
   const speeds = [
-    { label: "\u23F8", speed: 0, title: "Pause" },
-    { label: "\u25B6", speed: 1, title: "1x speed" },
-    { label: "\u23E9", speed: 2, title: "2x speed" },
-    { label: "\u23ED", speed: 3, title: "3x speed" },
+    { label: icon("pause", 14), speed: 0, title: "Pause" },
+    { label: icon("play", 14), speed: 1, title: "1x speed" },
+    { label: "\u25B6\u25B6", speed: 2, title: "2x speed" },
+    { label: "\u25B6\u25B6\u25B6", speed: 3, title: "3x speed" },
   ];
 
   container.innerHTML = speeds

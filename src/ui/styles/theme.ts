@@ -46,47 +46,27 @@ function getBaseStyles(): string {
 function getTopBarStyles(): string {
   return `
     .topbar { pointer-events: none; position: absolute; inset: 0; z-index: 10; }
-    .topbar-city, .topbar-stats, .topbar-time, .topbar-right { pointer-events: auto; background: var(--glass-bg); backdrop-filter: blur(16px) saturate(1.15); border: 1px solid var(--glass-border); box-shadow: var(--shadow-lg); }
-    .topbar-city { position: absolute; left: 12px; top: 12px; width: 238px; height: 64px; display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 11px; }
-    .topbar-level { 
-      width: 40px; height: 40px; 
-      background: #172630;
-      color: var(--text-primary);
-      border: 2px solid #8bc9e3;
-      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-      display: flex; align-items: center; justify-content: center; 
-      font-weight: 800; font-size: 16px;
-      filter: drop-shadow(0 0 8px rgba(83, 184, 231, 0.35));
-      position: relative;
-    }
-    .topbar-level::after {
-      content: '';
-      position: absolute;
-      inset: -3px;
-      background: #8bc9e3;
-      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-      opacity: 0.15;
-      z-index: -1;
-      filter: blur(4px);
-    }
-    .topbar-city-details { min-width: 0; flex: 1; }
-    .topbar-city-name { font-weight: 800; font-size: 14px; letter-spacing: 0.8px; text-transform: uppercase; }
-    .topbar-city-progress { height: 7px; margin-top: 8px; overflow: hidden; background: #3a464b; border-radius: 99px; }
-    .topbar-city-progress span { display: block; width: 46%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #e19a26, #f5bf36); box-shadow: 0 0 10px rgba(242, 181, 48, 0.42); }
-    .topbar-stats { position: absolute; left: 50%; top: 12px; transform: translateX(-50%); height: 58px; display: flex; align-items: stretch; border-radius: 11px; overflow: hidden; }
-    .topbar-stat { min-width: 142px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: 0 20px; gap: 1px; border-right: 1px solid var(--border); }
+    .topbar-shell { pointer-events: auto; position: absolute; left: 12px; right: 12px; top: 10px; height: 58px; display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: stretch; overflow: hidden; background: rgba(7, 20, 25, 0.9); backdrop-filter: blur(16px) saturate(1.15); border: 1px solid rgba(85, 136, 143, 0.32); border-radius: 8px; box-shadow: 0 14px 36px rgba(0, 0, 0, 0.46), inset 0 1px 0 rgba(255,255,255,0.05); }
+    .topbar-stats { display: flex; min-width: 0; align-items: stretch; }
+    .topbar-stat { min-width: 0; width: 112px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: 0 16px; gap: 1px; border-right: 1px solid rgba(205, 236, 234, 0.09); }
     .topbar-stat:last-child { border-right: 0; }
-    .topbar-stat-main { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; letter-spacing: 0.2px; }
-    .topbar-stat-icon { font-size: 24px; line-height: 1; font-weight: 900; }
-    .topbar-stat-icon.positive { color: var(--positive); }
-    .topbar-stat-icon.population { color: #5db8e4; font-size: 20px; }
-    .topbar-stat-icon.gold { color: #f3bb2d; }
-    .topbar-stat-sub { padding-left: 30px; font-size: 10px; font-weight: 700; color: var(--text-secondary); }
+    .topbar-stat-main { display: flex; align-items: center; gap: 9px; max-width: 100%; font-weight: 800; font-size: 14px; letter-spacing: 0; white-space: nowrap; }
+    .topbar-stat-icon { width: 24px; display: inline-flex; align-items: center; justify-content: center; font-size: 24px; line-height: 1; font-weight: 900; flex-shrink: 0; }
+    .topbar-stat-icon.money { color: var(--accent-teal); text-shadow: 0 0 12px rgba(45, 212, 191, 0.45); }
+    .topbar-stat-icon.population { color: #5db8e4; font-size: 19px; }
+    .topbar-stat-icon.happiness { color: #f3bb2d; }
+    .topbar-stat-icon.power { color: #f3bb2d; }
+    .topbar-stat-icon.water { color: #45c7f1; }
+    .topbar-stat-icon.water .ui-icon { width: 20px; height: 20px; }
+    .topbar-stat-sub { padding-left: 33px; font-size: 10px; line-height: 1.05; font-weight: 800; color: var(--text-secondary); white-space: nowrap; }
     .topbar-stat-sub.positive { color: var(--positive); }
     .topbar-stat-sub.negative { color: var(--negative); }
-    .topbar-time { position: absolute; left: 12px; top: 84px; height: 39px; display: flex; align-items: center; border-radius: 8px; padding: 0 10px; }
-    .topbar-date { padding-right: 10px; font-size: 11px; color: var(--text-primary); font-weight: 700; letter-spacing: 0.2px; }
-    .topbar-right { position: absolute; right: 12px; top: 12px; display: flex; align-items: center; gap: 7px; padding: 8px; border-radius: 10px; }
+    .topbar-time { display: flex; align-items: center; padding: 0 14px 0 18px; gap: 14px; border-left: 1px solid rgba(205, 236, 234, 0.09); }
+    .topbar-date { min-width: 70px; font-size: 10px; line-height: 1.45; color: var(--text-primary); font-weight: 800; letter-spacing: 0; text-align: left; }
+    .topbar-sound-btn, .topbar-stats-btn { pointer-events: auto; display: flex; align-items: center; justify-content: center; background: transparent; border: 0; color: var(--text-primary); cursor: pointer; transition: color 0.15s ease, opacity 0.15s ease; padding: 0; }
+    .topbar-sound-btn { width: 24px; height: 24px; }
+    .topbar-stats-btn { width: 42px; border-left: 1px solid rgba(205, 236, 234, 0.09); color: var(--text-secondary); }
+    .topbar-sound-btn:hover, .topbar-stats-btn:hover { color: var(--text-primary); opacity: 0.85; }
   `;
 }
 
@@ -273,10 +253,10 @@ function getDashboardStyles(): string {
 
 function getMiscStyles(): string {
   return `
-    .speed-controls { display: flex; align-items: center; gap: 3px; padding-left: 10px; border-left: 1px solid var(--border); }
-    .speed-btn { pointer-events: auto; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; background: transparent; border: 0; border-radius: var(--radius-sm); color: var(--text-secondary); cursor: pointer; transition: all 0.15s ease; font-size: 10px; font-weight: 700; }
-    .speed-btn:hover { background: var(--bg-card-hover); color: var(--text-primary); }
-    .speed-btn.active { background: var(--accent-gold); color: var(--bg-primary); border-color: var(--accent-gold); }
+    .speed-controls { display: flex; align-items: center; gap: 9px; padding-left: 0; }
+    .speed-btn { pointer-events: auto; min-width: 19px; height: 24px; display: flex; align-items: center; justify-content: center; background: transparent; border: 0; border-radius: var(--radius-sm); color: var(--text-secondary); cursor: pointer; transition: color 0.15s ease, opacity 0.15s ease; font-size: 10px; font-weight: 900; letter-spacing: 0; padding: 0; }
+    .speed-btn:hover { color: var(--text-primary); }
+    .speed-btn.active { color: var(--text-primary); }
     .speed-btn .ui-icon { width: 14px; height: 14px; }
     .icon-btn { pointer-events: auto; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; background: rgba(5, 13, 17, 0.42); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); cursor: pointer; transition: all 0.15s ease; padding: 0; }
     .icon-btn:hover { background: var(--bg-card-hover); color: var(--text-primary); }
@@ -298,11 +278,22 @@ function getMiscStyles(): string {
     .demand-bar-fill.commercial { background: #60a5fa; }
     .demand-bar-fill.industrial { background: #fb923c; }
     @media (max-width: 1100px) {
-      .topbar-stats { left: 280px; transform: none; }
-      .topbar-stat { min-width: 112px; padding: 0 12px; }
-      .topbar-stat:nth-child(4) { display: none; }
+      .topbar-shell { grid-template-columns: minmax(0, 1fr) auto; }
+      .topbar-stats-btn { display: none; }
+      .topbar-stat { width: auto; flex: 1 1 0; padding: 0 10px; }
+      .topbar-stat:nth-child(5) { display: none; }
       .bottom-panel { left: 246px; right: 22px; }
       .right-panel { display: none; }
+    }
+    @media (max-width: 820px) {
+      .topbar-shell { height: 54px; }
+      .topbar-stat { padding: 0 8px; }
+      .topbar-stat:nth-child(4) { display: none; }
+      .topbar-stat-main { gap: 6px; font-size: 12px; }
+      .topbar-stat-sub { padding-left: 28px; font-size: 9px; }
+      .topbar-time { gap: 8px; padding: 0 8px; }
+      .topbar-date { display: none; }
+      .speed-controls { gap: 5px; }
     }
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }

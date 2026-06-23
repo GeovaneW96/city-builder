@@ -2,6 +2,8 @@
 
 Removed unused `getCurrentObjectiveLabel` export (was dead code).
 
+Garbage collection now rounds all garbage units to whole numbers via `toWholeGarbageUnits()`, preventing fractional garbage accumulation from causing subtle drift in display and happiness penalty calculations.
+
 ## Phase 3 extensions
 
 Simulation now includes deterministic agent traffic, tiered services, density and office demand, tourism, specialization, and time-bound city events. These systems remain data/state driven and run without rendering dependencies.

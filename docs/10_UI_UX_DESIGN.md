@@ -2,6 +2,8 @@
 
 Removed unused `isDashboardVisible` and `isDashboardActive` exports (were dead code).
 
+TopBar overhauled: added water capacity/display, replaced emoji speed icons with inline SVGs, changed to grid layout with `topbar-shell`, added responsive breakpoints for 1100px and 820px, and removed city level hexagon. Dashboard tab switching now re-renders content immediately. RightPanel city overview section removed (stats moved to TopBar). Garbage stats in Dashboard use `formatQuantity` for whole-number display.
+
 ## Purpose
 
 City builders are UI-heavy games.

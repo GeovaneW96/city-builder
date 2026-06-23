@@ -84,6 +84,12 @@ City rendering is synchronized from simulation or UI changes rather than every a
 Static terrain is rebuilt only when terrain data changes; ordinary road, zoning, and building
 updates leave it intact.
 
+Renderer synchronization is also layer-granular. The app tracks separate dirty keys for roads,
+zones, buildings, overlays, warnings, and terrain, then rebuilds only the layers whose keys
+changed. This keeps ordinary placement and overlay changes from disposing and recreating the
+complete city scene. The render loop still draws frames continuously; performance comes from
+stable Three.js objects, instancing, and targeted synchronization rather than frame-skipping.
+
 ## Initial Limits
 
 Initial limits:

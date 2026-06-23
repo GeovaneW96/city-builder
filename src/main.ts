@@ -9,6 +9,7 @@ import {
   syncCityRenderLayers,
   syncPlacementPreview,
   type BuildingRenderInfo,
+  type CityRenderLayerName,
 } from "./rendering/three/city";
 import {
   createGrid,
@@ -71,7 +72,11 @@ let activePointerId: number | null = null;
 let lastTickAt = performance.now();
 let lastAutosaveAt = performance.now();
 let selectedSaveSlot: SaveSlotId = "manual_0";
-let lastCityRenderKey: string | null = null;
+let lastRoadRenderKey: string | null = null;
+let lastBuildingRenderKey: string | null = null;
+let lastZoneRenderKey: string | null = null;
+let lastOverlayRenderKey: string | null = null;
+let lastWarningRenderKey: string | null = null;
 let lastTerrainRenderKey: string | null = null;
 let lastEvaluatedCityState: CityState | null = null;
 let lastEvaluatedOverlay: UIState["activeOverlay"] = null;
@@ -187,18 +192,36 @@ function evaluateCityRender(
   const overlayChanged = activeOverlay !== lastEvaluatedOverlay;
   if (!force && !stateChanged && !overlayChanged) return;
 
-  const cityRenderKey = getCityRenderKey(state, activeOverlay);
+  const roadRenderKey = getRoadRenderKey(state);
+  const buildingRenderKey = getBuildingRenderKey(state);
+  const zoneRenderKey = getZoneRenderKey(state);
+  const overlayRenderKey = getOverlayRenderKey(state, activeOverlay);
+  const warningRenderKey = getWarningRenderKey(state);
   const terrainRenderKey = getTerrainRenderKey(state);
   const refreshTerrain = force || terrainRenderKey !== lastTerrainRenderKey;
-  if (force || refreshTerrain || cityRenderKey !== lastCityRenderKey) {
+  const dirtyLayers = getDirtyRenderLayers({
+    force,
+    refreshTerrain,
+    roadRenderKey,
+    buildingRenderKey,
+    zoneRenderKey,
+    overlayRenderKey,
+    warningRenderKey,
+  });
+  if (dirtyLayers.length > 0) {
     syncCityRenderLayers(cityLayers, state, activeOverlay, getBuildingRenderInfo, {
       assetSource: generatedAssetsReady ? cityAssets : undefined,
       detailDensity: getRenderQualityProfile(
         useUIStore.getState().settings.graphicsQuality,
       ).detailDensity,
       refreshTerrain,
+      dirtyLayers,
     });
-    lastCityRenderKey = cityRenderKey;
+    lastRoadRenderKey = roadRenderKey;
+    lastBuildingRenderKey = buildingRenderKey;
+    lastZoneRenderKey = zoneRenderKey;
+    lastOverlayRenderKey = overlayRenderKey;
+    lastWarningRenderKey = warningRenderKey;
     lastTerrainRenderKey = terrainRenderKey;
   }
   lastEvaluatedCityState = state;
@@ -227,17 +250,51 @@ async function preloadGeneratedCityAssets(): Promise<void> {
   );
 }
 
-function getCityRenderKey(
-  state: CityState,
-  activeOverlay: UIState["activeOverlay"],
-): string {
-  return [
-    activeOverlay,
-    getRoadRenderKey(state),
-    getBuildingRenderKey(state),
-    getZoneRenderKey(state),
-    getOverlayRenderKey(state, activeOverlay),
-  ].join("|");
+function getDirtyRenderLayers(params: {
+  force: boolean;
+  refreshTerrain: boolean;
+  roadRenderKey: string;
+  buildingRenderKey: string;
+  zoneRenderKey: string;
+  overlayRenderKey: string;
+  warningRenderKey: string;
+}): CityRenderLayerName[] {
+  const dirtyLayers: CityRenderLayerName[] = [];
+  addDirtyRenderLayer(dirtyLayers, params.refreshTerrain, "terrain");
+  addDirtyRenderLayer(
+    dirtyLayers,
+    params.force || params.roadRenderKey !== lastRoadRenderKey,
+    "roads",
+  );
+  addDirtyRenderLayer(
+    dirtyLayers,
+    params.force || params.buildingRenderKey !== lastBuildingRenderKey,
+    "buildings",
+  );
+  addDirtyRenderLayer(
+    dirtyLayers,
+    params.force || params.zoneRenderKey !== lastZoneRenderKey,
+    "zones",
+  );
+  addDirtyRenderLayer(
+    dirtyLayers,
+    params.force || params.overlayRenderKey !== lastOverlayRenderKey,
+    "overlays",
+  );
+  addDirtyRenderLayer(
+    dirtyLayers,
+    params.force || params.warningRenderKey !== lastWarningRenderKey,
+    "warnings",
+  );
+  return dirtyLayers;
+}
+
+function addDirtyRenderLayer(
+  dirtyLayers: CityRenderLayerName[],
+  dirty: boolean,
+  layer: CityRenderLayerName,
+): void {
+  if (dirty) dirtyLayers.push(layer);
 }
 
 function getRoadRenderKey(state: CityState): string {
@@ -259,7 +316,10 @@ function getZoneRenderKey(state: CityState): string {
   return state.map
     .flat()
     .filter((tile) => tile.zone)
-    .map((tile) => `${tile.x},${tile.y}:${tile.zone}:${tile.buildingId ?? ""}`)
+    .map(
+      (tile) =>
+        `${tile.x},${tile.y}:${tile.zone}:${tile.roadId ?? ""}:${tile.buildingId ?? ""}`,
+    )
     .join(",");
 }
 
@@ -267,17 +327,25 @@ function getOverlayRenderKey(
   state: CityState,
   activeOverlay: UIState["activeOverlay"],
 ): string {
-  const warnings = state.warnings
-    .map((warning) => `${warning.id}:${warning.targetTile?.join(",") ?? ""}`)
-    .join(",");
+  if (activeOverlay === null) return "none";
   if (activeOverlay === "pollution") {
     return state.map
       .flat()
       .map((tile) => tile.pollution)
       .join(",");
   }
+  if (activeOverlay === "zoning") return getZoneRenderKey(state);
+  if (activeOverlay === "health" || activeOverlay === "education") {
+    return getBuildingRenderKey(state);
+  }
   if (activeOverlay === "districts") return JSON.stringify(state.districts);
-  return warnings;
+  return activeOverlay;
+}
+
+function getWarningRenderKey(state: CityState): string {
+  return state.warnings
+    .map((warning) => `${warning.id}:${warning.targetTile?.join(",") ?? ""}`)
+    .join(",");
 }
 
 function getTerrainRenderKey(state: CityState): string {

@@ -49,8 +49,8 @@ function addLighting(scene: THREE.Scene, gridSize: number): void {
   dirLight.shadow.camera.right = shadowSize;
   dirLight.shadow.camera.top = shadowSize;
   dirLight.shadow.camera.bottom = -shadowSize;
-  dirLight.shadow.bias = -0.00008;
-  dirLight.shadow.normalBias = 0.015;
+  dirLight.shadow.bias = -0.00002;
+  dirLight.shadow.normalBias = 0.04;
   scene.add(dirLight);
 
   const moonFill = new THREE.DirectionalLight(0x9fc3ff, 0.75);

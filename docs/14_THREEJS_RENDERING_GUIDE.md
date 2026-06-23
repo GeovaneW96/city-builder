@@ -28,6 +28,12 @@ soft directional shadows, and filmic color mapping. Buildings and roads should h
 surface depth rather than reading as flat colored blocks. These are renderer-only presentation
 settings and must not influence grid or simulation state.
 
+Large grass terrain receivers should avoid projected shadow-map reception when the camera can
+rotate. The procedural terrain surface is broad and lightly displaced, so shadow reception there
+can produce camera-dependent crawling or flicker. Use stable material variation for terrain
+shading, and reserve received shadows for smaller road, building, and detail meshes where they
+remain visually stable.
+
 ## Scene Structure
 
 Suggested objects:
@@ -43,6 +49,18 @@ Scene
   WarningIconLayer
   EffectsLayer
 ```
+
+### Layer Synchronization
+
+The animation loop may render every frame, but it must not rebuild the scene graph every frame.
+City rendering is synchronized by dirty layer: terrain, roads, zones, buildings, overlays, and
+warnings are cleared and recreated independently. A road placement should not dispose building
+meshes, and an overlay change should not rebuild roads or terrain.
+
+When adding a rendered layer, give it an explicit invalidation key derived from the simulation or
+UI state it actually visualizes. If a layer depends on occupancy, include the relevant occupancy
+fields in that key. Do not hide rebuild cost by throttling frames; keep the objects alive and only
+update the layer whose visual inputs changed.
 
 ## Camera
 

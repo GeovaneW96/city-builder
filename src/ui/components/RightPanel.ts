@@ -30,12 +30,6 @@ export function createRightPanel(): RightPanelElements {
   root.className = "right-panel";
 
   root.innerHTML = `
-    <div class="right-panel-section" data-ui="overview">
-      <div class="right-panel-header">
-        <span class="right-panel-title">City Overview</span>
-      </div>
-      <div class="city-overview-grid"></div>
-    </div>
     <div class="right-panel-section" data-ui="inspector">
       <div class="right-panel-header">
         <span class="right-panel-title">Inspector</span>
@@ -83,42 +77,8 @@ export function updateRightPanel(
   uiState: UIState,
 ): void {
   els.root.classList.toggle("has-selection", uiState.selectedTile !== null);
-  updateCityOverview(els.overview, state);
   updateInspector(els.inspector, state, uiState);
   updateNotifications(els.notifications, state);
-}
-
-function updateCityOverview(container: HTMLElement, state: CityState): void {
-  const cashFlow = state.economy.monthlyIncome - state.economy.monthlyExpenses;
-  const power = state.services.powerCapacity - state.services.powerDemand;
-  const water = state.services.waterCapacity - state.services.waterDemand;
-  const grid = container.querySelector(".city-overview-grid");
-  if (!grid) return;
-  grid.innerHTML = [
-    ["Funds", formatMoney(state.economy.money), ""],
-    [
-      "Cash flow",
-      `${cashFlow >= 0 ? "+" : ""}${formatMoney(cashFlow)}/mo`,
-      cashFlow >= 0 ? "positive" : "negative",
-    ],
-    ["Population", state.population.total.toLocaleString("en-US"), ""],
-    [
-      "Happiness",
-      `${state.happiness.value}%`,
-      state.happiness.value < 40 ? "negative" : "positive",
-    ],
-    [
-      "Power",
-      `${power >= 0 ? "+" : ""}${power} MW`,
-      power >= 0 ? "positive" : "negative",
-    ],
-    ["Water", `${water >= 0 ? "+" : ""}${water}`, water >= 0 ? "positive" : "negative"],
-  ]
-    .map(
-      ([label, value, status]) =>
-        `<div class="city-overview-stat"><span>${label}</span><strong class="${status}">${value}</strong></div>`,
-    )
-    .join("");
 }
 
 function renderBuildingInfo(

@@ -143,11 +143,13 @@ function collectGarbage(
     backlog - backlogCollected - EXTENDED_SERVICE_BALANCE.GARBAGE_DECAY,
   );
   return {
-    totalUncollectedGarbage,
+    totalUncollectedGarbage: toWholeGarbageUnits(totalUncollectedGarbage),
     monthlyGarbageProduction,
-    monthlyGarbageCollected,
+    monthlyGarbageCollected: toWholeGarbageUnits(monthlyGarbageCollected),
     garbageCoverage,
-    garbageHappinessPenalty: -Math.floor(totalUncollectedGarbage / 10),
+    garbageHappinessPenalty: -Math.floor(
+      toWholeGarbageUnits(totalUncollectedGarbage) / 10,
+    ),
   };
 }
 
@@ -160,7 +162,13 @@ function collectGarbageBacklog(
     (total, value) => total + value,
     0,
   );
-  return Math.min(backlog * (garbageCoverage / 100), availableCapacity);
+  return toWholeGarbageUnits(
+    Math.min(backlog * (garbageCoverage / 100), availableCapacity),
+  );
+}
+
+function toWholeGarbageUnits(value: number): number {
+  return Math.round(value);
 }
 
 function collectSource(

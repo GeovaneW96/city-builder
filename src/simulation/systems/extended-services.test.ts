@@ -87,6 +87,18 @@ describe("garbage service", () => {
     expect(state.extendedServices.totalUncollectedGarbage).toBe(0);
   });
 
+  it("keeps garbage totals as whole units under partial coverage", () => {
+    const state = createInitialCityState();
+    addBuilding(state, "large_plant", 0, 0);
+    addBuilding(state, "large_plant", 40, 40);
+    addBuilding(state, "large_plant", 50, 50);
+    addBuilding(state, "landfill", 0, 0);
+    state.extendedServices.totalUncollectedGarbage = 40;
+    recomputeExtendedServices(state);
+    expect(Number.isInteger(state.extendedServices.monthlyGarbageCollected)).toBe(true);
+    expect(Number.isInteger(state.extendedServices.totalUncollectedGarbage)).toBe(true);
+  });
+
   it("applies garbage happiness penalties and related warnings", () => {
     const state = createInitialCityState();
     addBuilding(state, "large_plant", 10, 10);

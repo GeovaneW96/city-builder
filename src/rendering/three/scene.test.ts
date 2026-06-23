@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import * as THREE from "three";
 import { describe, expect, it, vi } from "vitest";
 
 vi.mock("three/src/renderers/WebGLRenderer.js", () => ({}));
@@ -63,5 +64,21 @@ describe("scene camera bounds", () => {
     const ctx = createScene(container, 100);
     expect(ctx.controls.target.x).toBeCloseTo(50, 5);
     expect(ctx.controls.target.z).toBeCloseTo(50, 5);
+  });
+
+  it("uses terrain-stable directional shadow bias", async () => {
+    const { createScene } = await import("./scene");
+    const container = document.createElement("div");
+    Object.defineProperty(container, "clientWidth", { value: 800 });
+    Object.defineProperty(container, "clientHeight", { value: 600 });
+
+    const ctx = createScene(container, 64);
+    const sunlight = ctx.scene.children.find(
+      (child): child is THREE.DirectionalLight =>
+        child instanceof THREE.DirectionalLight && child.castShadow,
+    );
+
+    expect(sunlight?.shadow.bias).toBeCloseTo(-0.00002, 7);
+    expect(sunlight?.shadow.normalBias).toBeCloseTo(0.04, 3);
   });
 });

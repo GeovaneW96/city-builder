@@ -53,6 +53,14 @@ export interface CityRenderLayers {
   waterMaterials: AnimatedWaterMaterial[];
 }
 
+export type CityRenderLayerName =
+  | "terrain"
+  | "roads"
+  | "zones"
+  | "buildings"
+  | "overlays"
+  | "warnings";
+
 export interface BuildingRenderInfo {
   size: BuildingDefinition["size"];
   category: BuildingCategory;
@@ -63,6 +71,7 @@ export interface CityRenderOptions {
   assetSource?: CityAssetSource;
   detailDensity?: number;
   refreshTerrain?: boolean;
+  dirtyLayers?: readonly CityRenderLayerName[];
 }
 
 export type BuildingRenderInfoLookup = (
@@ -188,27 +197,23 @@ export function syncCityRenderLayers(
   options: CityRenderOptions = {},
 ): void {
   const detailDensity = options.detailDensity ?? 1;
-  clearGroup(layers.roads);
-  clearGroup(layers.zones);
-  clearGroup(layers.buildings);
-  clearGroup(layers.overlays);
-  clearGroup(layers.warnings);
-  if (options.refreshTerrain ?? true) {
-    clearGroup(layers.terrain);
-    layers.waterMaterials = [];
-    renderTerrain(
-      layers.terrain,
-      state,
-      layers.waterMaterials,
-      options.assetSource,
-      detailDensity,
-    );
-  }
-  renderZones(layers.zones, state);
-  renderRoads(layers.roads, state, options.assetSource, detailDensity);
-  renderBuildings(layers.buildings, state, getBuildingRenderInfo, options.assetSource);
-  renderOverlay(layers.overlays, state, activeOverlay, getBuildingRenderInfo);
-  renderWarnings(layers.warnings, state);
+  const dirtyLayers = getDirtyLayerSet(options.dirtyLayers);
+  syncTerrainRenderLayer(layers, state, options, detailDensity, dirtyLayers);
+  syncStaticRenderLayer(dirtyLayers, "zones", layers.zones, () =>
+    renderZones(layers.zones, state),
+  );
+  syncStaticRenderLayer(dirtyLayers, "roads", layers.roads, () =>
+    renderRoads(layers.roads, state, options.assetSource, detailDensity),
+  );
+  syncStaticRenderLayer(dirtyLayers, "buildings", layers.buildings, () =>
+    renderBuildings(layers.buildings, state, getBuildingRenderInfo, options.assetSource),
+  );
+  syncStaticRenderLayer(dirtyLayers, "overlays", layers.overlays, () =>
+    renderOverlay(layers.overlays, state, activeOverlay, getBuildingRenderInfo),
+  );
+  syncStaticRenderLayer(dirtyLayers, "warnings", layers.warnings, () =>
+    renderWarnings(layers.warnings, state),
+  );
 }
 
 export function animateCityRenderLayers(
@@ -216,6 +221,44 @@ export function animateCityRenderLayers(
   elapsedSeconds: number,
 ): void {
   animateWater(layers.waterMaterials, elapsedSeconds);
+}
+
+function getDirtyLayerSet(
+  dirtyLayers: readonly CityRenderLayerName[] | undefined,
+): ReadonlySet<CityRenderLayerName> {
+  return new Set(
+    dirtyLayers ?? ["terrain", "roads", "zones", "buildings", "overlays", "warnings"],
+  );
+}
+
+function syncTerrainRenderLayer(
+  layers: CityRenderLayers,
+  state: CityState,
+  options: CityRenderOptions,
+  detailDensity: number,
+  dirtyLayers: ReadonlySet<CityRenderLayerName>,
+): void {
+  if (!dirtyLayers.has("terrain") || !(options.refreshTerrain ?? true)) return;
+  clearGroup(layers.terrain);
+  layers.waterMaterials = [];
+  renderTerrain(
+    layers.terrain,
+    state,
+    layers.waterMaterials,
+    options.assetSource,
+    detailDensity,
+  );
+}
+
+function syncStaticRenderLayer(
+  dirtyLayers: ReadonlySet<CityRenderLayerName>,
+  layerName: CityRenderLayerName,
+  layer: THREE.Group,
+  render: () => void,
+): void {
+  if (!dirtyLayers.has(layerName)) return;
+  clearGroup(layer);
+  render();
 }
 
 export function syncPlacementPreview(
