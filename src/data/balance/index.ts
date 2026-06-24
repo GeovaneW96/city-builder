@@ -6,7 +6,7 @@ export { TAX_HAPPINESS_EFFECT, DEFAULT_TAX_RATE, getTaxHappinessModifier } from 
 export { TAX_INCOME_FORMULAS, calculateTaxIncome } from "./income";
 export { HAPPINESS_DEFAULTS, STARTING_MONEY, BANKRUPTCY_GRACE_MONTHS } from "./happiness";
 export { DEMAND_PARAMS } from "./demand";
-export { SERVICE_DEMAND, SERVICE_HAPPINESS } from "./services";
+export { SERVICE_DEMAND, SERVICE_HAPPINESS, UTILITY_AVAILABILITY } from "./services";
 export { POLLUTION_BALANCE } from "./pollution";
 export { TRAFFIC_BALANCE } from "./traffic";
 export { GOODS_BALANCE } from "./goods";

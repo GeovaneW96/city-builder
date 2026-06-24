@@ -103,7 +103,7 @@ A zone can grow a building if:
 - tile is empty;
 - zone has road access;
 - city has demand for that zone type;
-- required services are available or not strictly required yet;
+- power and water are sufficient once the city has active utility demand;
 - placement size fits.
 
 ## Building Growth
@@ -177,6 +177,10 @@ Service state:
 - coverage;
 - upkeep;
 - affected buildings.
+
+Power and water shortages reduce occupied residential capacity and all job capacity by the
+limiting supply ratio. Once a city has active utility demand, zone growth pauses until both
+utilities meet demand.
 
 ## Pollution System
 

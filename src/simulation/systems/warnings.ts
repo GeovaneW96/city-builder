@@ -204,7 +204,11 @@ function getCityWarnings(state: CityState): Warning[] {
 
 function getExtendedServiceWarnings(state: CityState): Warning[] {
   const warnings: Warning[] = [];
-  if (hasPoliceTargets(state) && state.extendedServices.policeCoverage < 50) {
+  if (
+    isServiceUnlocked(state, "police_station") &&
+    hasPoliceTargets(state) &&
+    state.extendedServices.policeCoverage < 50
+  ) {
     warnings.push({
       id: "city:high-crime",
       severity: "medium",
@@ -212,7 +216,11 @@ function getExtendedServiceWarnings(state: CityState): Warning[] {
       suggestedFix: "Build a police station near homes and shops.",
     });
   }
-  if (hasFireTargets(state) && state.extendedServices.fireCoverage < 50) {
+  if (
+    isServiceUnlocked(state, "fire_station") &&
+    hasFireTargets(state) &&
+    state.extendedServices.fireCoverage < 50
+  ) {
     warnings.push({
       id: "city:fire-risk",
       severity: "medium",
@@ -254,6 +262,15 @@ function hasFireTargets(state: CityState): boolean {
     const category = getBuildingById(building.definitionId)?.category;
     return category === "residential" || category === "industrial";
   });
+}
+
+function isServiceUnlocked(state: CityState, buildingId: string): boolean {
+  const definition = getBuildingById(buildingId);
+  if (!definition) return false;
+  return (
+    state.population.total >= definition.unlockPopulation ||
+    state.progression.unlockedFeatures.includes(definition.id)
+  );
 }
 
 function getGoodsWarnings(state: CityState): Warning[] {

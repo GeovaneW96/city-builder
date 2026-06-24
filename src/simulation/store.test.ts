@@ -119,7 +119,7 @@ describe("SimulationStore building and tax commands", () => {
     expect(state.map[5]![5]!.buildingId).toBe(state.buildings[0]?.id);
   });
 
-  it("keeps clinic construction locked until the 500-population milestone", () => {
+  it("keeps clinic construction locked until the 250-population milestone", () => {
     expect(
       command({ type: "PLACE_BUILDING", definitionId: "clinic", x: 5, y: 5 }),
     ).toMatchObject({ success: false, error: "Building is locked" });
@@ -137,21 +137,23 @@ describe("Simulation growth", () => {
   beforeEach(resetStore);
 
   it("suppresses growth on the first tick and grows residential buildings after that", () => {
+    addActiveUtilities(useSimulationStore.getState().state);
     command({ type: "PLACE_ROAD", x: 8, y: 8, roadType: "dirt" });
     command({ type: "PAINT_ZONE", x: 8, y: 9, zoneType: "residential" });
 
     useSimulationStore.getState().tick();
-    expect(useSimulationStore.getState().state.buildings).toHaveLength(0);
+    expect(getBuildingsByDefinition("small_house")).toHaveLength(0);
 
     useSimulationStore.getState().tick();
-    expect(useSimulationStore.getState().state.buildings[0]?.status).toBe("constructing");
+    expect(getBuildingsByDefinition("small_house")[0]?.status).toBe("constructing");
 
     useSimulationStore.getState().tick();
-    expect(useSimulationStore.getState().state.buildings[0]?.status).toBe("active");
+    expect(getBuildingsByDefinition("small_house")[0]?.status).toBe("active");
     expect(useSimulationStore.getState().state.population.total).toBe(8);
   });
 
   it("can reach the 50 population milestone before jobs are unlocked", () => {
+    addActiveUtilities(useSimulationStore.getState().state);
     for (let x = 8; x < 15; x += 1) {
       command({ type: "PLACE_ROAD", x, y: 8, roadType: "dirt" });
       command({ type: "PAINT_ZONE", x, y: 9, zoneType: "residential" });
@@ -194,8 +196,8 @@ describe("Simulation economy", () => {
 
     useSimulationStore.getState().tick();
     const next = useSimulationStore.getState().state;
-    expect(next.population.total).toBe(8);
-    expect(next.services.waterCapacity).toBe(50);
+    expect(next.population.total).toBe(0);
+    expect(next.services.waterCapacity).toBe(300);
     expect(next.services.powerDemand).toBeGreaterThan(0);
     expect(next.economy.monthlyExpenses).toBe(0);
 
@@ -209,10 +211,15 @@ describe("Simulation economy", () => {
         .state.warnings.some((warning) => warning.id.includes("no-power")),
     ).toBe(true);
   });
+});
+
+describe("Simulation utility warnings", () => {
+  beforeEach(resetStore);
 
   it("does not abandon homes from utility shortage warnings alone", () => {
     const state = createInitialCityState();
     addActiveBuilding(state, "small_house", 8, 9);
+    addActiveUtilities(state);
     state.roads.push({
       id: "road:8,8",
       type: "dirt",
@@ -252,6 +259,7 @@ describe("Simulation progression", () => {
 
   it("unlocks milestones and applies rewards once", () => {
     const state = createInitialCityState();
+    addActiveUtilities(state);
     for (let index = 0; index < 7; index += 1) {
       addActiveBuilding(state, "small_house", index, 1);
     }
@@ -309,4 +317,17 @@ function addActiveBuilding(
   };
   state.buildings.push(building);
   state.map[y]![x]!.buildingId = id;
+}
+
+function addActiveUtilities(state: CityState): void {
+  addActiveBuilding(state, "power_plant", 2, 2);
+  addActiveBuilding(state, "water_tower", 6, 2);
+  state.map[2]![1]!.roadId = "road:1,2";
+  state.map[1]![6]!.roadId = "road:6,1";
+}
+
+function getBuildingsByDefinition(definitionId: string): BuildingInstance[] {
+  return useSimulationStore
+    .getState()
+    .state.buildings.filter((building) => building.definitionId === definitionId);
 }

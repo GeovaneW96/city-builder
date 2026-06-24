@@ -18,3 +18,8 @@ export const SERVICE_HAPPINESS = {
   PARK_BONUS_CAP: 15,
   UTILITY_SHORTAGE_PENALTY: -8,
 } as const;
+
+export const UTILITY_AVAILABILITY = {
+  MIN_PRODUCTIVITY: 0,
+  MAX_PRODUCTIVITY: 1,
+} as const;

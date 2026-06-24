@@ -34,6 +34,7 @@ All values are provisional. Balance should be adjusted after playtesting.
 | Industrial zone tile  |                          0 |
 | Power plant           |                     10,000 |
 | Water tower           |                      5,000 |
+| Landfill              |                      8,000 |
 | Park                  |                      2,500 |
 | Clinic                |                      8,000 |
 | School                |                     12,000 |
@@ -47,6 +48,7 @@ All values are provisional. Balance should be adjusted after playtesting.
 | Paved road tile |              2 |
 | Power plant     |            500 |
 | Water tower     |            250 |
+| Landfill        |            300 |
 | Park            |            100 |
 | Clinic          |            400 |
 | School          |            600 |
@@ -126,9 +128,9 @@ Draft formula:
 
 ```txt
 commercialDemand =
-  30
-  + population / 20
-  - commercialCapacity * 0.3
+  15
+  + population / 30
+  - commercialCapacity * 0.5
   - workerShortagePenalty
 ```
 
@@ -138,9 +140,9 @@ Draft formula:
 
 ```txt
 industrialDemand =
-  30
-  + unemployedWorkers * 0.4
-  - industrialCapacity * 0.2
+  10
+  + unemployedWorkers * 0.15
+  - industrialCapacity * 0.5
   - pollutionPenalty
 ```
 
@@ -179,8 +181,15 @@ Per active building:
 
 City hall and parks do not require utilities in the prototype.
 
-The starter power plant supplies 200 MW, covering the first settlement's homes and basic water/
-waste infrastructure before a second plant becomes necessary.
+The starter power plant supplies 500 MW and the water tower supplies 300 units. One of each
+covers a compact First Settlement when commercial and industrial capacity is kept close to the
+available workforce. A landfill collects 750 units within a 32-tile Manhattan radius, so one
+compact settlement needs one landfill rather than several.
+
+Power and water shortages scale occupied residential capacity and job capacity by the limiting
+utility ratio. Zoning growth pauses once an active city is short of either utility. This makes
+utilities a real prerequisite for population, commerce, and industry rather than a happiness-only
+warning.
 
 Health and education coverage each provide up to +4 happiness at full residential coverage. Parks provide their building happiness effect up to a +15 citywide cap. A power or water shortage applies a -8 utility happiness penalty.
 

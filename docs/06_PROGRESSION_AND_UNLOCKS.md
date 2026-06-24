@@ -12,10 +12,10 @@ Progression should create a sense of growth and prevent the player from being ov
 | ---------: | --------------- | ---------------------------------------- |
 |          0 | Settlement Site | Dirt road, residential zoning, city hall |
 |         50 | Hamlet          | Commercial zoning                        |
-|        100 | Village         | Industrial zoning                        |
-|        250 | Small Town      | Park                                     |
-|        500 | Growing Town    | Clinic                                   |
-|        750 | Local Center    | School                                   |
+|        100 | Village         | Industrial zoning, landfill              |
+|        250 | Small Town      | Park, clinic                             |
+|        500 | Growing Town    | School                                   |
+|        750 | Local Center    | Expansion bonus                          |
 |      1,000 | First City      | Scenario victory                         |
 
 ## Unlock Design Rules
@@ -61,16 +61,12 @@ Objectives should align with unlocks.
 
 Example flow:
 
-1. Build a road.
-2. Zone residential.
-3. Reach 50 population.
-4. Zone commercial.
-5. Reach 100 population.
-6. Zone industrial.
-7. Build a park.
-8. Build a clinic.
-9. Build a school.
-10. Reach 1,000 population.
+1. Build power and water utilities, then zone residential.
+2. Reach 50 population and zone commercial.
+3. Reach 100 population, zone industrial, and build a landfill.
+4. Reach 250 population, then build a park and clinic.
+5. Reach 500 population, then build a school.
+6. Reach 1,000 population.
 
 ## Extended Milestones
 
@@ -87,3 +83,5 @@ The milestone table above covers the first scenario. A broader milestone table f
 |     25,000 | Landmarks                  |
 
 Progression uses simple population milestones. Alternative models (research tree, city reputation, mayor level, scenario-specific unlocks, achievement-based unlocks) can be introduced per scenario design.
+
+Coverage warnings for police and fire should remain hidden until those services are unlocked, so the warning feed does not ask the player to build unavailable infrastructure.

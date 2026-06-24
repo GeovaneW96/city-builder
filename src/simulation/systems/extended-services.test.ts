@@ -20,6 +20,25 @@ describe("police and fire services", () => {
     expect(state.extendedServices.policeCoverage).toBe(100);
   });
 
+  it("does not warn about police or fire coverage before those services unlock", () => {
+    const state = createInitialCityState();
+    addBuilding(state, "small_house", 10, 10);
+    addBuilding(state, "small_factory", 12, 10);
+    addRoad(state, 9, 10);
+    addRoad(state, 11, 10);
+    state.services.powerCapacity = 999;
+    state.services.powerDemand = 0;
+    state.services.waterCapacity = 999;
+    state.services.waterDemand = 0;
+
+    recomputeExtendedServices(state);
+    rebuildWarnings(state);
+
+    const warningIds = state.warnings.map((warning) => warning.id);
+    expect(warningIds).not.toContain("city:high-crime");
+    expect(warningIds).not.toContain("city:fire-risk");
+  });
+
   it("destroys an uncovered building when its fire risk reaches the threshold", () => {
     const state = createInitialCityState();
     const factory = addBuilding(state, "small_factory", 10, 10);
@@ -139,4 +158,8 @@ function addBuilding(
   };
   state.buildings.push(building);
   return building;
+}
+
+function addRoad(state: CityState, x: number, y: number): void {
+  state.map[y]![x]!.roadId = `road:${x},${y}`;
 }

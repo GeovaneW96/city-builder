@@ -80,14 +80,16 @@ function getObjectiveHint(
   if (objective.condition === "reach_population") {
     return getPopulationObjectiveHint(objective.target, state.population.total);
   }
-  return `How: Services → ${formatUnlock(objective.buildingId ?? "building")}.`;
+  const tab = objective.buildingId === "landfill" ? "Utilities" : "Services";
+  return `How: ${tab} → ${formatUnlock(objective.buildingId ?? "building")}.`;
 }
 
 function getPopulationObjectiveHint(
   target: number | undefined,
   population: number,
 ): string {
-  if (target === 50) return "How: zone more homes beside roads and keep time running.";
+  if (target === 50)
+    return "How: build power and water utilities, then zone homes beside roads.";
   if (target === 100)
     return "How: paint commercial zones beside roads; shops need residents.";
   if (target === 250)

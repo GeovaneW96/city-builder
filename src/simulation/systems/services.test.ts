@@ -3,6 +3,7 @@ import { getBuildingById } from "../../data/buildings";
 import type { BuildingInstance } from "../../shared/types";
 import { createInitialCityState } from "../state";
 import { recomputeServices } from "./services";
+import { calculateCityMetrics } from "./metrics";
 
 describe("tiered education and healthcare", () => {
   it("defines the documented education and healthcare buildings", () => {
@@ -48,6 +49,27 @@ describe("tiered education and healthcare", () => {
     expect(university.services.educationQuality).toBeGreaterThan(
       elementary.services.educationQuality,
     );
+  });
+});
+
+describe("utility shortages", () => {
+  it("reduces occupied homes and available jobs by the limiting utility ratio", () => {
+    const state = createInitialCityState();
+    state.buildings = [
+      building("small_house", 5, 5),
+      building("small_shop", 6, 5),
+      building("small_factory", 7, 5),
+    ];
+    state.services.powerCapacity = 50;
+    state.services.powerDemand = 100;
+    state.services.waterCapacity = 100;
+    state.services.waterDemand = 100;
+
+    const metrics = calculateCityMetrics(state);
+
+    expect(metrics.residentialCapacity).toBe(4);
+    expect(metrics.commercialJobs).toBe(3);
+    expect(metrics.industrialJobs).toBe(6);
   });
 });
 

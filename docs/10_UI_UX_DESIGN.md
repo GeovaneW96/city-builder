@@ -124,7 +124,8 @@ need road access state that placement requirement before the player selects them
 
 For population objectives, the panel explains the immediate build action. When happiness falls,
 it shows the strongest active penalty and its remedy (for example, a utility shortage and the
-specific utility to build). Reaching a population milestone produces a five-second status
+specific utility to build). The initial 50-population objective explicitly calls out power and
+water, and landfill objectives open the Utilities catalog. Reaching a population milestone produces a five-second status
 notification naming the newly unlocked tool.
 
 Selecting a zoned tile shows whether it can grow. The inspector names a missing adjacent road or

@@ -15,6 +15,7 @@ import {
   MIN_DEMAND_FOR_GROWTH,
 } from "../constants";
 import { getFootprint, getTile, hasAdjacentRoad } from "../grid/map";
+import { getUtilityAvailability } from "./metrics";
 
 export function updateConstructionStatuses(state: CityState): GameEvent[] {
   const events: GameEvent[] = [];
@@ -97,8 +98,15 @@ function canGrowAt(
   return (
     fits &&
     hasAdjacentRoad(state, footprint) &&
+    hasUtilityCapacityForGrowth(state) &&
     meetsDensityRequirements(state, x, y, zoneType)
   );
+}
+
+function hasUtilityCapacityForGrowth(state: CityState): boolean {
+  const hasActiveUtilityDemand =
+    state.services.powerDemand > 0 || state.services.waterDemand > 0;
+  return !hasActiveUtilityDemand || getUtilityAvailability(state) >= 1;
 }
 
 function meetsDensityRequirements(

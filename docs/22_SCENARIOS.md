@@ -33,7 +33,10 @@ Reach 1,000 population without going bankrupt.
 
 ### Objectives
 
-Objectives follow the progression milestones in `06_PROGRESSION_AND_UNLOCKS.md`. Each milestone grants a new unlock and bonus; the scenario advances the player through the full milestone chain from 0 to 1,000 population.
+Objectives follow the progression milestones in `06_PROGRESSION_AND_UNLOCKS.md`. The player
+first establishes power and water, adds a landfill with industrial zoning at 100 population,
+then adds the clinic at 250 and school at 500. Each milestone grants its listed unlock and bonus
+on the path to 1,000 population.
 
 ### Win Condition
 

@@ -1,4 +1,5 @@
 import { getBuildingById } from "../../data/buildings";
+import { UTILITY_AVAILABILITY } from "../../data/balance";
 import type {
   BuildingCategory,
   BuildingDefinition,
@@ -29,10 +30,23 @@ export function calculateCityMetrics(state: CityState): CityMetrics {
   const activeBuildings = state.buildings.filter(
     (building) => building.status === "active",
   );
-  const capacity = sumEffect(state, activeBuildings, "residential", "populationCapacity");
-  const commercialJobs = sumEffect(state, activeBuildings, "commercial", "jobs");
-  const industrialJobs = sumEffect(state, activeBuildings, "industrial", "jobs");
-  const serviceJobs = activeBuildings.reduce(sumServiceJobs, 0);
+  const utilityAvailability = getUtilityAvailability(state);
+  const capacity = scaleForUtilities(
+    sumEffect(state, activeBuildings, "residential", "populationCapacity"),
+    utilityAvailability,
+  );
+  const commercialJobs = scaleForUtilities(
+    sumEffect(state, activeBuildings, "commercial", "jobs"),
+    utilityAvailability,
+  );
+  const industrialJobs = scaleForUtilities(
+    sumEffect(state, activeBuildings, "industrial", "jobs"),
+    utilityAvailability,
+  );
+  const serviceJobs = scaleForUtilities(
+    activeBuildings.reduce(sumServiceJobs, 0),
+    utilityAvailability,
+  );
   const totalJobs = commercialJobs + industrialJobs + serviceJobs;
   const allocations = allocateWorkers(
     state.population.total,
@@ -53,6 +67,25 @@ export function calculateCityMetrics(state: CityState): CityMetrics {
     commercialJobsFilled: allocations.commercialJobsFilled,
     industrialJobsFilled: allocations.industrialJobsFilled,
   };
+}
+
+export function getUtilityAvailability(state: CityState): number {
+  return Math.min(
+    getUtilityRatio(state.services.powerCapacity, state.services.powerDemand),
+    getUtilityRatio(state.services.waterCapacity, state.services.waterDemand),
+  );
+}
+
+function getUtilityRatio(capacity: number, demand: number): number {
+  if (demand === 0) return UTILITY_AVAILABILITY.MAX_PRODUCTIVITY;
+  return Math.max(
+    UTILITY_AVAILABILITY.MIN_PRODUCTIVITY,
+    Math.min(UTILITY_AVAILABILITY.MAX_PRODUCTIVITY, capacity / demand),
+  );
+}
+
+function scaleForUtilities(value: number, availability: number): number {
+  return Math.floor(value * availability);
 }
 
 export function getAvailableJobs(metrics: CityMetrics, population: number): number {

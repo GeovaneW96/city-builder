@@ -64,21 +64,21 @@ export const FIRST_SETTLEMENT = {
     },
     {
       id: "obj_07",
+      label: "Build a landfill",
+      condition: "build_building" as const,
+      buildingId: "landfill",
+    },
+    {
+      id: "obj_08",
       label: "Reach 250 population",
       condition: "reach_population" as const,
       target: 250,
     },
     {
-      id: "obj_08",
+      id: "obj_09",
       label: "Build a park",
       condition: "build_building" as const,
       buildingId: "park",
-    },
-    {
-      id: "obj_09",
-      label: "Reach 500 population",
-      condition: "reach_population" as const,
-      target: 500,
     },
     {
       id: "obj_10",
@@ -88,9 +88,9 @@ export const FIRST_SETTLEMENT = {
     },
     {
       id: "obj_11",
-      label: "Reach 750 population",
+      label: "Reach 500 population",
       condition: "reach_population" as const,
-      target: 750,
+      target: 500,
     },
     {
       id: "obj_12",
@@ -100,6 +100,12 @@ export const FIRST_SETTLEMENT = {
     },
     {
       id: "obj_13",
+      label: "Reach 750 population",
+      condition: "reach_population" as const,
+      target: 750,
+    },
+    {
+      id: "obj_14",
       label: "Reach 1,000 population",
       condition: "reach_population" as const,
       target: 1000,

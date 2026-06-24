@@ -137,6 +137,9 @@ Tradeoff:
 - upkeep;
 - pollution.
 
+The First Settlement plant supplies 500 power units. Power shortages reduce occupied homes and
+available jobs, and prevent further zone growth until supply meets demand.
+
 ### Water Tower
 
 Purpose:
@@ -146,6 +149,9 @@ Purpose:
 Tradeoff:
 
 - cost and upkeep.
+
+The First Settlement tower supplies 300 water units. Water shortages use the same occupancy,
+job, and growth rules as power shortages.
 
 ### Park
 
@@ -215,6 +221,8 @@ General placement rules for roads, zones, and buildings are defined in `08_MAP_G
 Police stations, fire stations, and landfills are data-driven manual buildings. Their coverage
 and collection radii live in building effects and are consumed exclusively by the simulation;
 their listed costs, upkeep, and jobs participate in the regular construction and economy rules.
+The First Settlement landfill unlocks with industrial zoning at 100 population and is sized to
+cover a compact first city.
 
 Bus depots are also manual data-driven buildings. They must remain active for associated bus
 routes to operate; bus stops themselves are lightweight road-tile transit markers.

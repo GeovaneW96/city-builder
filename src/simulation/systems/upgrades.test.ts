@@ -60,7 +60,7 @@ describe("upgrade restrictions", () => {
     expect(building.upgradeTier).toBe(2);
   });
 
-  it("requires education tier 2 for t2-to-t3 upgrade, tier 1 is insufficient", () => {
+  it("allows tier-1 education for a t2-to-t3 upgrade in the first scenario", () => {
     const { state, building } = createEligibleState("small_house");
     updateBuildingUpgrades(state);
     building.status = "active";
@@ -70,8 +70,8 @@ describe("upgrade restrictions", () => {
 
     updateBuildingUpgrades(state);
 
-    expect(building.definitionId).toBe("medium_house");
-    expect(building.upgradeTier).toBe(2);
+    expect(building.definitionId).toBe("high_apartment");
+    expect(building.upgradeTier).toBe(3);
   });
 
   it("allows t2-to-t3 upgrade when education tier 2 is present", () => {

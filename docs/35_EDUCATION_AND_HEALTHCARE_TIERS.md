@@ -60,7 +60,7 @@ Used by:
 
 | Building       | Size |   Cost | Upkeep/Month | Radius | Patient Capacity | Unlock Population | Tier Weight |
 | -------------- | ---: | -----: | -----------: | -----: | ---------------: | ----------------: | ----------: |
-| Clinic         |  2x2 |  8,000 |          400 |      8 |              100 |                 0 |           1 |
+| Clinic         |  2x2 |  8,000 |          400 |      8 |              100 |               250 |           1 |
 | Hospital       |  4x4 | 30,000 |        1,500 |     15 |              500 |             5,000 |           2 |
 | Medical Center |  5x5 | 60,000 |        3,000 |     20 |            1,000 |            15,000 |           3 |
 
@@ -137,7 +137,7 @@ Buildings:
     size: [2, 2]
     cost: 8000
     upkeep: 400
-    unlockPopulation: 0
+    unlockPopulation: 250
     effects:
       healthRadius: 8
       healthCapacity: 100
