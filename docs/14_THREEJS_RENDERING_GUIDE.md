@@ -117,6 +117,8 @@ generated assets on top for streetlights, traffic lights, cars, signs, trees, an
 
 ## Buildings
 
+Residential building variant range was expanded from `[0, 5]` to `[0, 6]` in `city.ts` when two new GLB models (`residential_house_detached`, `residential_stucco_cottage_reference`) were added to the asset registry.
+
 The production building path uses the locally generated GLB library under
 `public/assets/generated/`, not primitive building boxes. `CityAssetManager` preloads the
 static registry once, then clones cached GLTF scenes with `SkeletonUtils.clone` so materials,

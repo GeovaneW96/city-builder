@@ -115,7 +115,7 @@ type BuildingVariantRanges = Record<string, [number, number]> & {
 const BUILDING_VARIANT_RANGES: Record<GeneratedBuildingCategory, BuildingVariantRanges> =
   {
     residential: {
-      default: [0, 5],
+      default: [0, 6],
       medium_house: [2, 7],
       high_apartment: [5, 10],
       residential_midriser_brick: [0, 5],

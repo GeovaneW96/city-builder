@@ -1,6 +1,6 @@
 {
   "generator": "tools/generate_city_assets.py",
-  "assetCount": 54,
+  "assetCount": 56,
   "assets": [
     {
       "id": "residential_rowhouse_brick",
@@ -331,6 +331,20 @@
       "id": "park_lamp",
       "category": "nature",
       "path": "assets/generated/nature/park_lamp.glb"
+    },
+    {
+      "id": "residential_house_detached",
+      "category": "residential",
+      "path": "assets/generated/buildings/residential/residential_house_detached.glb",
+      "footprint": [1.2, 1.0],
+      "height": 1.04
+    },
+    {
+      "id": "residential_stucco_cottage_reference",
+      "category": "residential",
+      "path": "assets/generated/buildings/residential/residential_stucco_cottage_reference.glb",
+      "footprint": [1.16, 0.82],
+      "height": 1.04
     }
   ]
 }

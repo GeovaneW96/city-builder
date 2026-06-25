@@ -44,6 +44,8 @@ function createAssets(
 
 export const CITY_ASSET_REGISTRY: readonly GeneratedCityAsset[] = [
   ...createBuildingAssets("residential", [
+    "residential_house_detached",
+    "residential_stucco_cottage_reference",
     "residential_rowhouse_brick",
     "residential_rowhouse_stucco",
     "residential_cottage_corner",
