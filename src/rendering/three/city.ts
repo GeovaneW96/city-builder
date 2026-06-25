@@ -143,6 +143,7 @@ const BUILDING_VARIANT_RANGES: Record<GeneratedBuildingCategory, BuildingVariant
       industrial_workshop: [0, 4],
       industrial_factory_large: [2, 8],
       industrial_storage_yard: [0, 4],
+      water_tower: [8, 9],
     },
     civic: { default: [0, 8] },
   };
@@ -264,6 +265,8 @@ function syncStaticRenderLayer(
 export function syncPlacementPreview(
   layer: THREE.Group,
   preview: UIState["placementPreview"],
+  getBuildingRenderInfo?: BuildingRenderInfoLookup,
+  assetSource?: CityAssetSource,
 ): void {
   clearGroup(layer);
   if (!preview) return;
@@ -273,6 +276,56 @@ export function syncPlacementPreview(
     mesh.position.set(x + 0.5, 0.045, y + 0.5);
     layer.add(mesh);
   });
+  if (preview.definitionId && getBuildingRenderInfo && assetSource) {
+    addGeneratedPlacementPreview(layer, preview, getBuildingRenderInfo, assetSource);
+  }
+}
+
+function addGeneratedPlacementPreview(
+  layer: THREE.Group,
+  preview: NonNullable<UIState["placementPreview"]>,
+  getBuildingRenderInfo: BuildingRenderInfoLookup,
+  assetSource: CityAssetSource,
+): void {
+  if (!preview.definitionId) return;
+  const renderInfo = getBuildingRenderInfo(preview.definitionId);
+  if (!renderInfo) return;
+  const category = getGeneratedBuildingCategory(renderInfo.category);
+  if (!category) return;
+  const asset = assetSource.createBuildingInstance(
+    category,
+    getGeneratedBuildingSeed(category, preview.definitionId, 0),
+  );
+  const origin = getPreviewOrigin(preview.positions);
+  if (!asset || !origin) return;
+  placeGeneratedBuilding(
+    asset.object,
+    {
+      id: `preview:${preview.definitionId}`,
+      definitionId: preview.definitionId,
+      position: origin,
+      rotation: 0,
+      status: "active",
+      warnings: [],
+      createdAtTick: 0,
+      lockedUntilTick: 0,
+      unresolvedWarningTicks: 0,
+      upgradeTier: 1,
+      lastUpgradeTick: 0,
+    },
+    renderInfo.size,
+  );
+  asset.object.name = `preview:${preview.definitionId}`;
+  layer.add(asset.object);
+}
+
+function getPreviewOrigin(
+  positions: readonly [number, number][],
+): [number, number] | null {
+  if (positions.length === 0) return null;
+  const minX = Math.min(...positions.map(([x]) => x));
+  const minY = Math.min(...positions.map(([, y]) => y));
+  return [minX, minY];
 }
 
 function renderRoads(

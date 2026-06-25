@@ -5,6 +5,7 @@ import { createInitialCityState } from "../../simulation/state";
 import {
   createCityRenderLayers,
   syncCityRenderLayers,
+  syncPlacementPreview,
   type BuildingRenderInfoLookup,
 } from "./city";
 import type { CityAssetSource } from "../../assets/AssetManager";
@@ -132,10 +133,56 @@ describe("generated city assets", () => {
   });
 });
 
+describe("generated water tower asset", () => {
+  it("selects the authored generated model for water towers", () => {
+    const state = createInitialCityState();
+    state.buildings.push(createBuilding("water-tower:1", "water_tower", 4, 5));
+    const layers = createCityRenderLayers(new THREE.Scene());
+    const { source, createBuildingInstance } = createAssetSource();
+
+    syncCityRenderLayers(layers, state, null, getBuildingRenderInfo, {
+      assetSource: source,
+    });
+
+    expect(layers.buildings.children[0]?.name).toBe("building:water_tower:active");
+    expect(createBuildingInstance).toHaveBeenCalledWith("industrial", 8);
+  });
+
+  it("uses the authored generated model for water tower placement previews", () => {
+    const layers = createCityRenderLayers(new THREE.Scene());
+    const { source, createBuildingInstance } = createAssetSource();
+
+    syncPlacementPreview(
+      layers.preview,
+      {
+        positions: [[4, 5]],
+        valid: true,
+        cost: 5000,
+        label: "Water Tower",
+        definitionId: "water_tower",
+      },
+      getBuildingRenderInfo,
+      source,
+    );
+
+    expect(layers.preview.children.at(-1)?.name).toBe("preview:water_tower");
+    expect(createBuildingInstance).toHaveBeenCalledWith("industrial", 8);
+  });
+});
+
 function createHouse(id: string, x: number, y: number): BuildingInstance {
+  return createBuilding(id, "small_house", x, y);
+}
+
+function createBuilding(
+  id: string,
+  definitionId: string,
+  x: number,
+  y: number,
+): BuildingInstance {
   return {
     id,
-    definitionId: "small_house",
+    definitionId,
     position: [x, y],
     rotation: 0,
     status: "active",
@@ -149,6 +196,13 @@ function createHouse(id: string, x: number, y: number): BuildingInstance {
 }
 
 const getBuildingRenderInfo: BuildingRenderInfoLookup = (definitionId) => {
+  if (definitionId === "water_tower") {
+    return {
+      size: [1, 1],
+      category: "utility",
+      effects: {},
+    };
+  }
   if (definitionId !== "small_house") return null;
   return {
     size: [1, 1],

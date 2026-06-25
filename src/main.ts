@@ -176,7 +176,12 @@ function syncAll(force = false): void {
   const uiState = useUIStore.getState();
   const qualityChanged = syncRenderQuality(uiState.settings.graphicsQuality);
   evaluateCityRender(state, uiState.activeOverlay, force || qualityChanged);
-  syncPlacementPreview(cityLayers.preview, uiState.placementPreview);
+  syncPlacementPreview(
+    cityLayers.preview,
+    uiState.placementPreview,
+    getBuildingRenderInfo,
+    generatedAssetsReady ? cityAssets : undefined,
+  );
   updateGameUI(ui, state, uiState);
   updateSelectionHighlight(grid.selectionHighlight, uiState.selectedTile);
   setGridVisibility(grid, uiState.placementPreview !== null);
@@ -518,6 +523,7 @@ function createBuildingPreview(
     valid,
     cost: definition.cost,
     label: definition.name,
+    definitionId: definition.id,
   };
 }
 

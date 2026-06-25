@@ -1,5 +1,5 @@
 {
-  "assetCount": 56,
+  "assetCount": 57,
   "assets": [
     {
       "id": "residential_rowhouse_brick",
@@ -175,6 +175,13 @@
       "path": "assets/generated/buildings/industrial/industrial_processing_plant.glb",
       "footprint": [1.48, 1.28],
       "height": 2.24
+    },
+    {
+      "id": "water_tower",
+      "category": "industrial",
+      "path": "assets/generated/buildings/industrial/water_tower.glb",
+      "footprint": [0.98, 0.98],
+      "height": 2.2
     },
     {
       "id": "civic_clinic",

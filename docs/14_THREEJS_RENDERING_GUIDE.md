@@ -127,6 +127,14 @@ residential, commercial, industrial (including utilities), and civic (including 
 Asset geometry and materials are shared resources and must not be disposed when a render layer
 is rebuilt.
 
+Utility buildings use the industrial generated asset category unless they have explicit
+authored handling. `water_tower` selects the `water_tower.glb` slot in the industrial registry
+so the placed water utility consistently renders as a cylindrical elevated tower instead of a
+generic factory variant.
+Building placement previews carry the selected definition ID and may render the same generated
+asset once the generated library has loaded, with the tile preview plane retained for validity
+feedback.
+
 Buildings should be modular procedural meshes assembled from shared geometries and materials.
 Prioritize façade depth, roof shapes, windows, doors, storefronts, loading bays, and rooftop
 equipment over unique asset files. Deterministic per-instance variation prevents repetition.

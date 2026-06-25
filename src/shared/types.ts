@@ -550,6 +550,7 @@ export interface PlacementPreview {
   valid: boolean;
   cost: number;
   label?: string;
+  definitionId?: string;
 }
 
 export interface CameraState {
