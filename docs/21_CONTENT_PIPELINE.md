@@ -57,18 +57,13 @@ Final art should not block gameplay systems.
 
 ## Generated City Asset Library
 
-The reusable final-art kit is generated locally with Blender rather than downloaded from an
-external asset library. Run the following command from the repository root:
+The reusable final-art kit lives under `public/assets/generated/` as committed GLB files and
+`manifest.json`. Assets use a ground-centred root pivot, named PBR materials, emissive window
+or lighting materials where applicable, and shared repeated geometry for an
+instancing-friendly loading path.
 
-```bash
-blender --background --python tools/generate_city_assets.py
-```
-
-It writes tile-scale GLB files to `public/assets/generated/` and a generated `manifest.json`.
-Assets use a ground-centred root pivot, named PBR materials, emissive window or lighting
-materials where applicable, and shared repeated geometry for an instancing-friendly loading
-path. Do not edit generated GLB files by hand; change `tools/generate_city_assets.py` and
-rerun the generator instead.
+Treat these assets as data. Do not edit the GLB files by hand unless you are intentionally
+replacing the checked-in art set and updating the manifest in the same change.
 
 ## Content Quality Checklist
 

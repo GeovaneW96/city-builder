@@ -119,13 +119,13 @@ generated assets on top for streetlights, traffic lights, cars, signs, trees, an
 
 Residential building variant range was expanded from `[0, 5]` to `[0, 6]` in `city.ts` when two new GLB models (`residential_house_detached`, `residential_stucco_cottage_reference`) were added to the asset registry.
 
-The production building path uses the locally generated GLB library under
-`public/assets/generated/`, not primitive building boxes. `CityAssetManager` preloads the
+The production building path uses the GLB library under `public/assets/generated/`, not
+primitive building boxes. `CityAssetManager` preloads the
 static registry once, then clones cached GLTF scenes with `SkeletonUtils.clone` so materials,
 including emissive windows, are preserved. Selection is deterministic by render category:
 residential, commercial, industrial (including utilities), and civic (including services).
-Generated asset geometry and materials are shared resources and must not be disposed when a
-render layer is rebuilt.
+Asset geometry and materials are shared resources and must not be disposed when a render layer
+is rebuilt.
 
 Buildings should be modular procedural meshes assembled from shared geometries and materials.
 Prioritize façade depth, roof shapes, windows, doors, storefronts, loading bays, and rooftop
