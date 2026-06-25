@@ -104,6 +104,11 @@ interface GeneratedAssetPlacement {
   scale?: number;
 }
 
+interface GeneratedBuildingSelection {
+  category: GeneratedBuildingCategory;
+  seed: number;
+}
+
 type StreetAxis = "horizontal" | "vertical";
 type RoadType = CityState["roads"][number]["type"];
 
@@ -290,12 +295,9 @@ function addGeneratedPlacementPreview(
   if (!preview.definitionId) return;
   const renderInfo = getBuildingRenderInfo(preview.definitionId);
   if (!renderInfo) return;
-  const category = getGeneratedBuildingCategory(renderInfo.category);
-  if (!category) return;
-  const asset = assetSource.createBuildingInstance(
-    category,
-    getGeneratedBuildingSeed(category, preview.definitionId, 0),
-  );
+  const selection = getGeneratedBuildingSelection(renderInfo, preview.definitionId, 0);
+  if (!selection) return;
+  const asset = assetSource.createBuildingInstance(selection.category, selection.seed);
   const origin = getPreviewOrigin(preview.positions);
   if (!asset || !origin) return;
   placeGeneratedBuilding(
@@ -467,16 +469,12 @@ function addGeneratedStreetTrees(
     .filter((road) => shouldPlaceRoadDetail(road, detailDensity, 12))
     .forEach((road) => {
       const [x, y] = road.position;
+      const treeHash = getVisualHash(x, y);
       const side = getVisualHash(x, y + 7) % 2 === 0 ? -0.6 : 0.6;
-      const treeId =
-        getVisualHash(x, y) % 3 === 0
-          ? "tree_conifer"
-          : getVisualHash(x, y) % 2 === 0
-            ? "tree_oak"
-            : "tree_maple";
-      addGeneratedAsset(group, assetSource, treeId, {
+      const treeScale = 1.04 + (treeHash % 3) * 0.08;
+      addGeneratedAsset(group, assetSource, "tree_mature_oak", {
         position: [x + 0.5 + side, 0, y + 0.5],
-        scale: 0.6 + (getVisualHash(x, y) % 3) * 0.08,
+        scale: treeScale,
       });
     });
 }
@@ -1106,20 +1104,40 @@ function renderGeneratedBuildings(
     const renderInfo = getBuildingRenderInfo(building.definitionId);
     if (!renderInfo) return;
     if (renderInfo.category === "decoration") {
-      renderGeneratedPark(group, assetSource, building, renderInfo.size, index);
+      renderGeneratedPark(group, assetSource, building, renderInfo.size);
       return;
     }
-    const category = getGeneratedBuildingCategory(renderInfo.category);
-    if (!category) return;
-    const asset = assetSource.createBuildingInstance(
-      category,
-      getGeneratedBuildingSeed(category, building.definitionId, index),
+    const selection = getGeneratedBuildingSelection(
+      renderInfo,
+      building.definitionId,
+      index,
     );
-    if (!asset) return;
+    if (!selection) {
+      renderProceduralBuilding(group, building.definitionId, renderInfo, building);
+      return;
+    }
+    const asset = assetSource.createBuildingInstance(selection.category, selection.seed);
+    if (!asset) {
+      renderProceduralBuilding(group, building.definitionId, renderInfo, building);
+      return;
+    }
     placeGeneratedBuilding(asset.object, building, renderInfo.size);
     asset.object.name = `building:${building.definitionId}:${building.status}`;
     group.add(asset.object);
   });
+}
+
+function renderProceduralBuilding(
+  group: THREE.Group,
+  definitionId: string,
+  renderInfo: BuildingRenderInfo,
+  building: CityState["buildings"][number],
+): void {
+  const buildings = [building];
+  group.add(
+    createBuildingInstances(definitionId, renderInfo, building.status, buildings),
+  );
+  addBuildingDetails(group, definitionId, renderInfo, buildings);
 }
 
 function getGeneratedBuildingSeed(
@@ -1140,19 +1158,40 @@ function getBuildingVariantRange(
   return ranges[definitionId] ?? ranges.default;
 }
 
+function getGeneratedBuildingSelection(
+  renderInfo: BuildingRenderInfo,
+  definitionId: string,
+  index: number,
+): GeneratedBuildingSelection | null {
+  const override = getExplicitGeneratedBuildingSelection(definitionId);
+  if (override) return override;
+  const category = getGeneratedBuildingCategory(renderInfo.category);
+  if (!category) return null;
+  return {
+    category,
+    seed: getGeneratedBuildingSeed(category, definitionId, index),
+  };
+}
+
+function getExplicitGeneratedBuildingSelection(
+  definitionId: string,
+): GeneratedBuildingSelection | null {
+  if (definitionId === "water_tower") return { category: "industrial", seed: 8 };
+  return null;
+}
+
 function renderGeneratedPark(
   group: THREE.Group,
   assetSource: CityAssetSource,
   building: CityState["buildings"][number],
   size: BuildingDefinition["size"],
-  index: number,
 ): void {
   const centerX = building.position[0] + size[0] / 2;
   const centerZ = building.position[1] + size[1] / 2;
-  const treeId = index % 2 === 0 ? "tree_oak" : "tree_maple";
-  addGeneratedAsset(group, assetSource, treeId, {
+  const treeScale = Math.max(1.08, Math.min(size[0], size[1]) * 0.5);
+  addGeneratedAsset(group, assetSource, "tree_mature_oak", {
     position: [centerX - size[0] * 0.18, 0, centerZ],
-    scale: Math.max(0.55, Math.min(size[0], size[1]) * 0.44),
+    scale: treeScale,
   });
   addGeneratedAsset(group, assetSource, "plaza_planter", {
     position: [centerX + size[0] * 0.2, 0, centerZ - size[1] * 0.18],
@@ -1170,7 +1209,7 @@ function getGeneratedBuildingCategory(
 ): GeneratedBuildingCategory | null {
   if (category === "residential") return "residential";
   if (category === "commercial") return "commercial";
-  if (category === "industrial" || category === "utility") return "industrial";
+  if (category === "industrial") return "industrial";
   if (["service", "security", "transit", "civic"].includes(category)) return "civic";
   return null;
 }

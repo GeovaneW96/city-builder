@@ -293,23 +293,29 @@ This document lists every feature across all four implementation phases. Under e
 
 **Docs:** `14_THREEJS_RENDERING_GUIDE.md`, `08_MAP_GRID_AND_TERRAIN.md`
 
-| #      | Testable Logic                    | Status |
-| ------ | --------------------------------- | ------ |
-| 1.19.1 | Camera pan bounded to map extents | done   |
-| 1.19.2 | Camera zoom clamped to min/max    | done   |
-| 1.19.3 | Camera pitch clamped to min/max   | done   |
+| #      | Testable Logic                                           | Status |
+| ------ | -------------------------------------------------------- | ------ |
+| 1.19.1 | Camera pan bounded to map extents                        | done   |
+| 1.19.2 | Camera zoom clamped to min/max                           | done   |
+| 1.19.3 | Camera pitch clamped to min/max                          | done   |
+| 1.19.4 | Keyboard arrow key camera pan with frame-time movement   | done   |
+| 1.19.5 | Diagonal keyboard pan normalized to match cardinal speed | done   |
+| 1.19.6 | Keyboard pan clamps target inside map bounds             | done   |
 
 ### 1.20 Grid Rendering and Building/Road Visualization
 
 **Docs:** `14_THREEJS_RENDERING_GUIDE.md`
 
-| #      | Testable Logic                                             | Status |
-| ------ | ---------------------------------------------------------- | ------ |
-| 1.20.1 | Grid rendered with correct dimensions                      | done   |
-| 1.20.2 | Road mesh created/removed when road placed/removed         | done   |
-| 1.20.3 | Building mesh created/removed when building placed/removed | done   |
-| 1.20.4 | Mesh update on building status change                      | done   |
-| 1.20.5 | Instanced meshes used for repeated building types          | done   |
+| #      | Testable Logic                                                                   | Status |
+| ------ | -------------------------------------------------------------------------------- | ------ |
+| 1.20.1 | Grid rendered with correct dimensions                                            | done   |
+| 1.20.2 | Road mesh created/removed when road placed/removed                               | done   |
+| 1.20.3 | Building mesh created/removed when building placed/removed                       | done   |
+| 1.20.4 | Mesh update on building status change                                            | done   |
+| 1.20.5 | Instanced meshes used for repeated building types                                | done   |
+| 1.20.6 | Procedural InstancedMesh fallback for utility buildings without generated assets | done   |
+| 1.20.7 | Generated nature details use single mature oak GLB asset                         | done   |
+| 1.20.8 | Generated assets can opt out of shadow casting per type                          | done   |
 
 ### 1.21 HUD (Money, Population, Date, Demand Bars)
 

@@ -120,9 +120,7 @@ export const CITY_ASSET_REGISTRY: readonly GeneratedCityAsset[] = [
   ]),
   ...createAssets("vehicles", ["car_compact", "car_sedan", "bus_city", "truck_delivery"]),
   ...createAssets("nature", [
-    "tree_oak",
-    "tree_maple",
-    "tree_conifer",
+    "tree_mature_oak",
     "bush_cluster",
     "rock_cluster",
     "park_lamp",

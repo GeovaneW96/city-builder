@@ -1,5 +1,5 @@
 {
-  "assetCount": 57,
+  "assetCount": 55,
   "assets": [
     {
       "id": "residential_rowhouse_brick",
@@ -309,19 +309,9 @@
       "path": "assets/generated/vehicles/truck_delivery.glb"
     },
     {
-      "id": "tree_oak",
+      "id": "tree_mature_oak",
       "category": "nature",
-      "path": "assets/generated/nature/tree_oak.glb"
-    },
-    {
-      "id": "tree_maple",
-      "category": "nature",
-      "path": "assets/generated/nature/tree_maple.glb"
-    },
-    {
-      "id": "tree_conifer",
-      "category": "nature",
-      "path": "assets/generated/nature/tree_conifer.glb"
+      "path": "assets/generated/nature/tree_mature_oak.glb"
     },
     {
       "id": "bush_cluster",

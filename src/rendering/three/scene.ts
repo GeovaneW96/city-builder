@@ -9,6 +9,12 @@ import { getRenderQualityProfile } from "./quality";
 
 const DEFAULT_GRID_SIZE = 64;
 const CAMERA_BOUNDS_PADDING = 4;
+const CAMERA_KEYBOARD_PAN_RATIO = 0.035;
+
+export interface CameraPanInput {
+  forward: number;
+  right: number;
+}
 
 export interface SceneContext {
   scene: THREE.Scene;
@@ -31,6 +37,51 @@ function clampCameraTarget(target: THREE.Vector3, gridSize: number): void {
     -CAMERA_BOUNDS_PADDING,
     Math.min(gridSize + CAMERA_BOUNDS_PADDING, target.z),
   );
+}
+
+function getCameraPanStep(gridSize: number): number {
+  return Math.max(1, gridSize * CAMERA_KEYBOARD_PAN_RATIO);
+}
+
+function getCameraPanVector(
+  camera: THREE.PerspectiveCamera,
+  input: CameraPanInput,
+  distance: number,
+): THREE.Vector3 {
+  const normalizedInput = new THREE.Vector2(input.right, input.forward);
+  if (normalizedInput.lengthSq() === 0) return new THREE.Vector3();
+  if (normalizedInput.lengthSq() > 1) normalizedInput.normalize();
+
+  const forward = new THREE.Vector3();
+  camera.getWorldDirection(forward);
+  forward.y = 0;
+  if (forward.lengthSq() === 0) forward.set(0, 0, -1);
+  forward.normalize();
+
+  const right = new THREE.Vector3().crossVectors(forward, camera.up).normalize();
+  return forward
+    .multiplyScalar(normalizedInput.y)
+    .add(right.multiplyScalar(normalizedInput.x))
+    .multiplyScalar(distance);
+}
+
+export function panSceneCamera(
+  context: SceneContext,
+  input: CameraPanInput,
+  distance = getCameraPanStep(context.gridSize),
+): void {
+  const startTarget = context.controls.target.clone();
+  const nextTarget = startTarget
+    .clone()
+    .add(getCameraPanVector(context.camera, input, distance));
+  clampCameraTarget(nextTarget, context.gridSize);
+
+  const delta = nextTarget.sub(startTarget);
+  if (delta.lengthSq() === 0) return;
+
+  context.controls.target.add(delta);
+  context.camera.position.add(delta);
+  context.controls.update();
 }
 
 function addLighting(scene: THREE.Scene, gridSize: number): void {

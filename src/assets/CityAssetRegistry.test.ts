@@ -14,15 +14,15 @@ describe("generated city asset registry", () => {
   });
 
   it("points every entry to the generated public asset directory", () => {
-    expect(CITY_ASSET_REGISTRY).toHaveLength(73);
+    expect(CITY_ASSET_REGISTRY).toHaveLength(71);
     expect(getAssetById("residential_stucco_cottage_reference")?.path).toBe(
       "/assets/generated/buildings/residential/residential_stucco_cottage_reference.glb",
     );
     expect(getAssetById("road_4_way_intersection")?.path).toBe(
       "/assets/generated/roads/road_4_way_intersection.glb",
     );
-    expect(getAssetById("tree_conifer")?.path).toBe(
-      "/assets/generated/nature/tree_conifer.glb",
+    expect(getAssetById("tree_mature_oak")?.path).toBe(
+      "/assets/generated/nature/tree_mature_oak.glb",
     );
     expect(getAssetById("water_tower")?.path).toBe(
       "/assets/generated/buildings/industrial/water_tower.glb",

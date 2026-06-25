@@ -73,6 +73,9 @@ Recommended camera:
 - constrained bounds.
 
 Orthographic camera improves readability and city-builder feel.
+Keyboard panning should be continuous frame-time movement while arrow keys are held. It should
+move the camera position and orbit target by the same normalized world-space delta, then clamp
+the target inside map bounds so controls remain stable.
 
 ### Dynamic Map Size
 
@@ -123,14 +126,14 @@ The production building path uses the GLB library under `public/assets/generated
 primitive building boxes. `CityAssetManager` preloads the
 static registry once, then clones cached GLTF scenes with `SkeletonUtils.clone` so materials,
 including emissive windows, are preserved. Selection is deterministic by render category:
-residential, commercial, industrial (including utilities), and civic (including services).
-Asset geometry and materials are shared resources and must not be disposed when a render layer
-is rebuilt.
+residential, commercial, industrial, and civic (including services). Asset geometry and
+materials are shared resources and must not be disposed when a render layer is rebuilt.
 
-Utility buildings use the industrial generated asset category unless they have explicit
-authored handling. `water_tower` selects the `water_tower.glb` slot in the industrial registry
-so the placed water utility consistently renders as a cylindrical elevated tower instead of a
-generic factory variant.
+Utility buildings only use generated building assets when they have explicit authored
+handling. `water_tower` selects the `water_tower.glb` slot in the industrial registry so the
+placed water utility consistently renders as a cylindrical elevated tower instead of a generic
+factory variant. Other utility buildings, including landfills, fall back to the procedural
+utility renderer until they receive dedicated generated assets.
 Building placement previews carry the selected definition ID and may render the same generated
 asset once the generated library has loaded, with the tile preview plane retained for validity
 feedback.
@@ -152,6 +155,19 @@ renderer can draw a larger surrounding landscape so the map feels continuous, bu
 active tile rectangle is pickable and buildable. Terrain height, grass color variation, rocks,
 and trees must never change tile simulation data.
 Water animation, foam, and reflections are render-time effects only.
+
+Generated tree placement uses the detailed `tree_mature_oak` GLB so natural scatter, roadside
+trees, and park trees share the same mature deciduous silhouette. The first scenario should
+not ship the simplified oak, maple, or conifer generated assets; keep them out of the
+registry, manifest, and generated nature output. Tiny clustered tree placements are skipped
+for generated nature because shrinking the detailed mature tree makes it read like a
+placeholder sapling; asset-backed tree placement should keep mature oaks near full scale.
+Generated tree detail should be batched into a small number of mesh nodes by material. Keep
+the oak visually dense through leaf/branch geometry, but avoid exporting hundreds of child
+mesh objects; each child mesh becomes repeated draw-call work for every placed tree. Mature
+oak batches do not cast dynamic shadows in the runtime asset configuration; use the modeled
+root flare, bark, and ground litter for grounding instead of paying shadow-map cost for every
+placed tree.
 
 Small authored albedo textures are stored under `public/textures/` and loaded through the
 renderer texture cache. Detailed facade images must not be wrapped around a building box: that
@@ -241,7 +257,7 @@ Road rendering includes:
 - Streetlights (instanced with pole, arm, lamp sphere, and warm light cone)
 - Traffic lights (at intersections with 3+ connections)
 - Parked cars (on 2-connection road segments, with headlights and taillights)
-- Street trees (oak, maple, conifer alongside roads)
+- Street trees (mature oak alongside roads)
 - Street furniture (benches, trash bins at low density)
 - Road signs and bus stops (at high detail density)
 - Crosswalks (5 white stripes per intersection direction)

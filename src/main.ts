@@ -18,7 +18,13 @@ import {
   updateHoverHighlight,
   updateSelectionHighlight,
 } from "./rendering/three/grid";
-import { createScene, renderFrame, setSceneQuality } from "./rendering/three/scene";
+import {
+  createScene,
+  panSceneCamera,
+  renderFrame,
+  setSceneQuality,
+  type CameraPanInput,
+} from "./rendering/three/scene";
 import { getRenderQualityProfile } from "./rendering/three/quality";
 import { getCalendarTimeAfterHours, HOURS_PER_MONTH } from "./simulation/systems/time";
 import {
@@ -51,6 +57,15 @@ import { createGameUI, updateGameUI, toggleDashboardMode, showStatus } from "./u
 
 const TICK_INTERVALS: Record<1 | 2 | 3, number> = { 1: 10000, 2: 5000, 3: 2500 };
 const isE2ETest = new URLSearchParams(window.location.search).has("e2e");
+const CAMERA_KEY_PANS: Record<string, CameraPanInput> = {
+  ArrowUp: { forward: 1, right: 0 },
+  ArrowDown: { forward: -1, right: 0 },
+  ArrowLeft: { forward: 0, right: -1 },
+  ArrowRight: { forward: 0, right: 1 },
+};
+const CAMERA_PAN_UNITS_PER_SECOND_RATIO = 0.45;
+const CAMERA_PAN_MIN_UNITS_PER_SECOND = 16;
+const MAX_FRAME_DELTA_SECONDS = 1 / 20;
 
 const app = document.getElementById("app");
 if (!app) throw new Error("No #app element found");
@@ -71,6 +86,7 @@ let dragStart: [number, number] | null = null;
 let activePointerId: number | null = null;
 let lastTickAt = performance.now();
 let lastAutosaveAt = performance.now();
+let lastFrameAt = performance.now();
 let selectedSaveSlot: SaveSlotId = "manual_0";
 let lastRoadRenderKey: string | null = null;
 let lastBuildingRenderKey: string | null = null;
@@ -82,6 +98,7 @@ let lastEvaluatedCityState: CityState | null = null;
 let lastEvaluatedOverlay: UIState["activeOverlay"] = null;
 let lastRenderQuality = useUIStore.getState().settings.graphicsQuality;
 let generatedAssetsReady = false;
+const activeCameraPanKeys = new Set<string>();
 
 const GLOBAL_ACTIONS: Record<string, (target: HTMLElement) => void> = {
   speed: (target) => setSpeed(Number(target.dataset.speed) as 0 | 1 | 2 | 3),
@@ -111,6 +128,8 @@ if (!isE2ETest) void preloadGeneratedCityAssets();
 requestAnimationFrame(animate);
 
 function animate(now: number): void {
+  const deltaSeconds = getFrameDeltaSeconds(now);
+  updateKeyboardCameraPan(deltaSeconds);
   runSimulationClock(now);
   updateGameClock(now);
   if (!isE2ETest) {
@@ -121,6 +140,38 @@ function animate(now: number): void {
     scene.scene.updateMatrixWorld();
   }
   requestAnimationFrame(animate);
+}
+
+function getFrameDeltaSeconds(now: number): number {
+  const deltaSeconds = Math.max(0, (now - lastFrameAt) / 1000);
+  lastFrameAt = now;
+  return Math.min(deltaSeconds, MAX_FRAME_DELTA_SECONDS);
+}
+
+function updateKeyboardCameraPan(deltaSeconds: number): void {
+  const input = getActiveCameraPanInput();
+  if (!input || deltaSeconds === 0) return;
+  panSceneCamera(scene, input, getCameraPanDistance(deltaSeconds));
+}
+
+function getActiveCameraPanInput(): CameraPanInput | null {
+  const input: CameraPanInput = { forward: 0, right: 0 };
+  for (const key of activeCameraPanKeys) {
+    const keyInput = CAMERA_KEY_PANS[key];
+    if (!keyInput) continue;
+    input.forward += keyInput.forward;
+    input.right += keyInput.right;
+  }
+  if (input.forward === 0 && input.right === 0) return null;
+  return input;
+}
+
+function getCameraPanDistance(deltaSeconds: number): number {
+  const unitsPerSecond = Math.max(
+    CAMERA_PAN_MIN_UNITS_PER_SECOND,
+    scene.gridSize * CAMERA_PAN_UNITS_PER_SECOND_RATIO,
+  );
+  return unitsPerSecond * deltaSeconds;
 }
 
 function updateGameClock(now: number): void {
@@ -574,6 +625,7 @@ function isDragBuildMode(mode: BuildMode): boolean {
 
 function bindKeyboard(): void {
   window.addEventListener("keydown", (event) => {
+    if (handleCameraPanKey(event)) return;
     if (event.key === "Escape") {
       cancelPlacement();
       useUIStore.getState().setBuildMode(null);
@@ -583,6 +635,30 @@ function bindKeyboard(): void {
     if (event.key === "2") setSpeed(2);
     if (event.key === "3") setSpeed(3);
   });
+  window.addEventListener("keyup", handleCameraPanRelease);
+  window.addEventListener("blur", () => activeCameraPanKeys.clear());
+}
+
+function handleCameraPanKey(event: KeyboardEvent): boolean {
+  const input = CAMERA_KEY_PANS[event.key];
+  if (!input || isEditableKeyboardTarget(event.target)) return false;
+  event.preventDefault();
+  activeCameraPanKeys.add(event.key);
+  return true;
+}
+
+function handleCameraPanRelease(event: KeyboardEvent): void {
+  activeCameraPanKeys.delete(event.key);
+}
+
+function isEditableKeyboardTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false;
+  return (
+    target.isContentEditable ||
+    target instanceof HTMLInputElement ||
+    target instanceof HTMLSelectElement ||
+    target instanceof HTMLTextAreaElement
+  );
 }
 
 function togglePause(): void {

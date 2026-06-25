@@ -340,22 +340,18 @@ function renderGeneratedNaturalDetails(
   detailDensity: number,
 ): void {
   getTreePlacements(state)
+    .filter((tree) => tree.scale >= 1)
     .filter((_tree, index) => shouldPlaceGeneratedNature(index, detailDensity))
-    .forEach((tree, index) => {
-      const asset = assetSource.createAssetInstance(getTreeAssetId(tree, index));
+    .forEach((tree) => {
+      const asset = assetSource.createAssetInstance("tree_mature_oak");
       if (!asset) return;
       asset.object.position.set(tree.x, 0, tree.y);
       asset.object.rotation.y =
         getTerrainHash(Math.round(tree.x * 10), Math.round(tree.y * 10)) % (Math.PI * 2);
-      asset.object.scale.setScalar(tree.scale);
+      asset.object.scale.setScalar(tree.scale * 1.24);
       asset.object.name = `asset:${asset.id}`;
       group.add(asset.object);
     });
-}
-
-function getTreeAssetId(tree: NaturePlacement, index: number): string {
-  if (tree.evergreen) return "tree_conifer";
-  return index % 2 === 0 ? "tree_oak" : "tree_maple";
 }
 
 function renderGeneratedShoreRocks(

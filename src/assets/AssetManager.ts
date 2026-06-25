@@ -88,19 +88,31 @@ export class CityAssetManager implements CityAssetSource {
     const scene = this.scenes.get(asset.id);
     if (!scene) return null;
     const object = clone(scene);
-    configureRenderableObject(object);
+    configureRenderableObject(object, asset);
     return { id: asset.id, object };
   }
 }
 
-function configureRenderableObject(object: THREE.Object3D): void {
+export function configureRenderableObject(
+  object: THREE.Object3D,
+  asset: GeneratedCityAsset,
+): void {
   object.userData.generatedAssetInstance = true;
   object.traverse((child) => {
     if (!(child instanceof THREE.Mesh)) return;
-    child.castShadow = true;
+    child.castShadow = shouldCastGeneratedAssetShadow(asset, child);
     child.receiveShadow = true;
     child.frustumCulled = true;
   });
+}
+
+function shouldCastGeneratedAssetShadow(
+  asset: GeneratedCityAsset,
+  mesh: THREE.Mesh,
+): boolean {
+  void mesh;
+  if (asset.id === "tree_mature_oak") return false;
+  return true;
 }
 
 function toError(cause: unknown, path: string): Error {

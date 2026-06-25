@@ -131,6 +131,32 @@ describe("generated city assets", () => {
     expect(layers.roads.children.length).toBeGreaterThan(1);
     expect(createAssetInstance).not.toHaveBeenCalledWith("road_t_intersection");
   });
+
+  it("uses the mature oak asset for generated street trees", () => {
+    const state = createInitialCityState();
+    state.roads.push({
+      id: "road:17,1",
+      type: "local",
+      position: [17, 1],
+      connections: { north: false, east: true, south: false, west: true },
+    });
+    const layers = createCityRenderLayers(new THREE.Scene());
+    const { source, createAssetInstance } = createAssetSource();
+
+    syncCityRenderLayers(layers, state, null, getBuildingRenderInfo, {
+      assetSource: source,
+      refreshTerrain: false,
+    });
+
+    expect(createAssetInstance).toHaveBeenCalledWith("tree_mature_oak");
+    expect(createAssetInstance).not.toHaveBeenCalledWith("tree_oak");
+    expect(createAssetInstance).not.toHaveBeenCalledWith("tree_maple");
+    expect(createAssetInstance).not.toHaveBeenCalledWith("tree_conifer");
+    const streetTree = layers.roads.children.find(
+      (child) => child.name === "asset:tree_mature_oak",
+    );
+    expect(streetTree?.scale.x).toBeGreaterThanOrEqual(1.04);
+  });
 });
 
 describe("generated water tower asset", () => {
@@ -170,6 +196,44 @@ describe("generated water tower asset", () => {
   });
 });
 
+describe("generated landfill rendering", () => {
+  it("does not select industrial generated models for landfill buildings", () => {
+    const state = createInitialCityState();
+    state.buildings.push(createBuilding("landfill:1", "landfill", 4, 5));
+    const layers = createCityRenderLayers(new THREE.Scene());
+    const { source, createBuildingInstance } = createAssetSource();
+
+    syncCityRenderLayers(layers, state, null, getBuildingRenderInfo, {
+      assetSource: source,
+    });
+
+    expect(createBuildingInstance).not.toHaveBeenCalled();
+    expect(layers.buildings.children[0]?.name).toBe("building:landfill:active");
+    expect(layers.buildings.children[0]).toBeInstanceOf(THREE.InstancedMesh);
+  });
+
+  it("keeps landfill placement previews on tile feedback instead of industrial models", () => {
+    const layers = createCityRenderLayers(new THREE.Scene());
+    const { source, createBuildingInstance } = createAssetSource();
+
+    syncPlacementPreview(
+      layers.preview,
+      {
+        positions: [[4, 5]],
+        valid: true,
+        cost: 8000,
+        label: "Landfill",
+        definitionId: "landfill",
+      },
+      getBuildingRenderInfo,
+      source,
+    );
+
+    expect(createBuildingInstance).not.toHaveBeenCalled();
+    expect(layers.preview.children).toHaveLength(1);
+  });
+});
+
 function createHouse(id: string, x: number, y: number): BuildingInstance {
   return createBuilding(id, "small_house", x, y);
 }
@@ -199,6 +263,13 @@ const getBuildingRenderInfo: BuildingRenderInfoLookup = (definitionId) => {
   if (definitionId === "water_tower") {
     return {
       size: [1, 1],
+      category: "utility",
+      effects: {},
+    };
+  }
+  if (definitionId === "landfill") {
+    return {
+      size: [3, 3],
       category: "utility",
       effects: {},
     };
