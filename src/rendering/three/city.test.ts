@@ -132,7 +132,7 @@ describe("generated city assets", () => {
     expect(createAssetInstance).not.toHaveBeenCalledWith("road_t_intersection");
   });
 
-  it("uses the mature oak asset for generated street trees", () => {
+  it("does not add generated trees to roads", () => {
     const state = createInitialCityState();
     state.roads.push({
       id: "road:17,1",
@@ -141,21 +141,33 @@ describe("generated city assets", () => {
       connections: { north: false, east: true, south: false, west: true },
     });
     const layers = createCityRenderLayers(new THREE.Scene());
-    const { source, createAssetInstance } = createAssetSource();
+    const { source, createInstancedAssetGroup } = createAssetSource();
 
     syncCityRenderLayers(layers, state, null, getBuildingRenderInfo, {
       assetSource: source,
       refreshTerrain: false,
     });
 
-    expect(createAssetInstance).toHaveBeenCalledWith("tree_mature_oak");
-    expect(createAssetInstance).not.toHaveBeenCalledWith("tree_oak");
-    expect(createAssetInstance).not.toHaveBeenCalledWith("tree_maple");
-    expect(createAssetInstance).not.toHaveBeenCalledWith("tree_conifer");
-    const streetTree = layers.roads.children.find(
-      (child) => child.name === "asset:tree_mature_oak",
+    expect(createInstancedAssetGroup).not.toHaveBeenCalledWith(
+      "tree_mature_oak",
+      expect.any(Array),
     );
-    expect(streetTree?.scale.x).toBeGreaterThanOrEqual(1.04);
+    expect(createInstancedAssetGroup).not.toHaveBeenCalledWith(
+      "tree_oak",
+      expect.any(Array),
+    );
+    expect(createInstancedAssetGroup).not.toHaveBeenCalledWith(
+      "tree_maple",
+      expect.any(Array),
+    );
+    expect(createInstancedAssetGroup).not.toHaveBeenCalledWith(
+      "tree_conifer",
+      expect.any(Array),
+    );
+    const streetTree = layers.roads.children.find(
+      (child) => child.name === "asset-batch:tree_mature_oak",
+    );
+    expect(streetTree).toBeUndefined();
   });
 });
 
@@ -196,6 +208,97 @@ describe("generated water tower asset", () => {
   });
 });
 
+describe("service radius feedback", () => {
+  it("renders a radius overlay in building placement previews", () => {
+    const layers = createCityRenderLayers(new THREE.Scene());
+
+    syncPlacementPreview(
+      layers.preview,
+      {
+        positions: [
+          [4, 5],
+          [5, 5],
+          [4, 6],
+          [5, 6],
+        ],
+        valid: true,
+        cost: 8000,
+        label: "Clinic",
+        definitionId: "clinic",
+      },
+      getBuildingRenderInfo,
+    );
+
+    expect(
+      layers.preview.children.some(
+        (child) => child.name === "radius-preview:healthRadius",
+      ),
+    ).toBe(true);
+    const radiusOverlay = layers.preview.children.find(
+      (child) => child.name === "radius-preview:healthRadius",
+    ) as THREE.Group | undefined;
+    const fill = radiusOverlay?.children.find((child) => child.name === "radius-fill") as
+      | THREE.Mesh
+      | undefined;
+    expect(fill?.geometry).toBeInstanceOf(THREE.CircleGeometry);
+  });
+
+  it("renders a selected building radius while inspecting", () => {
+    const state = createInitialCityState();
+    state.buildings.push(createBuilding("clinic:1", "clinic", 4, 5));
+    state.map[5]![4]!.buildingId = "clinic:1";
+    const layers = createCityRenderLayers(new THREE.Scene());
+
+    syncCityRenderLayers(layers, state, null, getBuildingRenderInfo, {
+      selectedTile: [4, 5],
+    });
+
+    expect(
+      layers.overlays.children.some(
+        (child) => child.name === "radius-selected:clinic:1:healthRadius",
+      ),
+    ).toBe(true);
+  });
+});
+
+describe("building feedback markers", () => {
+  it("renders typed utility and unemployment feedback above buildings", () => {
+    const state = createInitialCityState();
+    state.buildings.push(
+      createBuilding("house:1", "small_house", 4, 5),
+      createBuilding("shop:1", "small_shop", 6, 5),
+    );
+    state.population.unemployedWorkers = 4;
+    state.warnings.push({
+      id: "shop:1:no-power",
+      severity: "medium",
+      message: "Not enough power.",
+      targetBuilding: "shop:1",
+      targetTile: [6, 5],
+      suggestedFix: "Build a power plant.",
+    });
+    state.warnings.push({
+      id: "shop:1:no-water",
+      severity: "medium",
+      message: "Not enough water.",
+      targetBuilding: "shop:1",
+      targetTile: [6, 5],
+      suggestedFix: "Build a water tower.",
+    });
+    const layers = createCityRenderLayers(new THREE.Scene());
+
+    syncCityRenderLayers(layers, state, null, getBuildingRenderInfo);
+
+    expect(layers.warnings.children.map((child) => child.name)).toEqual(
+      expect.arrayContaining([
+        "feedback:unemployment:house:1",
+        "feedback:no-power:shop:1",
+        "feedback:no-water:shop:1",
+      ]),
+    );
+  });
+});
+
 describe("generated landfill rendering", () => {
   it("does not select industrial generated models for landfill buildings", () => {
     const state = createInitialCityState();
@@ -230,7 +333,11 @@ describe("generated landfill rendering", () => {
     );
 
     expect(createBuildingInstance).not.toHaveBeenCalled();
-    expect(layers.preview.children).toHaveLength(1);
+    expect(
+      layers.preview.children.some(
+        (child) => child.name === "radius-preview:garbageCollectionRadius",
+      ),
+    ).toBe(true);
   });
 });
 
@@ -271,6 +378,20 @@ const getBuildingRenderInfo: BuildingRenderInfoLookup = (definitionId) => {
     return {
       size: [3, 3],
       category: "utility",
+      effects: { garbageCollectionRadius: 32 },
+    };
+  }
+  if (definitionId === "clinic") {
+    return {
+      size: [2, 2],
+      category: "service",
+      effects: { healthRadius: 8 },
+    };
+  }
+  if (definitionId === "small_shop") {
+    return {
+      size: [1, 1],
+      category: "commercial",
       effects: {},
     };
   }
@@ -278,7 +399,7 @@ const getBuildingRenderInfo: BuildingRenderInfoLookup = (definitionId) => {
   return {
     size: [1, 1],
     category: "residential",
-    effects: {},
+    effects: { populationCapacity: 8 },
   };
 };
 
@@ -286,6 +407,7 @@ function createAssetSource(): {
   source: CityAssetSource;
   createBuildingInstance: ReturnType<typeof vi.fn>;
   createAssetInstance: ReturnType<typeof vi.fn>;
+  createInstancedAssetGroup: ReturnType<typeof vi.fn>;
 } {
   const createBuildingInstance = vi.fn(() => ({
     id: "residential_rowhouse_brick",
@@ -295,12 +417,18 @@ function createAssetSource(): {
     id,
     object: new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1)),
   }));
+  const createInstancedAssetGroup = vi.fn((id: string) => ({
+    id,
+    object: Object.assign(new THREE.Group(), { name: `asset-batch:${id}` }),
+  }));
   return {
     source: {
       createBuildingInstance,
       createAssetInstance,
+      createInstancedAssetGroup,
     },
     createBuildingInstance,
     createAssetInstance,
+    createInstancedAssetGroup,
   };
 }

@@ -32,6 +32,7 @@ import { advanceCommandObjectives } from "../systems/progression";
 import { takeLoan } from "../systems/loans";
 import { DISTRICT_COLORS, isPolicyRequirementMet } from "../systems/districts";
 import { canSelectSpecialization } from "../systems/specialization";
+import { monthsToTicks } from "../systems/time";
 
 interface CommandApplication {
   state: CityState;
@@ -291,7 +292,7 @@ function setSpecialization(
 ): CommandApplication {
   if (!canSelectSpecialization(current, command.specializationId))
     return failure(current, "Specialization requirements are not met");
-  if (current.time.tick - current.specialization.lastSwitchTick < 12)
+  if (current.time.tick - current.specialization.lastSwitchTick < monthsToTicks(12))
     return failure(current, "Specialization is on cooldown");
   const cost = current.specialization.active
     ? Math.floor(current.economy.monthlyIncome * 0.5)

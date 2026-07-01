@@ -137,6 +137,8 @@ This document lists every feature across all four implementation phases. Under e
 | 1.8.10 | Milestone rewards add to money exactly once                               | done   |
 | 1.8.11 | Set tax rate updates stored rate for correct category                     | done   |
 | 1.8.12 | Tax rate clamped to valid range                                           | done   |
+| 1.8.13 | Economy accrues one-thirtieth of monthly net each daily tick              | done   |
+| 1.8.14 | `monthsBelowZero` only increments on month-end day                        | done   |
 
 ### 1.9 RCI Demand System
 
@@ -306,16 +308,19 @@ This document lists every feature across all four implementation phases. Under e
 
 **Docs:** `14_THREEJS_RENDERING_GUIDE.md`
 
-| #      | Testable Logic                                                                   | Status |
-| ------ | -------------------------------------------------------------------------------- | ------ |
-| 1.20.1 | Grid rendered with correct dimensions                                            | done   |
-| 1.20.2 | Road mesh created/removed when road placed/removed                               | done   |
-| 1.20.3 | Building mesh created/removed when building placed/removed                       | done   |
-| 1.20.4 | Mesh update on building status change                                            | done   |
-| 1.20.5 | Instanced meshes used for repeated building types                                | done   |
-| 1.20.6 | Procedural InstancedMesh fallback for utility buildings without generated assets | done   |
-| 1.20.7 | Generated nature details use single mature oak GLB asset                         | done   |
-| 1.20.8 | Generated assets can opt out of shadow casting per type                          | done   |
+| #       | Testable Logic                                                                   | Status |
+| ------- | -------------------------------------------------------------------------------- | ------ |
+| 1.20.1  | Grid rendered with correct dimensions                                            | done   |
+| 1.20.2  | Road mesh created/removed when road placed/removed                               | done   |
+| 1.20.3  | Building mesh created/removed when building placed/removed                       | done   |
+| 1.20.4  | Mesh update on building status change                                            | done   |
+| 1.20.5  | Instanced meshes used for repeated building types                                | done   |
+| 1.20.6  | Procedural InstancedMesh fallback for utility buildings without generated assets | done   |
+| 1.20.7  | Generated nature details use single mature oak GLB asset                         | done   |
+| 1.20.8  | Generated assets can opt out of shadow casting per type                          | done   |
+| 1.20.9  | Terrain rendering places generated tree assets on grass tiles                    | done   |
+| 1.20.10 | Terrain rendering avoids tree placement on road tiles                            | done   |
+| 1.20.11 | Instanced asset batching creates InstancedMesh for repeated static nature assets | done   |
 
 ### 1.21 HUD (Money, Population, Date, Demand Bars)
 

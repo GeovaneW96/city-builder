@@ -5,7 +5,9 @@ import type { CityState, Loan } from "../../shared/types";
 import { runEconomy } from "./economy";
 import { getMonthlyPayment, takeLoan } from "./loans";
 import { calculateCityMetrics } from "./metrics";
+import { DAYS_PER_MONTH, monthsToTicks } from "./time";
 import { rebuildWarnings } from "./warnings";
+import { LOAN_BALANCE } from "../../data/balance";
 
 describe("loan issuance", () => {
   it("adds the selected principal and records a fixed repayment schedule", () => {
@@ -35,7 +37,7 @@ describe("loan issuance", () => {
     eligible.economy.money = 0;
     expect(takeLoan(eligible, "medium")).toBe("Loan cooldown is active");
 
-    eligible.time.tick = 20;
+    eligible.time.tick = monthsToTicks(LOAN_BALANCE.COOLDOWN_TICKS) + 1;
     eligible.economy.money = 0;
     eligible.economy.lastLoanTick = 0;
     eligible.economy.loans = [
@@ -53,6 +55,7 @@ describe("loan repayments", () => {
     const loan = createLoan("small", 1, 2);
     state.economy.loans = [loan];
     state.economy.money = 1000;
+    state.time.day = DAYS_PER_MONTH;
 
     runEconomy(state, calculateCityMetrics(state));
 
@@ -65,6 +68,7 @@ describe("loan repayments", () => {
     const state = createInitialCityState();
     state.economy.loans = [createLoan("small")];
     state.economy.money = 0;
+    state.time.day = DAYS_PER_MONTH;
 
     runEconomy(state, calculateCityMetrics(state));
     runEconomy(state, calculateCityMetrics(state));
@@ -96,7 +100,7 @@ describe("loan repayments", () => {
 function createEligibleState(): CityState {
   const state = createInitialCityState();
   state.economy.money = 9999;
-  state.time.tick = 6;
+  state.time.tick = monthsToTicks(LOAN_BALANCE.COOLDOWN_TICKS);
   return state;
 }
 

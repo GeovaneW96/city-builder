@@ -2,6 +2,7 @@ import { EXTENDED_SERVICE_BALANCE } from "../../data/balance";
 import { getBuildingById } from "../../data/buildings";
 import type { BuildingInstance, CityState, GameEvent } from "../../shared/types";
 import { getBuildingFootprint, getTile } from "../grid/map";
+import { isLastDayOfMonth } from "./time";
 
 type RadiusEffect = "policeRadius" | "fireRadius" | "garbageCollectionRadius";
 
@@ -120,15 +121,25 @@ function collectGarbage(
     (total, source) => total + source.amount,
     0,
   );
-  const currentWasteCollected = sources.reduce(
-    (total, source) =>
-      total + collectSource(source.building, source.amount, collectors, capacity),
-    0,
-  );
   const garbageCoverage = getCoverage(
     sources.filter((source) => source.amount > 0).map((source) => source.building),
     collectors,
     "garbageCollectionRadius",
+  );
+  if (!isLastDayOfMonth(state.time)) {
+    const totalUncollectedGarbage = state.extendedServices.totalUncollectedGarbage;
+    return {
+      totalUncollectedGarbage,
+      monthlyGarbageProduction,
+      monthlyGarbageCollected: state.extendedServices.monthlyGarbageCollected,
+      garbageCoverage,
+      garbageHappinessPenalty: -Math.floor(totalUncollectedGarbage / 10),
+    };
+  }
+  const currentWasteCollected = sources.reduce(
+    (total, source) =>
+      total + collectSource(source.building, source.amount, collectors, capacity),
+    0,
   );
   const backlog = Math.max(
     0,

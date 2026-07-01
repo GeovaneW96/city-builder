@@ -1,9 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { createInitialCityState } from "../state";
 import { createMap } from "../grid/map";
-import { getResourceMultiplier } from "./resources";
+import { depleteResources, getResourceMultiplier } from "./resources";
 import { calculateCityMetrics } from "./metrics";
 import type { BuildingInstance } from "../../shared/types";
+import { DAYS_PER_MONTH } from "./time";
 
 describe("resources", () => {
   it("stores resource richness and calculates deposit productivity", () => {
@@ -38,6 +39,22 @@ describe("resources", () => {
     state.map[2]![2]!.resourceType = "fertile_soil";
     state.map[2]![2]!.richness = 75;
     expect(calculateCityMetrics(state).industrialJobs).toBe(18);
+  });
+
+  it("depletes active resource tiles only on the last day of the year", () => {
+    const state = createInitialCityState();
+    state.buildings = [building("small_factory", 2, 2)];
+    state.map[2]![2]!.resourceType = "ore";
+    state.map[2]![2]!.richness = 10;
+    state.time.month = 12;
+    state.time.day = 12;
+
+    depleteResources(state);
+    expect(state.map[2]![2]!.richness).toBe(10);
+
+    state.time.day = DAYS_PER_MONTH;
+    depleteResources(state);
+    expect(state.map[2]![2]!.richness).toBe(9);
   });
 });
 

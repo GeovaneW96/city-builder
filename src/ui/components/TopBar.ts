@@ -20,6 +20,7 @@ export interface TopBarElements {
   settingsBtn: HTMLElement;
   demandBars: HTMLElement;
   speedControls: HTMLElement;
+  speedLabel: HTMLElement;
 }
 
 let lastRenderedSpeed: number | null = null;
@@ -57,6 +58,7 @@ export function createTopBar(): TopBarElements {
     settingsBtn: findEl(root, "settings-btn"),
     demandBars: findEl(root, "demand-mini"),
     speedControls: findEl(root, "speed-controls"),
+    speedLabel: findEl(root, "speed-label"),
   };
 }
 
@@ -102,10 +104,14 @@ function renderTopBarMarkup(): string {
       </div>
       <div class="topbar-time">
         <span class="topbar-date" data-ui="date">Jan 1, Year 1<br>08:00</span>
+        <span class="topbar-weather" aria-hidden="true">&#9728;</span>
+        <span class="topbar-control-divider"></span>
         <button class="topbar-sound-btn" data-action="sound" data-ui="sound-btn" aria-pressed="true" title="Toggle sound"></button>
         <div class="speed-controls" data-ui="speed-controls"></div>
+        <span class="topbar-speed-label" data-ui="speed-label">1x</span>
+        <span class="topbar-control-divider"></span>
+        <button class="topbar-stats-btn" data-action="stats" data-ui="settings-btn" title="Statistics"></button>
       </div>
-      <button class="topbar-stats-btn" data-action="stats" data-ui="settings-btn" title="Statistics"></button>
     </div>
   `;
 }
@@ -145,9 +151,9 @@ function updatePowerDisplay(els: TopBarElements, state: CityState): void {
 
 function updateWaterDisplay(els: TopBarElements, state: CityState): void {
   const net = state.services.waterCapacity - state.services.waterDemand;
-  els.water.textContent = String(state.services.waterCapacity);
+  els.water.textContent = `${state.services.waterCapacity.toLocaleString("en-US")} L`;
   const sign = net >= 0 ? "+" : "";
-  els.waterSub.textContent = `${sign}${net}`;
+  els.waterSub.textContent = `${sign}${net.toLocaleString("en-US")} /mo`;
   els.waterSub.className = `topbar-stat-sub ${net >= 0 ? "positive" : "negative"}`;
 }
 
@@ -167,6 +173,7 @@ export function updateTopBar(
 
   updateDemandMini(els.demandBars, state);
   updateSpeedControls(els.speedControls, state.time.speed);
+  els.speedLabel.textContent = `${state.time.speed}x`;
 
   els.soundBtn.innerHTML = uiState.settings.soundEnabled
     ? icon("sound", 16)

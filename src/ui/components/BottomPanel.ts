@@ -1,8 +1,10 @@
 import { MILESTONES } from "../../data/unlocks/milestones";
+import { CONSTRUCTION_COSTS, MONTHLY_UPKEEP, TRAFFIC_BALANCE } from "../../data/balance";
 import type {
   BuildMode,
   BuildingDefinition,
   CityState,
+  Road,
   UIState,
   ZoneType,
 } from "../../shared/types";
@@ -43,8 +45,10 @@ interface ItemDef {
   label: string;
   icon: IconName;
   cost?: number;
+  unlockPopulation?: number;
   action: string;
   data?: Record<string, string>;
+  building?: BuildingDefinition;
 }
 
 const ROAD_ITEMS: ItemDef[] = [
@@ -52,6 +56,7 @@ const ROAD_ITEMS: ItemDef[] = [
     id: "dirt",
     label: "Dirt Road",
     icon: "road",
+    cost: CONSTRUCTION_COSTS.DIRT_ROAD,
     action: "road",
     data: { roadtype: "dirt" },
   },
@@ -59,8 +64,35 @@ const ROAD_ITEMS: ItemDef[] = [
     id: "paved",
     label: "Paved Road",
     icon: "road",
+    cost: CONSTRUCTION_COSTS.PAVED_ROAD,
     action: "road",
     data: { roadtype: "paved" },
+  },
+  {
+    id: "local",
+    label: "Main Road",
+    icon: "road",
+    cost: TRAFFIC_BALANCE.LOCAL_ROAD_COST,
+    action: "road",
+    data: { roadtype: "local" },
+  },
+  {
+    id: "collector",
+    label: "Avenue",
+    icon: "road",
+    cost: TRAFFIC_BALANCE.COLLECTOR_ROAD_COST,
+    unlockPopulation: 500,
+    action: "road",
+    data: { roadtype: "collector" },
+  },
+  {
+    id: "arterial",
+    label: "Highway",
+    icon: "road",
+    cost: TRAFFIC_BALANCE.ARTERIAL_ROAD_COST,
+    unlockPopulation: 1000,
+    action: "road",
+    data: { roadtype: "arterial" },
   },
 ];
 
@@ -118,9 +150,10 @@ export function createBottomPanel(): BottomPanelElements {
     <div class="bottom-tabs" data-ui="tabs"></div>
     <div class="bottom-content" data-ui="content"></div>
     <div class="bottom-hint" data-ui="hint">
-      <span><kbd>Drag</kbd> to build</span>
-      <span><kbd>R</kbd> to rotate</span>
-      <span><kbd>Esc</kbd> to inspect</span>
+      <span><kbd>LMB</kbd> Place</span>
+      <span>Hold <kbd>Shift</kbd> to place multiple</span>
+      <span><kbd>R</kbd> Rotate</span>
+      <span><kbd>Esc</kbd> Cancel</span>
     </div>
   `;
 
@@ -222,19 +255,30 @@ function renderContent(
       const active = isItemActive(item, uiState);
       const availability = getItemAvailability(item, state);
       return `
-        <button type="button" class="item-card ${active ? "active" : ""} ${availability.locked ? "locked" : ""}" data-action="${item.action}" aria-pressed="${active}" ${availability.locked ? "disabled" : ""} ${Object.entries(
+        <button type="button" class="item-card item-card-${item.action} ${active ? "active" : ""} ${availability.locked ? "locked" : ""}" data-action="${item.action}" aria-pressed="${active}" ${availability.locked ? "disabled" : ""} ${Object.entries(
           item.data ?? {},
         )
           .map(([k, v]) => `data-${k.toLowerCase()}="${v}"`)
           .join(" ")}>
-          <div class="item-card-icon">${icon(item.icon, 32)}</div>
+          ${renderItemVisual(item)}
           <div class="item-card-label">${item.label}</div>
-          ${availability.requirement ? `<div class="item-card-requirement">${availability.requirement}</div>` : ""}
-          ${item.cost ? `<div class="item-card-cost">$${item.cost.toLocaleString()}</div>` : ""}
+          <div class="item-card-requirement ${availability.requirement ? "" : "empty"}">${availability.requirement ?? ""}</div>
+          ${renderItemStats(item)}
         </button>
       `;
     })
     .join("");
+}
+
+function renderItemVisual(item: ItemDef): string {
+  if (item.action !== "road") {
+    return `<div class="item-card-icon">${icon(item.icon, 32)}</div>`;
+  }
+  return `
+    <div class="road-card-preview road-card-preview-${item.id}">
+      <span class="road-card-road"></span>
+    </div>
+  `;
 }
 
 function isServiceBuilding(building: BuildingDefinition): boolean {
@@ -253,7 +297,188 @@ function toBuildingItem(building: BuildingDefinition): ItemDef {
     cost: building.cost,
     action: "building",
     data: { building: building.id },
+    building,
   };
+}
+
+interface ItemStat {
+  label: string;
+  value: string;
+  tone?: "positive" | "warning" | "negative";
+}
+
+const MAX_BUILDING_STATS = 5;
+
+function renderItemStats(item: ItemDef): string {
+  const stats = getItemStats(item);
+  if (stats.length === 0) return "";
+  return `
+    <div class="item-card-stats">
+      ${stats
+        .map(
+          (stat) => `
+            <div class="item-card-stat ${stat.tone ?? ""}">
+              <span>${stat.label}</span>
+              <strong>${stat.value}</strong>
+            </div>
+          `,
+        )
+        .join("")}
+    </div>
+  `;
+}
+
+function getItemStats(item: ItemDef): ItemStat[] {
+  if (item.action === "road") return getRoadStats(item);
+  if (item.action === "building" && item.building) {
+    return getBuildingStats(item.building);
+  }
+  if (item.action === "zone") return getZoneStats(item);
+  return [];
+}
+
+function getRoadStats(item: ItemDef): ItemStat[] {
+  const type = item.data?.roadtype as Road["type"] | undefined;
+  if (!type) return [];
+  return [
+    { label: "Cost", value: `${formatMoney(item.cost ?? 0)}/cell`, tone: "positive" },
+    { label: "Upkeep", value: `${formatMoney(getRoadUpkeep(type))}/mo` },
+    { label: "Capacity", value: String(getRoadCapacity(type)) },
+    { label: "Speed", value: `${formatRoadSpeed(getRoadSpeed(type))}x` },
+  ];
+}
+
+function getZoneStats(item: ItemDef): ItemStat[] {
+  const zoneType = item.data?.zone;
+  const zoneLabel = zoneType ? formatLabel(zoneType) : "Zone";
+  return [
+    { label: "Cost", value: "$0/cell", tone: "positive" },
+    { label: "Type", value: zoneLabel },
+    { label: "Road", value: "Required" },
+  ];
+}
+
+function getBuildingStats(building: BuildingDefinition): ItemStat[] {
+  const baseStats: ItemStat[] = [
+    { label: "Cost", value: formatMoney(building.cost), tone: "positive" },
+    { label: "Upkeep", value: `${formatMoney(building.upkeep)}/mo` },
+    { label: "Size", value: `${building.size[0]}x${building.size[1]}` },
+  ];
+  const effectStats = getPriorityEffectStats(building);
+  return [...baseStats, ...effectStats.slice(0, MAX_BUILDING_STATS - baseStats.length)];
+}
+
+function getEffectStats(building: BuildingDefinition): ItemStat[] {
+  return EFFECT_STAT_BUILDERS.map((create) => create(building)).filter(isItemStat);
+}
+
+function getPriorityEffectStats(building: BuildingDefinition): ItemStat[] {
+  const stats = getEffectStats(building);
+  const jobStat = stats.find((stat) => stat.label === "Jobs");
+  const primaryStats = stats.filter((stat) => stat.label !== "Jobs");
+  return jobStat ? [...primaryStats, jobStat] : primaryStats;
+}
+
+function isItemStat(stat: ItemStat | null): stat is ItemStat {
+  return stat !== null;
+}
+
+type EffectStatBuilder = (building: BuildingDefinition) => ItemStat | null;
+
+const EFFECT_STAT_BUILDERS: EffectStatBuilder[] = [
+  (building) => getNumericEffectStat(building, "populationCapacity", "Residents"),
+  (building) => getNumericEffectStat(building, "jobs", "Jobs"),
+  (building) => getCapacityEffectStat(building, "powerCapacity", "Power", "MW"),
+  (building) => getCapacityEffectStat(building, "waterCapacity", "Water", ""),
+  (building) => getRadiusEffectStat(building, "healthRadius", "Health"),
+  (building) => getRadiusEffectStat(building, "educationRadius", "Education"),
+  (building) => getRadiusEffectStat(building, "policeRadius", "Police"),
+  (building) => getRadiusEffectStat(building, "fireRadius", "Fire"),
+  (building) => getGarbageEffectStat(building),
+  (building) => getSignedEffectStat(building, "happiness", "Happiness", "positive"),
+  (building) => getSignedEffectStat(building, "pollution", "Pollution", "warning"),
+  (building) => getSignedEffectStat(building, "attractiveness", "Appeal"),
+];
+
+function getNumericEffectStat(
+  building: BuildingDefinition,
+  key: "populationCapacity" | "jobs",
+  label: string,
+): ItemStat | null {
+  const value = building.effects[key];
+  return value ? { label, value: String(value) } : null;
+}
+
+function getCapacityEffectStat(
+  building: BuildingDefinition,
+  key: "powerCapacity" | "waterCapacity",
+  label: string,
+  suffix: string,
+): ItemStat | null {
+  const value = building.effects[key];
+  return value ? { label, value: `+${value}${suffix}`, tone: "positive" } : null;
+}
+
+function getRadiusEffectStat(
+  building: BuildingDefinition,
+  key: "healthRadius" | "educationRadius" | "policeRadius" | "fireRadius",
+  label: string,
+): ItemStat | null {
+  const value = building.effects[key];
+  return value ? { label, value: `${value} tiles` } : null;
+}
+
+function getGarbageEffectStat(building: BuildingDefinition): ItemStat | null {
+  const value = building.effects.garbageCapacity;
+  return value ? { label: "Garbage", value: `${value}/mo` } : null;
+}
+
+function getSignedEffectStat(
+  building: BuildingDefinition,
+  key: "happiness" | "pollution" | "attractiveness",
+  label: string,
+  tone?: ItemStat["tone"],
+): ItemStat | null {
+  const value = building.effects[key];
+  return value ? { label, value: `+${value}`, tone } : null;
+}
+
+function getRoadCapacity(type: Road["type"]): number {
+  if (type === "dirt") return TRAFFIC_BALANCE.DIRT_ROAD_CAPACITY;
+  if (type === "paved") return TRAFFIC_BALANCE.PAVED_ROAD_CAPACITY;
+  if (type === "local") return TRAFFIC_BALANCE.LOCAL_ROAD_CAPACITY;
+  if (type === "collector") return TRAFFIC_BALANCE.COLLECTOR_ROAD_CAPACITY;
+  return TRAFFIC_BALANCE.ARTERIAL_ROAD_CAPACITY;
+}
+
+function getRoadSpeed(type: Road["type"]): number {
+  if (type === "dirt" || type === "local") return TRAFFIC_BALANCE.LOCAL_ROAD_SPEED;
+  if (type === "paved" || type === "collector")
+    return TRAFFIC_BALANCE.COLLECTOR_ROAD_SPEED;
+  return TRAFFIC_BALANCE.ARTERIAL_ROAD_SPEED;
+}
+
+function getRoadUpkeep(type: Road["type"]): number {
+  if (type === "dirt") return MONTHLY_UPKEEP.DIRT_ROAD_PER_TILE;
+  if (type === "paved") return MONTHLY_UPKEEP.PAVED_ROAD_PER_TILE;
+  if (type === "local") return TRAFFIC_BALANCE.LOCAL_ROAD_UPKEEP;
+  if (type === "collector") return TRAFFIC_BALANCE.COLLECTOR_ROAD_UPKEEP;
+  return TRAFFIC_BALANCE.ARTERIAL_ROAD_UPKEEP;
+}
+
+function formatMoney(value: number): string {
+  return `$${Math.round(value).toLocaleString("en-US")}`;
+}
+
+function formatRoadSpeed(speed: number): string {
+  return Number.isInteger(speed) ? String(speed) : speed.toFixed(1);
+}
+
+function formatLabel(value: string): string {
+  return value
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 }
 
 function getItemAvailability(
@@ -261,6 +486,12 @@ function getItemAvailability(
   state: CityState | null,
 ): { locked: boolean; requirement: string | null } {
   if (!state) return { locked: false, requirement: null };
+  if (item.unlockPopulation && state.population.total < item.unlockPopulation) {
+    return {
+      locked: true,
+      requirement: `Reaches ${item.unlockPopulation.toLocaleString()} population`,
+    };
+  }
   const zone = item.data?.zone as ZoneType | undefined;
   if (zone) return getZoneAvailability(state, zone);
   const buildingId = item.data?.building;

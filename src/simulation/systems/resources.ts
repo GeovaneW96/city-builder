@@ -1,7 +1,8 @@
 import type { CityState, Tile } from "../../shared/types";
+import { isLastDayOfYear } from "./time";
 
 export function depleteResources(state: CityState): void {
-  if (state.time.month !== 12) return;
+  if (!isLastDayOfYear(state.time)) return;
   state.buildings.forEach((building) => {
     if (building.status !== "active") return;
     const tile = state.map[building.position[1]]?.[building.position[0]];

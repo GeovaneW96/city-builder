@@ -9,6 +9,7 @@ import type {
 } from "../../shared/types";
 import { LOAN_BALANCE } from "../../data/balance";
 import { GRID_SIZE } from "../constants";
+import { monthsToTicks } from "../systems/time";
 
 export interface FootprintCell {
   x: number;
@@ -90,7 +91,8 @@ export function cloneCityState(state: CityState): CityState {
       ...state.economy,
       taxRates: { ...state.economy.taxRates },
       loans: (state.economy.loans ?? []).map((loan) => ({ ...loan })),
-      lastLoanTick: state.economy.lastLoanTick ?? -LOAN_BALANCE.COOLDOWN_TICKS,
+      lastLoanTick:
+        state.economy.lastLoanTick ?? -monthsToTicks(LOAN_BALANCE.COOLDOWN_TICKS),
       tourismIncome: state.economy.tourismIncome ?? 0,
     },
     population: { ...state.population },
@@ -98,7 +100,7 @@ export function cloneCityState(state: CityState): CityState {
     office: { ...state.office },
     tourism: cloneTourism(state),
     specialization: {
-      ...(state.specialization ?? { active: null, lastSwitchTick: -12 }),
+      ...(state.specialization ?? { active: null, lastSwitchTick: -monthsToTicks(12) }),
     },
     events: state.events.map((event) => ({ ...event })),
     services: {

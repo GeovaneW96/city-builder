@@ -1,6 +1,7 @@
 import * as THREE from "three";
-import type { CityAssetSource } from "../../assets/AssetManager";
+import type { CityAssetSource, GeneratedAssetPlacement } from "../../assets/AssetManager";
 import type { CityState, Tile } from "../../shared/types";
+import { addGeneratedAssetBatch, GENERATED_OAK_RENDER_SCALE } from "./generated-assets";
 import { getTiledTexture } from "./textures";
 
 const WATER_COLORS = {
@@ -339,19 +340,11 @@ function renderGeneratedNaturalDetails(
   assetSource: CityAssetSource,
   detailDensity: number,
 ): void {
-  getTreePlacements(state)
+  const placements = getTreePlacements(state)
     .filter((tree) => tree.scale >= 1)
     .filter((_tree, index) => shouldPlaceGeneratedNature(index, detailDensity))
-    .forEach((tree) => {
-      const asset = assetSource.createAssetInstance("tree_mature_oak");
-      if (!asset) return;
-      asset.object.position.set(tree.x, 0, tree.y);
-      asset.object.rotation.y =
-        getTerrainHash(Math.round(tree.x * 10), Math.round(tree.y * 10)) % (Math.PI * 2);
-      asset.object.scale.setScalar(tree.scale * 1.24);
-      asset.object.name = `asset:${asset.id}`;
-      group.add(asset.object);
-    });
+    .map(createGeneratedTreePlacement);
+  addGeneratedAssetBatch(group, assetSource, "tree_mature_oak", placements);
 }
 
 function renderGeneratedShoreRocks(
@@ -361,21 +354,31 @@ function renderGeneratedShoreRocks(
   detailDensity: number,
 ): void {
   const frequency = Math.max(3, Math.round(8 / detailDensity));
-  state.map
+  const placements = state.map
     .flat()
     .filter((tile) => isVacantGrassTile(state, tile.x, tile.y))
     .filter((tile) => isNearWater(state, tile.x, tile.y))
     .filter((tile) => getTerrainHash(tile.x, tile.y) % frequency === 0)
-    .forEach((tile) => {
-      const asset = assetSource.createAssetInstance("rock_cluster");
-      if (!asset) return;
-      const offset = getTerrainOffset(tile.x + 3, tile.y + 11);
-      asset.object.position.set(tile.x + offset.x, 0, tile.y + offset.y);
-      asset.object.rotation.y = getTerrainHash(tile.x, tile.y) % Math.PI;
-      asset.object.scale.setScalar(0.48);
-      asset.object.name = `asset:${asset.id}`;
-      group.add(asset.object);
-    });
+    .map(createGeneratedShoreRockPlacement);
+  addGeneratedAssetBatch(group, assetSource, "rock_cluster", placements);
+}
+
+function createGeneratedTreePlacement(tree: NaturePlacement): GeneratedAssetPlacement {
+  return {
+    position: [tree.x, 0, tree.y],
+    rotation:
+      getTerrainHash(Math.round(tree.x * 10), Math.round(tree.y * 10)) % (Math.PI * 2),
+    scale: tree.scale * GENERATED_OAK_RENDER_SCALE,
+  };
+}
+
+function createGeneratedShoreRockPlacement(tile: Tile): GeneratedAssetPlacement {
+  const offset = getTerrainOffset(tile.x + 3, tile.y + 11);
+  return {
+    position: [tile.x + offset.x, 0, tile.y + offset.y],
+    rotation: getTerrainHash(tile.x, tile.y) % Math.PI,
+    scale: 0.48,
+  };
 }
 
 function shouldPlaceGeneratedNature(index: number, detailDensity: number): boolean {
@@ -534,22 +537,9 @@ function setTreeMatrices(
 function shouldRenderTree(state: CityState, x: number, y: number): boolean {
   return (
     isVacantGrassTile(state, x, y) &&
-    (isNearWater(state, x, y) ||
-      isMapEdge(state, x, y) ||
-      isStreetTreeSpot(state, x, y)) &&
+    (isNearWater(state, x, y) || isMapEdge(state, x, y)) &&
     getTerrainHash(x, y) % 3 !== 0
   );
-}
-
-function isStreetTreeSpot(state: CityState, x: number, y: number): boolean {
-  const tile = state.map[y]?.[x];
-  if (!tile || tile.zone) return false;
-  return [
-    state.map[y - 1]?.[x],
-    state.map[y]?.[x + 1],
-    state.map[y + 1]?.[x],
-    state.map[y]?.[x - 1],
-  ].some((neighbor) => Boolean(neighbor?.roadId));
 }
 
 function isVacantGrassTile(state: CityState, x: number, y: number): boolean {

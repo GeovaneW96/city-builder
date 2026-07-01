@@ -1,16 +1,45 @@
 import { describe, expect, it } from "vitest";
 import { createInitialCityState } from "../state";
-import { advanceTime, getCalendarTimeAfterHours, HOURS_PER_MONTH } from "./time";
+import {
+  advanceTime,
+  DAYS_PER_MONTH,
+  getCalendarTimeAfterHours,
+  HOURS_PER_DAY,
+  HOURS_PER_MONTH,
+} from "./time";
 
 describe("simulation calendar", () => {
-  it("starts each monthly tick on the first day at 08:00 and rolls the year", () => {
+  it("advances one day per simulation tick", () => {
     const state = createInitialCityState();
-    state.time = { tick: 11, day: 18, hour: 19, month: 12, year: 1, speed: 1 };
+    state.time = { tick: 3, day: 18, hour: 19, month: 4, year: 1, speed: 1 };
 
     advanceTime(state);
 
     expect(state.time).toEqual({
-      tick: 12,
+      tick: 4,
+      day: 19,
+      hour: 8,
+      month: 4,
+      year: 1,
+      speed: 1,
+    });
+  });
+
+  it("rolls the month and year after the last day", () => {
+    const state = createInitialCityState();
+    state.time = {
+      tick: 359,
+      day: DAYS_PER_MONTH,
+      hour: 19,
+      month: 12,
+      year: 1,
+      speed: 1,
+    };
+
+    advanceTime(state);
+
+    expect(state.time).toEqual({
+      tick: 360,
       day: 1,
       hour: 8,
       month: 1,
@@ -25,6 +54,13 @@ describe("simulation calendar", () => {
     expect(getCalendarTimeAfterHours(state.time, 16)).toMatchObject({
       day: 2,
       hour: 0,
+      month: 1,
+      year: 1,
+      tick: 0,
+    });
+    expect(getCalendarTimeAfterHours(state.time, HOURS_PER_DAY)).toMatchObject({
+      day: 2,
+      hour: 8,
       month: 1,
       year: 1,
       tick: 0,

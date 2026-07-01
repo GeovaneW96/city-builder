@@ -6,6 +6,11 @@ Monthly income also includes office, tourism, event, and specialization modifier
 Tourism requires an actual attraction (a park, landmark, or hotel); a clean empty map does not
 generate passive tourism income.
 
+The simulation advances one in-game day per tick. Monthly income and monthly expenses are
+recomputed every day as projected monthly rates, then ordinary income/upkeep changes the treasury
+by one-thirtieth of that monthly net amount. The HUD can therefore update money and projected
+cash flow daily while preserving monthly balance values.
+
 ## Purpose
 
 This document defines the initial economy model and balancing assumptions.
@@ -236,9 +241,9 @@ shortage without adding a separate rendering or agent dependency.
 ## Debt and Loans
 
 Loan principals, repayment terms, eligibility threshold, cooldown, and default limit are
-defined in `src/data/balance/loans.ts`. A loan payment is charged as part of the monthly
-economy tick after normal income and upkeep. Three consecutive missed payments on the same loan
-immediately fail the scenario.
+defined in `src/data/balance/loans.ts`. Loan payments remain monthly settlements and are charged
+on the last day of each 30-day month after daily income/upkeep has accrued. Three consecutive
+missed payments on the same loan immediately fail the scenario.
 
 ## District Policy Balance
 
@@ -267,7 +272,7 @@ computed, and add their derived happiness benefit.
 If money is below 0:
 
 - show warning immediately;
-- increment monthsBelowZero each economy tick;
+- increment monthsBelowZero on the last day of each month;
 - if monthsBelowZero >= 5, scenario fails.
 
 If money returns to >= 0:

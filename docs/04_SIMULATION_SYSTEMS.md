@@ -43,8 +43,8 @@ The game should separate render frames from simulation ticks.
 Example:
 
 - rendering: every animation frame;
-- simulation: every in-game day/month or fixed interval;
-- economy: monthly;
+- simulation: every in-game day;
+- economy: recomputed daily from monthly rates, with money accruing one daily slice;
 - building growth: periodic;
 - warnings: updated after relevant changes.
 
@@ -294,7 +294,7 @@ option, not an initial gate before the first placement.
 
 Within a single simulation tick, the following runs **in order**:
 
-1. **Economy** — compute income and expenses, process loan payments, update money, and check bankruptcy.
+1. **Economy** — compute monthly income and expenses, apply one daily cash-flow slice, and settle loans/bankruptcy only on month boundaries.
 2. **Demand** — recompute RCI demand from current city conditions.
 3. **Land Productivity** — compute per-building land value multipliers for commercial tax income and industrial jobs/output.
 4. **Building Growth and Upgrades** — activate completed construction, upgrade eligible buildings, then spawn new buildings on valid zoned tiles.
@@ -318,6 +318,11 @@ The implementation applies district policy effects inside the economy, demand, s
 happiness, and pollution systems. After progression is updated, achievement progress counters
 are advanced and newly eligible rewards are emitted as simulation events. Rendering only reads
 these results.
+
+Each simulation tick advances the calendar by one in-game day. Month-based systems remain
+calendar-gated: loan payments and `monthsBelowZero` update on the last day of the month, resource
+depletion runs on the last day of the year, garbage backlog changes on month boundaries, and
+positive-income achievement streaks count months rather than days.
 
 ### Building Growth Details
 

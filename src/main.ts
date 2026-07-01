@@ -26,7 +26,7 @@ import {
   type CameraPanInput,
 } from "./rendering/three/scene";
 import { getRenderQualityProfile } from "./rendering/three/quality";
-import { getCalendarTimeAfterHours, HOURS_PER_MONTH } from "./simulation/systems/time";
+import { getCalendarTimeAfterHours, HOURS_PER_DAY } from "./simulation/systems/time";
 import {
   AUTOSAVE_INTERVAL_MS,
   AUTOSAVE_SLOT_ID,
@@ -66,6 +66,13 @@ const CAMERA_KEY_PANS: Record<string, CameraPanInput> = {
 const CAMERA_PAN_UNITS_PER_SECOND_RATIO = 0.45;
 const CAMERA_PAN_MIN_UNITS_PER_SECOND = 16;
 const MAX_FRAME_DELTA_SECONDS = 1 / 20;
+const RADIUS_RENDER_EFFECTS = [
+  "healthRadius",
+  "educationRadius",
+  "policeRadius",
+  "fireRadius",
+  "garbageCollectionRadius",
+] as const;
 
 const app = document.getElementById("app");
 if (!app) throw new Error("No #app element found");
@@ -95,7 +102,6 @@ let lastOverlayRenderKey: string | null = null;
 let lastWarningRenderKey: string | null = null;
 let lastTerrainRenderKey: string | null = null;
 let lastEvaluatedCityState: CityState | null = null;
-let lastEvaluatedOverlay: UIState["activeOverlay"] = null;
 let lastRenderQuality = useUIStore.getState().settings.graphicsQuality;
 let generatedAssetsReady = false;
 const activeCameraPanKeys = new Set<string>();
@@ -109,6 +115,7 @@ const GLOBAL_ACTIONS: Record<string, (target: HTMLElement) => void> = {
   services: () => openBuildCatalog("buildings"),
   utilities: () => openBuildCatalog("utilities"),
   decorations: () => openBuildCatalog("decorations"),
+  specials: () => openBuildCatalog("specials"),
   demolish: () => useUIStore.getState().setBuildMode("demolish"),
   save: () => saveGame(),
   load: () => loadGame(),
@@ -183,8 +190,8 @@ function updateGameClock(now: number): void {
   const interval = TICK_INTERVALS[state.time.speed];
   const elapsed = Math.max(0, now - lastTickAt);
   const elapsedHours = Math.min(
-    HOURS_PER_MONTH - 1,
-    Math.floor((elapsed / interval) * HOURS_PER_MONTH),
+    HOURS_PER_DAY - 1,
+    Math.floor((elapsed / interval) * HOURS_PER_DAY),
   );
   updateCalendarClock(ui.topBar, getCalendarTimeAfterHours(state.time, elapsedHours));
 }
@@ -226,7 +233,7 @@ function syncAll(force = false): void {
   const state = useSimulationStore.getState().state;
   const uiState = useUIStore.getState();
   const qualityChanged = syncRenderQuality(uiState.settings.graphicsQuality);
-  evaluateCityRender(state, uiState.activeOverlay, force || qualityChanged);
+  evaluateCityRender(state, uiState, force || qualityChanged);
   syncPlacementPreview(
     cityLayers.preview,
     uiState.placementPreview,
@@ -238,20 +245,16 @@ function syncAll(force = false): void {
   setGridVisibility(grid, uiState.placementPreview !== null);
 }
 
-function evaluateCityRender(
-  state: CityState,
-  activeOverlay: UIState["activeOverlay"],
-  force: boolean,
-): void {
+function evaluateCityRender(state: CityState, uiState: UIState, force: boolean): void {
   if (isE2ETest) return;
   const stateChanged = state !== lastEvaluatedCityState;
-  const overlayChanged = activeOverlay !== lastEvaluatedOverlay;
+  const overlayRenderKey = getOverlayRenderKey(state, uiState);
+  const overlayChanged = overlayRenderKey !== lastOverlayRenderKey;
   if (!force && !stateChanged && !overlayChanged) return;
 
   const roadRenderKey = getRoadRenderKey(state);
   const buildingRenderKey = getBuildingRenderKey(state);
   const zoneRenderKey = getZoneRenderKey(state);
-  const overlayRenderKey = getOverlayRenderKey(state, activeOverlay);
   const warningRenderKey = getWarningRenderKey(state);
   const terrainRenderKey = getTerrainRenderKey(state);
   const refreshTerrain = force || terrainRenderKey !== lastTerrainRenderKey;
@@ -265,14 +268,21 @@ function evaluateCityRender(
     warningRenderKey,
   });
   if (dirtyLayers.length > 0) {
-    syncCityRenderLayers(cityLayers, state, activeOverlay, getBuildingRenderInfo, {
-      assetSource: generatedAssetsReady ? cityAssets : undefined,
-      detailDensity: getRenderQualityProfile(
-        useUIStore.getState().settings.graphicsQuality,
-      ).detailDensity,
-      refreshTerrain,
-      dirtyLayers,
-    });
+    syncCityRenderLayers(
+      cityLayers,
+      state,
+      uiState.activeOverlay,
+      getBuildingRenderInfo,
+      {
+        assetSource: generatedAssetsReady ? cityAssets : undefined,
+        detailDensity: getRenderQualityProfile(
+          useUIStore.getState().settings.graphicsQuality,
+        ).detailDensity,
+        refreshTerrain,
+        dirtyLayers,
+        selectedTile: uiState.selectedTile,
+      },
+    );
     lastRoadRenderKey = roadRenderKey;
     lastBuildingRenderKey = buildingRenderKey;
     lastZoneRenderKey = zoneRenderKey;
@@ -281,7 +291,6 @@ function evaluateCityRender(
     lastTerrainRenderKey = terrainRenderKey;
   }
   lastEvaluatedCityState = state;
-  lastEvaluatedOverlay = activeOverlay;
 }
 
 function syncRenderQuality(quality: UIState["settings"]["graphicsQuality"]): boolean {
@@ -379,29 +388,55 @@ function getZoneRenderKey(state: CityState): string {
     .join(",");
 }
 
-function getOverlayRenderKey(
-  state: CityState,
-  activeOverlay: UIState["activeOverlay"],
-): string {
-  if (activeOverlay === null) return "none";
+function getOverlayRenderKey(state: CityState, uiState: UIState): string {
+  const activeOverlay = uiState.activeOverlay;
+  const selectedRadiusKey = getSelectedRadiusRenderKey(state, uiState.selectedTile);
+  if (activeOverlay === null) return `none:${selectedRadiusKey}`;
   if (activeOverlay === "pollution") {
-    return state.map
+    return `pollution:${selectedRadiusKey}:${state.map
       .flat()
       .map((tile) => tile.pollution)
-      .join(",");
+      .join(",")}`;
   }
-  if (activeOverlay === "zoning") return getZoneRenderKey(state);
+  if (activeOverlay === "zoning")
+    return `zoning:${selectedRadiusKey}:${getZoneRenderKey(state)}`;
   if (activeOverlay === "health" || activeOverlay === "education") {
-    return getBuildingRenderKey(state);
+    return `${activeOverlay}:${selectedRadiusKey}:${getBuildingRenderKey(state)}`;
   }
-  if (activeOverlay === "districts") return JSON.stringify(state.districts);
-  return activeOverlay;
+  if (activeOverlay === "districts") {
+    return `districts:${selectedRadiusKey}:${JSON.stringify(state.districts)}`;
+  }
+  return `${activeOverlay}:${selectedRadiusKey}`;
+}
+
+function getSelectedRadiusRenderKey(
+  state: CityState,
+  selectedTile: UIState["selectedTile"],
+): string {
+  if (!selectedTile) return "selected:none";
+  const tile = state.map[selectedTile[1]]?.[selectedTile[0]];
+  const buildingId = tile?.buildingId;
+  if (!buildingId) return `selected:${selectedTile.join(",")}:empty`;
+  const building = state.buildings.find((item) => item.id === buildingId);
+  if (!building) return `selected:${buildingId}:missing`;
+  return `selected:${building.id}:${getDefinitionRadiusRenderKey(building.definitionId)}`;
+}
+
+function getDefinitionRadiusRenderKey(definitionId: string): string {
+  const effects = getBuildingById(definitionId)?.effects;
+  if (!effects) return "0:0:0:0:0";
+  return RADIUS_RENDER_EFFECTS.map((effect) => String(effects[effect] ?? 0)).join(":");
 }
 
 function getWarningRenderKey(state: CityState): string {
-  return state.warnings
+  const warningKey = state.warnings
     .map((warning) => `${warning.id}:${warning.targetTile?.join(",") ?? ""}`)
     .join(",");
+  return [
+    warningKey,
+    `unemployed:${state.population.unemployedWorkers}`,
+    getBuildingRenderKey(state),
+  ].join("|");
 }
 
 function getTerrainRenderKey(state: CityState): string {
@@ -823,6 +858,10 @@ function getBuildingRenderInfo(definitionId: string): BuildingRenderInfo | null 
     effects: {
       healthRadius: definition.effects.healthRadius,
       educationRadius: definition.effects.educationRadius,
+      policeRadius: definition.effects.policeRadius,
+      fireRadius: definition.effects.fireRadius,
+      garbageCollectionRadius: definition.effects.garbageCollectionRadius,
+      populationCapacity: definition.effects.populationCapacity,
     },
   };
 }

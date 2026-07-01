@@ -1,6 +1,7 @@
 import { ACHIEVEMENTS } from "../../data/achievements";
 import { MILESTONES } from "../../data/unlocks/milestones";
 import type { AchievementDefinition, CityState, GameEvent } from "../../shared/types";
+import { isLastDayOfMonth } from "./time";
 
 export function updateAchievementProgress(state: CityState): void {
   const progress = state.achievementProgress;
@@ -8,6 +9,7 @@ export function updateAchievementProgress(state: CityState): void {
   progress.pollutionStayedLow &&= getAveragePollution(state) < 10;
   progress.happyTickStreak =
     state.happiness.value > 80 ? progress.happyTickStreak + 1 : 0;
+  if (!isLastDayOfMonth(state.time)) return;
   const netIncome = state.economy.monthlyIncome - state.economy.monthlyExpenses;
   progress.positiveIncomeMonthStreak =
     netIncome > 0 ? progress.positiveIncomeMonthStreak + 1 : 0;

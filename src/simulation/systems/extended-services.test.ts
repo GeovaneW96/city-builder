@@ -3,6 +3,7 @@ import { createInitialCityState } from "../state";
 import type { BuildingInstance, CityState } from "../../shared/types";
 import { recomputeExtendedServices } from "./extended-services";
 import { recomputeHappiness } from "./happiness";
+import { DAYS_PER_MONTH } from "./time";
 import { rebuildWarnings } from "./warnings";
 
 describe("police and fire services", () => {
@@ -80,10 +81,12 @@ describe("police and fire services", () => {
 describe("garbage service", () => {
   it("collects garbage only when a landfill covers its producer", () => {
     const uncovered = createInitialCityState();
+    uncovered.time.day = DAYS_PER_MONTH;
     addBuilding(uncovered, "large_plant", 10, 10);
     recomputeExtendedServices(uncovered);
 
     const covered = createInitialCityState();
+    covered.time.day = DAYS_PER_MONTH;
     addBuilding(covered, "large_plant", 10, 10);
     addBuilding(covered, "landfill", 11, 10);
     recomputeExtendedServices(covered);
@@ -95,6 +98,7 @@ describe("garbage service", () => {
 
   it("uses spare landfill capacity to clear accumulated garbage", () => {
     const state = createInitialCityState();
+    state.time.day = DAYS_PER_MONTH;
     addBuilding(state, "large_plant", 10, 10);
     addBuilding(state, "landfill", 11, 10);
     state.extendedServices.totalUncollectedGarbage = 100;
@@ -108,6 +112,7 @@ describe("garbage service", () => {
 
   it("keeps garbage totals as whole units under partial coverage", () => {
     const state = createInitialCityState();
+    state.time.day = DAYS_PER_MONTH;
     addBuilding(state, "large_plant", 0, 0);
     addBuilding(state, "large_plant", 40, 40);
     addBuilding(state, "large_plant", 50, 50);
@@ -120,6 +125,7 @@ describe("garbage service", () => {
 
   it("applies garbage happiness penalties and related warnings", () => {
     const state = createInitialCityState();
+    state.time.day = DAYS_PER_MONTH;
     addBuilding(state, "large_plant", 10, 10);
     addBuilding(state, "small_house", 12, 10);
     state.population.total = 8;

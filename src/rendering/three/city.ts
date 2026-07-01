@@ -11,6 +11,11 @@ import type {
 } from "../../shared/types";
 import { animateWater, renderTerrain, type AnimatedWaterMaterial } from "./environment";
 import {
+  createGeneratedAssetBatcher,
+  GENERATED_OAK_RENDER_SCALE,
+  type GeneratedAssetBatcher,
+} from "./generated-assets";
+import {
   getTiledTexture,
   getConcreteTexture,
   getBrickTexture,
@@ -21,6 +26,7 @@ import {
 } from "./textures";
 
 const TILE_SIZE = 1;
+const RADIUS_OVERLAY_SEGMENTS = 96;
 
 const COLORS = {
   road: 0x20282e,
@@ -39,6 +45,12 @@ const COLORS = {
   pollution: 0xd95f43,
   health: 0x26a69a,
   education: 0x5c6bc0,
+  police: 0x4f7cff,
+  fire: 0xff7043,
+  garbage: 0x7cb342,
+  powerFeedback: 0xffd54f,
+  waterFeedback: 0x29b6f6,
+  unemploymentFeedback: 0xffa726,
   district: 0x5bc0eb,
 };
 
@@ -61,10 +73,17 @@ export type CityRenderLayerName =
   | "overlays"
   | "warnings";
 
+type RadiusEffect =
+  | "healthRadius"
+  | "educationRadius"
+  | "policeRadius"
+  | "fireRadius"
+  | "garbageCollectionRadius";
+
 export interface BuildingRenderInfo {
   size: BuildingDefinition["size"];
   category: BuildingCategory;
-  effects: Pick<BuildingDefinition["effects"], "healthRadius" | "educationRadius">;
+  effects: Pick<BuildingDefinition["effects"], RadiusEffect | "populationCapacity">;
 }
 
 export interface CityRenderOptions {
@@ -72,6 +91,7 @@ export interface CityRenderOptions {
   detailDensity?: number;
   refreshTerrain?: boolean;
   dirtyLayers?: readonly CityRenderLayerName[];
+  selectedTile?: UIState["selectedTile"];
 }
 
 export type BuildingRenderInfoLookup = (
@@ -98,15 +118,15 @@ interface DecorativeCar {
   color: number;
 }
 
-interface GeneratedAssetPlacement {
-  position: [number, number, number];
-  rotation?: number;
-  scale?: number;
-}
-
 interface GeneratedBuildingSelection {
   category: GeneratedBuildingCategory;
   seed: number;
+}
+
+interface BuildingFeedbackMarker {
+  type: "no-power" | "no-water" | "unemployment";
+  building: CityState["buildings"][number];
+  offsetIndex: number;
 }
 
 type StreetAxis = "horizontal" | "vertical";
@@ -215,10 +235,16 @@ export function syncCityRenderLayers(
     renderBuildings(layers.buildings, state, getBuildingRenderInfo, options.assetSource),
   );
   syncStaticRenderLayer(dirtyLayers, "overlays", layers.overlays, () =>
-    renderOverlay(layers.overlays, state, activeOverlay, getBuildingRenderInfo),
+    renderOverlay(
+      layers.overlays,
+      state,
+      activeOverlay,
+      getBuildingRenderInfo,
+      options.selectedTile ?? null,
+    ),
   );
   syncStaticRenderLayer(dirtyLayers, "warnings", layers.warnings, () =>
-    renderWarnings(layers.warnings, state),
+    renderWarnings(layers.warnings, state, getBuildingRenderInfo),
   );
 }
 
@@ -281,9 +307,30 @@ export function syncPlacementPreview(
     mesh.position.set(x + 0.5, 0.045, y + 0.5);
     layer.add(mesh);
   });
+  if (preview.definitionId && getBuildingRenderInfo) {
+    addPlacementRadiusPreview(layer, preview, getBuildingRenderInfo);
+  }
   if (preview.definitionId && getBuildingRenderInfo && assetSource) {
     addGeneratedPlacementPreview(layer, preview, getBuildingRenderInfo, assetSource);
   }
+}
+
+function addPlacementRadiusPreview(
+  layer: THREE.Group,
+  preview: NonNullable<UIState["placementPreview"]>,
+  getBuildingRenderInfo: BuildingRenderInfoLookup,
+): void {
+  if (!preview.definitionId) return;
+  const renderInfo = getBuildingRenderInfo(preview.definitionId);
+  const origin = getPreviewOrigin(preview.positions);
+  if (!renderInfo || !origin) return;
+  addRadiusVisuals(layer, {
+    origin,
+    renderInfo,
+    opacity: preview.valid ? 0.16 : 0.1,
+    y: 0.07,
+    namePrefix: "radius-preview",
+  });
 }
 
 function addGeneratedPlacementPreview(
@@ -347,7 +394,6 @@ function renderRoads(
   addIntersectionDetails(group, state.roads);
   addStreetLights(group, state.roads);
   addDecorativeTraffic(group, state.roads);
-  addStreetSidewalkDetail(group, state.roads);
 }
 
 function renderGeneratedRoads(
@@ -356,22 +402,22 @@ function renderGeneratedRoads(
   assetSource: CityAssetSource,
   detailDensity: number,
 ): void {
+  const assetBatcher = createGeneratedAssetBatcher(group, assetSource);
   const streetRuns = getStreetRuns(state.roads);
   group.add(createStreetCorridors(streetRuns));
   addContinuousLaneMarkings(group, streetRuns);
   addIntersectionDetails(group, state.roads);
-  addGeneratedStreetlights(group, state.roads, assetSource, detailDensity);
-  addGeneratedTrafficLights(group, state.roads, assetSource, detailDensity);
-  addGeneratedTraffic(group, state.roads, assetSource, detailDensity);
-  addGeneratedRoadProps(group, state.roads, assetSource, detailDensity);
-  addGeneratedStreetTrees(group, state.roads, assetSource, detailDensity);
-  addGeneratedStreetFurniture(group, state.roads, assetSource, detailDensity);
+  addGeneratedStreetlights(state.roads, assetBatcher, detailDensity);
+  addGeneratedTrafficLights(state.roads, assetBatcher, detailDensity);
+  addGeneratedTraffic(state.roads, assetBatcher, detailDensity);
+  addGeneratedRoadProps(state.roads, assetBatcher, detailDensity);
+  addGeneratedStreetFurniture(state.roads, assetBatcher, detailDensity);
+  assetBatcher.flush();
 }
 
 function addGeneratedStreetlights(
-  group: THREE.Group,
   roads: CityState["roads"],
-  assetSource: CityAssetSource,
+  assetBatcher: GeneratedAssetBatcher,
   detailDensity: number,
 ): void {
   roads
@@ -379,7 +425,7 @@ function addGeneratedStreetlights(
     .forEach((road) => {
       const [x, y] = road.position;
       const side = getVisualHash(x, y) % 2 === 0 ? -0.43 : 0.43;
-      addGeneratedAsset(group, assetSource, "streetlight", {
+      assetBatcher.add("streetlight", {
         position: [x + 0.5 + side, 0, y + 0.5],
         scale: 0.82,
       });
@@ -397,9 +443,8 @@ function shouldPlaceRoadDetail(
 }
 
 function addGeneratedTrafficLights(
-  group: THREE.Group,
   roads: CityState["roads"],
-  assetSource: CityAssetSource,
+  assetBatcher: GeneratedAssetBatcher,
   detailDensity: number,
 ): void {
   if (detailDensity < 0.55) return;
@@ -413,7 +458,7 @@ function addGeneratedTrafficLights(
           [0.36, 0.36],
         ] as const
       ).forEach(([offsetX, offsetY]) => {
-        addGeneratedAsset(group, assetSource, "traffic_light", {
+        assetBatcher.add("traffic_light", {
           position: [x + 0.5 + offsetX, 0, y + 0.5 + offsetY],
           rotation: offsetX < 0 ? 0 : Math.PI,
           scale: 0.8,
@@ -423,15 +468,14 @@ function addGeneratedTrafficLights(
 }
 
 function addGeneratedTraffic(
-  group: THREE.Group,
   roads: CityState["roads"],
-  assetSource: CityAssetSource,
+  assetBatcher: GeneratedAssetBatcher,
   detailDensity: number,
 ): void {
   if (detailDensity < 0.5) return;
   getDecorativeCars(roads).forEach((car, index) => {
     const id = index % 2 === 0 ? "car_compact" : "car_sedan";
-    addGeneratedAsset(group, assetSource, id, {
+    assetBatcher.add(id, {
       position: [car.x, 0, car.z],
       rotation: car.rotation,
       scale: 0.72,
@@ -440,9 +484,8 @@ function addGeneratedTraffic(
 }
 
 function addGeneratedRoadProps(
-  group: THREE.Group,
   roads: CityState["roads"],
-  assetSource: CityAssetSource,
+  assetBatcher: GeneratedAssetBatcher,
   detailDensity: number,
 ): void {
   if (detailDensity < 0.75) return;
@@ -451,7 +494,7 @@ function addGeneratedRoadProps(
     .forEach((road, index) => {
       const [x, y] = road.position;
       const assetId = index % 2 === 0 ? "road_sign" : "bus_stop";
-      addGeneratedAsset(group, assetSource, assetId, {
+      assetBatcher.add(assetId, {
         position: [x + 0.86, 0, y + 0.5],
         rotation: Math.PI / 2,
         scale: assetId === "bus_stop" ? 0.72 : 0.8,
@@ -459,30 +502,9 @@ function addGeneratedRoadProps(
     });
 }
 
-function addGeneratedStreetTrees(
-  group: THREE.Group,
-  roads: CityState["roads"],
-  assetSource: CityAssetSource,
-  detailDensity: number,
-): void {
-  roads
-    .filter((road) => shouldPlaceRoadDetail(road, detailDensity, 12))
-    .forEach((road) => {
-      const [x, y] = road.position;
-      const treeHash = getVisualHash(x, y);
-      const side = getVisualHash(x, y + 7) % 2 === 0 ? -0.6 : 0.6;
-      const treeScale = 1.04 + (treeHash % 3) * 0.08;
-      addGeneratedAsset(group, assetSource, "tree_mature_oak", {
-        position: [x + 0.5 + side, 0, y + 0.5],
-        scale: treeScale,
-      });
-    });
-}
-
 function addGeneratedStreetFurniture(
-  group: THREE.Group,
   roads: CityState["roads"],
-  assetSource: CityAssetSource,
+  assetBatcher: GeneratedAssetBatcher,
   detailDensity: number,
 ): void {
   if (detailDensity < 0.75) return;
@@ -492,33 +514,18 @@ function addGeneratedStreetFurniture(
       const [x, y] = road.position;
       const side = getVisualHash(x, y) % 2 === 0 ? -0.6 : 0.6;
       if (index % 2 === 0) {
-        addGeneratedAsset(group, assetSource, "bench", {
+        assetBatcher.add("bench", {
           position: [x + 0.5 + side, 0, y + 0.5],
           rotation: side < 0 ? 0 : Math.PI,
           scale: 0.7,
         });
       } else {
-        addGeneratedAsset(group, assetSource, "trash_bin", {
+        assetBatcher.add("trash_bin", {
           position: [x + 0.5 + side, 0, y + 0.5],
           scale: 0.75,
         });
       }
     });
-}
-
-function addGeneratedAsset(
-  group: THREE.Group,
-  assetSource: CityAssetSource,
-  id: string,
-  placement: GeneratedAssetPlacement,
-): void {
-  const asset = assetSource.createAssetInstance(id);
-  if (!asset) return;
-  asset.object.position.set(...placement.position);
-  asset.object.rotation.y = placement.rotation ?? 0;
-  asset.object.scale.setScalar(placement.scale ?? 1);
-  asset.object.name = `asset:${asset.id}`;
-  group.add(asset.object);
 }
 
 function getStreetRuns(roads: CityState["roads"]): StreetRun[] {
@@ -1033,39 +1040,6 @@ function createRoadCar(road: CityState["roads"][number]): DecorativeCar[] {
   ];
 }
 
-function addStreetSidewalkDetail(group: THREE.Group, roads: CityState["roads"]): void {
-  const streets = roads.filter(
-    (road) => road.type !== "dirt" && getRoadConnectionCount(road) < 3,
-  );
-  const trees = streets.filter(
-    (road) => getVisualHash(road.position[0], road.position[1]) % 9 === 0,
-  );
-  if (trees.length === 0) return;
-  const trunk = new THREE.InstancedMesh(
-    new THREE.CylinderGeometry(0.025, 0.04, 0.32, 6),
-    new THREE.MeshStandardMaterial({ color: 0x4a3020, roughness: 0.94 }),
-    trees.length,
-  );
-  const canopy = new THREE.InstancedMesh(
-    new THREE.SphereGeometry(0.18, 8, 6),
-    new THREE.MeshStandardMaterial({ color: 0x1a4828, roughness: 0.92 }),
-    trees.length,
-  );
-  const matrix = new THREE.Matrix4();
-  trees.forEach((road, index) => {
-    const [x, y] = road.position;
-    const side = getVisualHash(x, y) % 2 === 0 ? 0.62 : -0.62;
-    matrix.makeTranslation(x + 0.5 + side, 0.16, y + 0.5);
-    trunk.setMatrixAt(index, matrix);
-    matrix.makeTranslation(x + 0.5 + side, 0.4, y + 0.5);
-    canopy.setMatrixAt(index, matrix);
-  });
-  trunk.castShadow = true;
-  trunk.instanceMatrix.needsUpdate = true;
-  canopy.instanceMatrix.needsUpdate = true;
-  group.add(trunk, canopy);
-}
-
 function renderZones(group: THREE.Group, state: CityState): void {
   getZoneTiles(state, false).forEach(({ zone, tiles }) => {
     group.add(createZoneFillMesh(tiles, getZoneColor(zone), 0.16, 0.028));
@@ -1100,11 +1074,12 @@ function renderGeneratedBuildings(
   getBuildingRenderInfo: BuildingRenderInfoLookup,
   assetSource: CityAssetSource,
 ): void {
+  const parkAssets = createGeneratedAssetBatcher(group, assetSource);
   state.buildings.forEach((building, index) => {
     const renderInfo = getBuildingRenderInfo(building.definitionId);
     if (!renderInfo) return;
     if (renderInfo.category === "decoration") {
-      renderGeneratedPark(group, assetSource, building, renderInfo.size);
+      renderGeneratedPark(parkAssets, building, renderInfo.size);
       return;
     }
     const selection = getGeneratedBuildingSelection(
@@ -1125,6 +1100,7 @@ function renderGeneratedBuildings(
     asset.object.name = `building:${building.definitionId}:${building.status}`;
     group.add(asset.object);
   });
+  parkAssets.flush();
 }
 
 function renderProceduralBuilding(
@@ -1181,23 +1157,23 @@ function getExplicitGeneratedBuildingSelection(
 }
 
 function renderGeneratedPark(
-  group: THREE.Group,
-  assetSource: CityAssetSource,
+  assetBatcher: GeneratedAssetBatcher,
   building: CityState["buildings"][number],
   size: BuildingDefinition["size"],
 ): void {
   const centerX = building.position[0] + size[0] / 2;
   const centerZ = building.position[1] + size[1] / 2;
-  const treeScale = Math.max(1.08, Math.min(size[0], size[1]) * 0.5);
-  addGeneratedAsset(group, assetSource, "tree_mature_oak", {
+  const treeScale =
+    Math.max(1.08, Math.min(size[0], size[1]) * 0.5) * GENERATED_OAK_RENDER_SCALE;
+  assetBatcher.add("tree_mature_oak", {
     position: [centerX - size[0] * 0.18, 0, centerZ],
     scale: treeScale,
   });
-  addGeneratedAsset(group, assetSource, "plaza_planter", {
+  assetBatcher.add("plaza_planter", {
     position: [centerX + size[0] * 0.2, 0, centerZ - size[1] * 0.18],
     scale: 0.7,
   });
-  addGeneratedAsset(group, assetSource, "bench", {
+  assetBatcher.add("bench", {
     position: [centerX + size[0] * 0.2, 0, centerZ + size[1] * 0.2],
     rotation: Math.PI / 2,
     scale: 0.78,
@@ -1245,6 +1221,7 @@ function renderOverlay(
   state: CityState,
   activeOverlay: UIState["activeOverlay"],
   getBuildingRenderInfo: BuildingRenderInfoLookup,
+  selectedTile: UIState["selectedTile"],
 ): void {
   if (activeOverlay === "zoning") renderZoningOverlay(group, state);
   if (activeOverlay === "pollution") renderPollutionOverlay(group, state);
@@ -1266,6 +1243,7 @@ function renderOverlay(
     );
   }
   if (activeOverlay === "districts") renderDistrictOverlay(group, state);
+  renderSelectedBuildingRadius(group, state, selectedTile, getBuildingRenderInfo);
 }
 
 function renderZoningOverlay(group: THREE.Group, state: CityState): void {
@@ -2669,22 +2647,166 @@ function renderPollutionOverlay(group: THREE.Group, state: CityState): void {
 function renderRadiusOverlay(
   group: THREE.Group,
   state: CityState,
-  effect: "healthRadius" | "educationRadius",
+  effect: RadiusEffect,
   color: number,
   getBuildingRenderInfo: BuildingRenderInfoLookup,
 ): void {
   state.buildings.forEach((building) => {
     const radius = getBuildingRenderInfo(building.definitionId)?.effects[effect] ?? 0;
     if (radius <= 0) return;
-    const mesh = createPlane(color, 0.12, 0.028, radius * 2 + 1);
-    mesh.position.set(building.position[0] + 0.5, 0.028, building.position[1] + 0.5);
-    group.add(mesh);
+    const visual = createRadiusArea(color, 0.12, 0.028, radius);
+    visual.name = `radius-overlay:${building.id}:${effect}`;
+    visual.position.set(building.position[0] + 0.5, 0, building.position[1] + 0.5);
+    group.add(visual);
   });
 }
 
-function renderWarnings(group: THREE.Group, state: CityState): void {
+function renderSelectedBuildingRadius(
+  group: THREE.Group,
+  state: CityState,
+  selectedTile: UIState["selectedTile"],
+  getBuildingRenderInfo: BuildingRenderInfoLookup,
+): void {
+  if (!selectedTile) return;
+  const tile = state.map[selectedTile[1]]?.[selectedTile[0]];
+  if (!tile?.buildingId) return;
+  const building = state.buildings.find((item) => item.id === tile.buildingId);
+  const renderInfo = building ? getBuildingRenderInfo(building.definitionId) : null;
+  if (!building || !renderInfo) return;
+  addRadiusVisuals(group, {
+    origin: building.position,
+    renderInfo,
+    opacity: 0.2,
+    y: 0.082,
+    namePrefix: `radius-selected:${building.id}`,
+  });
+}
+
+function addRadiusVisuals(
+  group: THREE.Group,
+  options: {
+    origin: [number, number];
+    renderInfo: BuildingRenderInfo;
+    opacity: number;
+    y: number;
+    namePrefix: string;
+  },
+): void {
+  getRadiusEffects(options.renderInfo).forEach(({ effect, radius }, index) => {
+    const visual = createRadiusArea(
+      getRadiusColor(effect),
+      options.opacity,
+      options.y + index * 0.006,
+      radius,
+    );
+    visual.name = `${options.namePrefix}:${effect}`;
+    visual.position.set(options.origin[0] + 0.5, 0, options.origin[1] + 0.5);
+    group.add(visual);
+  });
+}
+
+function getRadiusEffects(
+  renderInfo: BuildingRenderInfo,
+): { effect: RadiusEffect; radius: number }[] {
+  const effects: RadiusEffect[] = [
+    "healthRadius",
+    "educationRadius",
+    "policeRadius",
+    "fireRadius",
+    "garbageCollectionRadius",
+  ];
+  return effects
+    .map((effect) => ({ effect, radius: renderInfo.effects[effect] ?? 0 }))
+    .filter(({ radius }) => radius > 0);
+}
+
+function getRadiusColor(effect: RadiusEffect): number {
+  if (effect === "healthRadius") return COLORS.health;
+  if (effect === "educationRadius") return COLORS.education;
+  if (effect === "policeRadius") return COLORS.police;
+  if (effect === "fireRadius") return COLORS.fire;
+  return COLORS.garbage;
+}
+
+function createRadiusArea(
+  color: number,
+  opacity: number,
+  yPosition: number,
+  radius: number,
+): THREE.Group {
+  const group = new THREE.Group();
+  group.add(createRadiusDisc(color, opacity, yPosition, radius));
+  group.add(createRadiusBorder(color, Math.min(0.9, opacity + 0.34), yPosition, radius));
+  return group;
+}
+
+function createRadiusDisc(
+  color: number,
+  opacity: number,
+  yPosition: number,
+  radius: number,
+): THREE.Mesh {
+  const extent = radius + 0.5;
+  const mesh = new THREE.Mesh(
+    new THREE.CircleGeometry(extent, RADIUS_OVERLAY_SEGMENTS),
+    new THREE.MeshBasicMaterial({
+      color,
+      transparent: true,
+      opacity,
+      depthWrite: false,
+      side: THREE.DoubleSide,
+    }),
+  );
+  mesh.rotation.x = -Math.PI / 2;
+  mesh.position.y = yPosition;
+  mesh.name = "radius-fill";
+  mesh.renderOrder = 3;
+  return mesh;
+}
+
+function createRadiusBorder(
+  color: number,
+  opacity: number,
+  yPosition: number,
+  radius: number,
+): THREE.LineLoop {
+  const extent = radius + 0.5;
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute(
+    "position",
+    new THREE.Float32BufferAttribute(getCircleBorderPositions(extent, yPosition), 3),
+  );
+  const line = new THREE.LineLoop(
+    geometry,
+    new THREE.LineBasicMaterial({
+      color,
+      transparent: true,
+      opacity,
+      depthWrite: false,
+    }),
+  );
+  line.name = "radius-border";
+  line.renderOrder = 4;
+  return line;
+}
+
+function getCircleBorderPositions(radius: number, yPosition: number): number[] {
+  return Array.from({ length: RADIUS_OVERLAY_SEGMENTS }, (_unused, index) => {
+    const angle = (index / RADIUS_OVERLAY_SEGMENTS) * Math.PI * 2;
+    return [Math.cos(angle) * radius, yPosition, Math.sin(angle) * radius];
+  }).flat();
+}
+
+function renderWarnings(
+  group: THREE.Group,
+  state: CityState,
+  getBuildingRenderInfo: BuildingRenderInfoLookup,
+): void {
+  collectBuildingFeedbackMarkers(state, getBuildingRenderInfo).forEach((marker) =>
+    group.add(createBuildingFeedbackMarker(marker, getBuildingRenderInfo)),
+  );
   state.warnings.slice(0, 60).forEach((warning) => {
-    if (!warning.targetTile) return;
+    if (!warning.targetTile || isTypedBuildingWarning(warning.id)) return;
     const mesh = new THREE.Mesh(
       new THREE.ConeGeometry(0.18, 0.45, 3),
       new THREE.MeshBasicMaterial({ color: COLORS.warning }),
@@ -2692,6 +2814,151 @@ function renderWarnings(group: THREE.Group, state: CityState): void {
     mesh.position.set(warning.targetTile[0] + 0.5, 1.25, warning.targetTile[1] + 0.5);
     group.add(mesh);
   });
+}
+
+function collectBuildingFeedbackMarkers(
+  state: CityState,
+  getBuildingRenderInfo: BuildingRenderInfoLookup,
+): BuildingFeedbackMarker[] {
+  return [
+    ...collectUtilityFeedbackMarkers(state),
+    ...collectUnemploymentFeedbackMarkers(state, getBuildingRenderInfo),
+  ].map((marker, index, markers) => ({
+    ...marker,
+    offsetIndex: getMarkerOffsetIndex(marker, markers.slice(0, index)),
+  }));
+}
+
+function collectUtilityFeedbackMarkers(state: CityState): BuildingFeedbackMarker[] {
+  return state.warnings.flatMap((warning) => {
+    const type = getUtilityFeedbackType(warning.id);
+    if (!type || !warning.targetBuilding) return [];
+    const building = state.buildings.find((item) => item.id === warning.targetBuilding);
+    return building ? [{ type, building, offsetIndex: 0 }] : [];
+  });
+}
+
+function collectUnemploymentFeedbackMarkers(
+  state: CityState,
+  getBuildingRenderInfo: BuildingRenderInfoLookup,
+): BuildingFeedbackMarker[] {
+  let remainingUnemployed = state.population.unemployedWorkers;
+  if (remainingUnemployed <= 0) return [];
+  return state.buildings.flatMap((building) => {
+    if (remainingUnemployed <= 0 || building.status !== "active") return [];
+    const renderInfo = getBuildingRenderInfo(building.definitionId);
+    const capacity = renderInfo?.effects.populationCapacity ?? 0;
+    if (renderInfo?.category !== "residential" || capacity <= 0) return [];
+    remainingUnemployed -= capacity;
+    return [{ type: "unemployment" as const, building, offsetIndex: 0 }];
+  });
+}
+
+function getUtilityFeedbackType(
+  warningId: string,
+): BuildingFeedbackMarker["type"] | null {
+  if (warningId.endsWith(":no-power")) return "no-power";
+  if (warningId.endsWith(":no-water")) return "no-water";
+  return null;
+}
+
+function getMarkerOffsetIndex(
+  marker: BuildingFeedbackMarker,
+  previous: BuildingFeedbackMarker[],
+): number {
+  return previous.filter((item) => item.building.id === marker.building.id).length;
+}
+
+function isTypedBuildingWarning(warningId: string): boolean {
+  return getUtilityFeedbackType(warningId) !== null;
+}
+
+function createBuildingFeedbackMarker(
+  marker: BuildingFeedbackMarker,
+  getBuildingRenderInfo: BuildingRenderInfoLookup,
+): THREE.Group {
+  const renderInfo = getBuildingRenderInfo(marker.building.definitionId);
+  const height = renderInfo
+    ? getBuildingHeight(
+        renderInfo.category,
+        marker.building.status === "constructing",
+        marker.building.definitionId,
+      )
+    : 1;
+  const group = createFeedbackSymbol(marker.type);
+  group.name = `feedback:${marker.type}:${marker.building.id}`;
+  group.position.set(
+    marker.building.position[0] + 0.5,
+    height + 0.56 + marker.offsetIndex * 0.3,
+    marker.building.position[1] + 0.5,
+  );
+  return group;
+}
+
+function createFeedbackSymbol(type: BuildingFeedbackMarker["type"]): THREE.Group {
+  if (type === "no-power") return createPowerFeedbackSymbol();
+  if (type === "no-water") return createWaterFeedbackSymbol();
+  return createUnemploymentFeedbackSymbol();
+}
+
+function createPowerFeedbackSymbol(): THREE.Group {
+  const group = createFeedbackBase(COLORS.powerFeedback);
+  const bolt = new THREE.Mesh(
+    new THREE.ConeGeometry(0.1, 0.32, 3),
+    new THREE.MeshBasicMaterial({ color: 0x252017 }),
+  );
+  bolt.rotation.z = Math.PI;
+  bolt.position.y = 0.08;
+  group.add(bolt);
+  return group;
+}
+
+function createWaterFeedbackSymbol(): THREE.Group {
+  const group = createFeedbackBase(COLORS.waterFeedback);
+  const drop = new THREE.Mesh(
+    new THREE.SphereGeometry(0.09, 10, 8),
+    new THREE.MeshBasicMaterial({ color: 0xe9f8ff }),
+  );
+  const tip = new THREE.Mesh(
+    new THREE.ConeGeometry(0.07, 0.14, 10),
+    new THREE.MeshBasicMaterial({ color: 0xe9f8ff }),
+  );
+  drop.position.y = 0.055;
+  tip.position.y = 0.18;
+  group.add(drop, tip);
+  return group;
+}
+
+function createUnemploymentFeedbackSymbol(): THREE.Group {
+  const group = createFeedbackBase(COLORS.unemploymentFeedback);
+  const caseBody = new THREE.Mesh(
+    new THREE.BoxGeometry(0.19, 0.1, 0.08),
+    new THREE.MeshBasicMaterial({ color: 0x2d2419 }),
+  );
+  const handle = new THREE.Mesh(
+    new THREE.BoxGeometry(0.1, 0.035, 0.06),
+    new THREE.MeshBasicMaterial({ color: 0x2d2419 }),
+  );
+  caseBody.position.y = 0.08;
+  handle.position.y = 0.16;
+  group.add(caseBody, handle);
+  return group;
+}
+
+function createFeedbackBase(color: number): THREE.Group {
+  const group = new THREE.Group();
+  const stem = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.018, 0.018, 0.24, 8),
+    new THREE.MeshBasicMaterial({ color: 0xffffff }),
+  );
+  const badge = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.18, 0.18, 0.045, 18),
+    new THREE.MeshBasicMaterial({ color }),
+  );
+  stem.position.y = -0.12;
+  badge.position.y = 0.02;
+  group.add(stem, badge);
+  return group;
 }
 
 function createPlane(

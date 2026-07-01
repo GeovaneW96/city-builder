@@ -153,3 +153,7 @@ or building placement, while routes reference their stop and depot identifiers.
 District definitions persist their name, color, rectangular tile list, and active policies.
 Deleting a district clears only `districtId` and policies; it does not change terrain, roads,
 zones, or buildings.
+
+Clone-time defaults for `lastLoanTick` and specialization `lastSwitchTick` use `monthsToTicks`
+to convert month-based constants into day-based tick counts, consistent with the daily
+simulation model.

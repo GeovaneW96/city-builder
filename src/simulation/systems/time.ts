@@ -4,6 +4,18 @@ export const DAYS_PER_MONTH = 30;
 export const HOURS_PER_DAY = 24;
 export const HOURS_PER_MONTH = DAYS_PER_MONTH * HOURS_PER_DAY;
 
+export function monthsToTicks(months: number): number {
+  return Math.max(0, Math.floor(months * DAYS_PER_MONTH));
+}
+
+export function isLastDayOfMonth(time: TimeState): boolean {
+  return time.day >= DAYS_PER_MONTH;
+}
+
+export function isLastDayOfYear(time: TimeState): boolean {
+  return time.month === 12 && isLastDayOfMonth(time);
+}
+
 export function getCalendarTimeAfterHours(time: TimeState, hours: number): TimeState {
   const totalHours =
     ((time.year - 1) * 12 + (time.month - 1)) * HOURS_PER_MONTH +
@@ -27,9 +39,13 @@ export function getCalendarTimeAfterHours(time: TimeState, hours: number): TimeS
 
 export function advanceTime(state: CityState): void {
   state.time.tick += 1;
-  state.time.day = 1;
   state.time.hour = 8;
-  if (state.time.month === 12) {
+  if (!isLastDayOfMonth(state.time)) {
+    state.time.day += 1;
+    return;
+  }
+  state.time.day = 1;
+  if (state.time.month >= 12) {
     state.time.month = 1;
     state.time.year += 1;
     return;

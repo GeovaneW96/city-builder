@@ -7,6 +7,7 @@ import {
 import { FIRST_SETTLEMENT } from "../data/scenarios/first_settlement";
 import type { BiomeType, CityState } from "../shared/types";
 import { createMap } from "./grid/map";
+import { monthsToTicks } from "./systems/time";
 
 export function createInitialCityState(
   biome: BiomeType = (FIRST_SETTLEMENT.biome as BiomeType) ?? "temperate",
@@ -27,7 +28,7 @@ export function createInitialCityState(
     demand: { residential: 50, commercial: 30, industrial: 30, office: 20 },
     office: { unlocked: false, totalCapacity: 0, filledJobs: 0, taxIncome: 0 },
     tourism: createInitialTourism(),
-    specialization: { active: null, lastSwitchTick: -12 },
+    specialization: { active: null, lastSwitchTick: -monthsToTicks(12) },
     events: [],
     services: {
       powerCapacity: 0,
@@ -75,7 +76,7 @@ function createInitialEconomy() {
     isBankrupt: false,
     monthsBelowZero: 0,
     loans: [],
-    lastLoanTick: -LOAN_BALANCE.COOLDOWN_TICKS,
+    lastLoanTick: -monthsToTicks(LOAN_BALANCE.COOLDOWN_TICKS),
     tourismIncome: 0,
   };
 }

@@ -80,6 +80,12 @@ The game starts at the `medium` profile. This keeps bloom disabled and caps pixe
 the initial scenario remains responsive on integrated GPUs; `high` and `ultra` remain available
 for higher-end hardware.
 
+Generated static detail such as park/nature mature oaks, shore rocks, streetlights, benches,
+signs, traffic lights, and decorative vehicles is collected into placement batches and rendered
+through shared `InstancedMesh` groups when the generated asset manager is available. This keeps
+the same GLB geometry and materials while reducing repeated clone draw/update overhead. The
+fallback path still creates individual generated asset instances when batching is unavailable.
+
 City rendering is synchronized from simulation or UI changes rather than every animation frame.
 Static terrain is rebuilt only when terrain data changes; ordinary road, zoning, and building
 updates leave it intact.

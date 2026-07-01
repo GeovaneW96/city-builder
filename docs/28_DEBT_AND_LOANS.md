@@ -96,13 +96,15 @@ Bankruptcy follows the existing bankruptcy rules in `docs/05_ECONOMY_AND_BALANCI
 - The player is shown a "City bankrupt — too many missed loan payments" message.
 
 Loan missed payments are tracked per loan, not globally. Missing a payment on one loan does not affect others.
+Because the simulation ticks daily, the six-month loan cooldown is converted to 180 daily ticks
+internally.
 
 ## Limits
 
 | Limit                       |  Value  |
 | --------------------------- | :-----: |
 | Max outstanding loans       |    3    |
-| Loan cooldown (ticks)       |    6    |
+| Loan cooldown (months)      |    6    |
 | Max missed payments allowed |    3    |
 | Loan eligibility threshold  | $10,000 |
 
@@ -172,8 +174,8 @@ LOAN_COOLDOWN_TICKS            = 6
 ## Current Implementation
 
 Loans are issued through the `TAKE_LOAN` command after eligibility, count, and cooldown
-validation. The simulation persists fixed-payment schedules, charges them in the monthly economy
-step, and marks the scenario lost after the third consecutive missed payment for a loan. City
+validation. The simulation persists fixed-payment schedules, charges them on the last day of each
+month, and marks the scenario lost after the third consecutive missed payment for a loan. City
 warnings report outstanding loans and escalate missed payments to critical severity.
 
 The current economy panel uses inline borrowing controls rather than a modal dialog. It shows

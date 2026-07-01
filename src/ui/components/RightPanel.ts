@@ -39,6 +39,7 @@ export function createRightPanel(): RightPanelElements {
     <div class="right-panel-section" data-ui="notifications">
       <div class="right-panel-header">
         <span class="right-panel-title">Notifications</span>
+        <span class="right-panel-header-icon">${icon("bell", 16)}</span>
       </div>
       <div id="notification-list"></div>
     </div>
@@ -275,26 +276,38 @@ function updateNotifications(container: HTMLElement, state: CityState): void {
 
   const warnings = groupWarnings(state.warnings).slice(0, 5);
   if (warnings.length === 0) {
-    listEl.innerHTML = `<p style="font-size:11px;color:var(--text-muted)">No notifications</p>`;
+    listEl.innerHTML = `
+      <div class="notification-item">
+        <div class="notification-icon positive">${icon("bell", 14)}</div>
+        <div class="notification-text">
+          <div class="notification-title">No active issues</div>
+          <div class="notification-desc">City systems are stable</div>
+          <div class="notification-meta">Just now</div>
+        </div>
+      </div>
+      <button class="notification-footer" type="button">View all notifications</button>
+    `;
     return;
   }
 
-  listEl.innerHTML = warnings
+  listEl.innerHTML = `${warnings
     .map(({ warning, count }) => {
-      const w = warning;
-      const severityIcon = getSeverityIcon(w.severity);
-      const severityClass = getSeverityClass(w);
+      const severityIcon = getSeverityIcon(warning.severity);
+      const severityClass = getSeverityClass(warning);
       return `
         <div class="notification-item">
-          <div class="notification-icon ${severityClass}">${icon(severityIcon, 14)}</div>
+          <div class="notification-icon ${severityClass}">${icon(severityIcon, 16)}</div>
           <div class="notification-text">
-            <div class="notification-title">${w.message}${count > 1 ? ` (${count})` : ""}</div>
-            <div class="notification-desc">${w.suggestedFix}</div>
+            <div class="notification-title">${warning.message}${count > 1 ? ` (${count})` : ""}</div>
+            <div class="notification-desc">${warning.suggestedFix}</div>
+            <div class="notification-meta">Just now</div>
           </div>
         </div>
       `;
     })
-    .join("");
+    .join("")}
+    <button class="notification-footer" type="button">View all notifications</button>
+  `;
 }
 
 function groupWarnings(warnings: Warning[]): { warning: Warning; count: number }[] {
@@ -325,5 +338,6 @@ function getSeverityIcon(severity: Warning["severity"]): IconName {
 
 function getSeverityClass(w: Warning): string {
   if (w.severity === "critical" || w.severity === "high") return "warning";
+  if (w.severity === "low") return "positive";
   return "commercial";
 }

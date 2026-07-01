@@ -1,5 +1,6 @@
 import { LOAN_BALANCE, LOAN_PRINCIPALS } from "../../data/balance";
 import type { CityState, Loan, LoanType } from "../../shared/types";
+import { monthsToTicks } from "./time";
 
 export function takeLoan(state: CityState, loanType: LoanType): string | null {
   const validation = validateLoan(state);
@@ -27,6 +28,10 @@ export function processLoanPayments(state: CityState): number {
   return paid;
 }
 
+export function calculateMonthlyLoanPaymentsDue(state: CityState): number {
+  return state.economy.loans.reduce((total, loan) => total + loan.monthlyPayment, 0);
+}
+
 export function getMonthlyPayment(principal: number): number {
   return (principal * (1 + LOAN_BALANCE.ANNUAL_RATE)) / LOAN_BALANCE.TERM_MONTHS;
 }
@@ -37,7 +42,10 @@ function validateLoan(state: CityState): string | null {
   }
   if (state.economy.loans.length >= LOAN_BALANCE.MAX_LOANS)
     return "Maximum loans reached";
-  if (state.time.tick - state.economy.lastLoanTick < LOAN_BALANCE.COOLDOWN_TICKS) {
+  if (
+    state.time.tick - state.economy.lastLoanTick <
+    monthsToTicks(LOAN_BALANCE.COOLDOWN_TICKS)
+  ) {
     return "Loan cooldown is active";
   }
   return null;

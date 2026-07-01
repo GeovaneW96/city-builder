@@ -156,18 +156,24 @@ active tile rectangle is pickable and buildable. Terrain height, grass color var
 and trees must never change tile simulation data.
 Water animation, foam, and reflections are render-time effects only.
 
-Generated tree placement uses the detailed `tree_mature_oak` GLB so natural scatter, roadside
-trees, and park trees share the same mature deciduous silhouette. The first scenario should
-not ship the simplified oak, maple, or conifer generated assets; keep them out of the
-registry, manifest, and generated nature output. Tiny clustered tree placements are skipped
-for generated nature because shrinking the detailed mature tree makes it read like a
-placeholder sapling; asset-backed tree placement should keep mature oaks near full scale.
+Generated tree placement uses the detailed `tree_mature_oak` GLB for natural scatter and park
+trees. Roads should not place trees or cause adjacent terrain tree scatter; keep road decoration
+limited to readable transport furniture such as lights, signs, stops, benches, bins, and
+vehicles. The first scenario should not ship the simplified oak, maple, or conifer generated
+assets; keep them out of the registry, manifest, and generated nature output. Tiny clustered tree
+placements are skipped for generated nature because shrinking the detailed mature tree makes it
+read like a placeholder sapling. The authored mature oak GLB is much wider than one city tile at
+raw scale, so runtime placement applies the shared `GENERATED_OAK_RENDER_SCALE` normalization
+before local park or terrain variation. This keeps the mature silhouette without allowing crowns
+to cover several tiles.
 Generated tree detail should be batched into a small number of mesh nodes by material. Keep
 the oak visually dense through leaf/branch geometry, but avoid exporting hundreds of child
 mesh objects; each child mesh becomes repeated draw-call work for every placed tree. Mature
 oak batches do not cast dynamic shadows in the runtime asset configuration; use the modeled
 root flare, bark, and ground litter for grounding instead of paying shadow-map cost for every
-placed tree.
+placed tree. Runtime rendering also batches repeated static generated assets with
+`InstancedMesh`, preserving GLB geometry/material quality while drawing one batch per source mesh
+instead of cloning a full object tree for every placement.
 
 Small authored albedo textures are stored under `public/textures/` and loaded through the
 renderer texture cache. Detailed facade images must not be wrapped around a building box: that
@@ -257,7 +263,6 @@ Road rendering includes:
 - Streetlights (instanced with pole, arm, lamp sphere, and warm light cone)
 - Traffic lights (at intersections with 3+ connections)
 - Parked cars (on 2-connection road segments, with headlights and taillights)
-- Street trees (mature oak alongside roads)
 - Street furniture (benches, trash bins at low density)
 - Road signs and bus stops (at high detail density)
 - Crosswalks (5 white stripes per intersection direction)
@@ -270,7 +275,8 @@ ensuring consistent placement across renders without random state.
 ### Data Decoupling
 
 Rendering code must not import from `src/data/` or `src/simulation/` directly. To access
-building definition fields needed for rendering (size, category, service radii), the
+building definition fields needed for rendering (size, category, service radii, and
+residential capacity for feedback badges), the
 `syncCityRenderLayers` function accepts a `BuildingRenderInfoLookup` callback. The
 application layer (`src/main.ts`) provides this callback, bridging data access while
 keeping the renderer agnostic of the data module. The lookup signature is:
@@ -312,6 +318,17 @@ and more precise without obscuring the city.
 The district overlay renders the saved color for each district-owned tile. It never assigns
 tiles, validates policies, or computes policy effects; those responsibilities remain in the
 simulation layer.
+
+Radius-based buildings should expose their working radius as circular renderer-only overlay
+geometry. The placement preview shows the selected building's radius whenever the definition
+has a radius effect, and inspection shows the selected placed building's radius even when no
+global overlay mode is active. These radius visuals use the same data lookup as building
+rendering and must not run service coverage calculations in the renderer.
+
+Building feedback markers live in the warning layer. Utility shortages use typed badges above
+the affected building for no power and no water warnings, while unemployment feedback is
+derived visually from aggregate unemployed workers and active residential capacity. The markers
+must remain presentation-only; warning creation and population accounting stay in simulation.
 
 ## Render State Cache
 

@@ -31,7 +31,7 @@ export function createMiniMap(): MiniMapElements {
 
   root.innerHTML = `
     <div class="minimap-header">
-      <span class="minimap-title">Map</span>
+      <span class="minimap-title">Minimap</span>
       <div class="minimap-controls">
         <button class="minimap-btn" data-action="minimap-expand" title="Expand">${icon("expand", 12)}</button>
         <button class="minimap-btn" data-action="minimap-close" title="Close">${icon("close", 12)}</button>

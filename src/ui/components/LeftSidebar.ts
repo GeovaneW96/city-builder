@@ -15,9 +15,10 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
   {
     id: "decorations",
     icon: "decorations",
-    label: "Decorations",
+    label: "Parks",
     category: "decoration",
   },
+  { id: "specials", icon: "landmark", label: "Specials", category: "decoration" },
   { id: "demolish", icon: "demolish", label: "Demolish", category: "action" },
 ];
 
@@ -79,5 +80,6 @@ function getCatalogSidebarId(activeCatalog: string): string | null {
   if (activeCatalog === "utilities") return "utilities";
   if (activeCatalog === "decorations") return "decorations";
   if (activeCatalog === "buildings") return "services";
+  if (activeCatalog === "specials") return "specials";
   return null;
 }

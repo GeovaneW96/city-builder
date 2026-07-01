@@ -15,6 +15,7 @@ import type {
 } from "../../shared/types";
 import { ABANDONED_WARNING_TICKS } from "../constants";
 import { getBuildingFootprint, getTile, hasAdjacentRoad } from "../grid/map";
+import { monthsToTicks } from "./time";
 
 export function rebuildWarnings(state: CityState): GameEvent[] {
   const previousWarnings = state.warnings;
@@ -333,7 +334,8 @@ function isEligibleForLoan(state: CityState): boolean {
   return (
     state.economy.money < LOAN_BALANCE.ELIGIBILITY_THRESHOLD &&
     state.economy.loans.length < LOAN_BALANCE.MAX_LOANS &&
-    state.time.tick - state.economy.lastLoanTick >= LOAN_BALANCE.COOLDOWN_TICKS
+    state.time.tick - state.economy.lastLoanTick >=
+      monthsToTicks(LOAN_BALANCE.COOLDOWN_TICKS)
   );
 }
 

@@ -24,12 +24,22 @@ export interface GeneratedAssetInstance {
   object: THREE.Object3D;
 }
 
+export interface GeneratedAssetPlacement {
+  position: readonly [number, number, number];
+  rotation?: number;
+  scale?: number;
+}
+
 export interface CityAssetSource {
   createBuildingInstance(
     category: GeneratedBuildingCategory,
     seed: number,
   ): GeneratedAssetInstance | null;
   createAssetInstance(id: string): GeneratedAssetInstance | null;
+  createInstancedAssetGroup?(
+    id: string,
+    placements: readonly GeneratedAssetPlacement[],
+  ): GeneratedAssetInstance | null;
 }
 
 export class CityAssetManager implements CityAssetSource {
@@ -67,6 +77,18 @@ export class CityAssetManager implements CityAssetSource {
     return asset ? this.createInstance(asset) : null;
   }
 
+  createInstancedAssetGroup(
+    id: string,
+    placements: readonly GeneratedAssetPlacement[],
+  ): GeneratedAssetInstance | null {
+    const asset = getAssetById(id);
+    if (!asset || placements.length === 0) return null;
+    const scene = this.scenes.get(asset.id);
+    if (!scene) return null;
+    const object = createInstancedAssetObject(scene, asset, placements);
+    return object ? { id: asset.id, object } : null;
+  }
+
   getFailure(id: string): Error | undefined {
     return this.failures.get(id);
   }
@@ -100,10 +122,90 @@ export function configureRenderableObject(
   object.userData.generatedAssetInstance = true;
   object.traverse((child) => {
     if (!(child instanceof THREE.Mesh)) return;
-    child.castShadow = shouldCastGeneratedAssetShadow(asset, child);
-    child.receiveShadow = true;
-    child.frustumCulled = true;
+    configureRenderableMesh(child, asset);
   });
+}
+
+export function createInstancedAssetObject(
+  source: THREE.Object3D,
+  asset: GeneratedCityAsset,
+  placements: readonly GeneratedAssetPlacement[],
+): THREE.Group | null {
+  source.updateMatrixWorld(true);
+  const meshes = getStaticMeshes(source);
+  if (meshes.length === 0) return null;
+
+  const group = new THREE.Group();
+  group.name = `asset-batch:${asset.id}`;
+  group.userData.generatedAssetInstance = true;
+  meshes.forEach((mesh, meshIndex) => {
+    group.add(createInstancedMeshBatch(mesh, asset, placements, meshIndex));
+  });
+  return group;
+}
+
+function getStaticMeshes(source: THREE.Object3D): THREE.Mesh[] {
+  const meshes: THREE.Mesh[] = [];
+  source.traverse((child) => {
+    if (child instanceof THREE.Mesh && !(child instanceof THREE.SkinnedMesh)) {
+      meshes.push(child);
+    }
+  });
+  return meshes;
+}
+
+function createInstancedMeshBatch(
+  source: THREE.Mesh,
+  asset: GeneratedCityAsset,
+  placements: readonly GeneratedAssetPlacement[],
+  meshIndex: number,
+): THREE.InstancedMesh {
+  const batch = new THREE.InstancedMesh(
+    source.geometry,
+    source.material,
+    placements.length,
+  );
+  batch.name = `${asset.id}:${source.name || `mesh_${meshIndex}`}:batch`;
+  batch.userData.generatedAssetInstance = true;
+  batch.matrixAutoUpdate = false;
+  configureRenderableMesh(batch, asset);
+  setInstancedAssetMatrices(batch, source.matrixWorld, placements);
+  return batch;
+}
+
+function setInstancedAssetMatrices(
+  batch: THREE.InstancedMesh,
+  sourceMatrix: THREE.Matrix4,
+  placements: readonly GeneratedAssetPlacement[],
+): void {
+  const placementMatrix = new THREE.Matrix4();
+  const instanceMatrix = new THREE.Matrix4();
+  placements.forEach((placement, index) => {
+    setPlacementMatrix(placementMatrix, placement);
+    instanceMatrix.multiplyMatrices(placementMatrix, sourceMatrix);
+    batch.setMatrixAt(index, instanceMatrix);
+  });
+  batch.instanceMatrix.needsUpdate = true;
+  batch.computeBoundingBox();
+  batch.computeBoundingSphere();
+}
+
+function setPlacementMatrix(
+  matrix: THREE.Matrix4,
+  placement: GeneratedAssetPlacement,
+): void {
+  const position = new THREE.Vector3(...placement.position);
+  const rotation = new THREE.Quaternion().setFromEuler(
+    new THREE.Euler(0, placement.rotation ?? 0, 0),
+  );
+  const scale = new THREE.Vector3().setScalar(placement.scale ?? 1);
+  matrix.compose(position, rotation, scale);
+}
+
+function configureRenderableMesh(mesh: THREE.Mesh, asset: GeneratedCityAsset): void {
+  mesh.castShadow = shouldCastGeneratedAssetShadow(asset, mesh);
+  mesh.receiveShadow = true;
+  mesh.frustumCulled = true;
 }
 
 function shouldCastGeneratedAssetShadow(

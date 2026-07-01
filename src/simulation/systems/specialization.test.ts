@@ -7,6 +7,7 @@ import {
   getPollutionSpecializationMultiplier,
   getSpecializationHappinessModifier,
 } from "./specialization";
+import { monthsToTicks } from "./time";
 
 describe("city specialization", () => {
   it("starts inactive and enforces industrial hub requirements", () => {
@@ -30,7 +31,7 @@ describe("city specialization", () => {
       type: "SET_SPECIALIZATION",
       specializationId: "industrial_hub",
     }).state;
-    first.time.tick = 12;
+    first.time.tick = monthsToTicks(12);
     first.economy.monthlyIncome = 1000;
     first.buildings = Array.from({ length: 5 }, (_, index) =>
       building(`shop:${index}`, "small_shop"),

@@ -10,21 +10,27 @@ import {
 import { getBuildingById } from "../../data/buildings";
 import type { CityState } from "../../shared/types";
 import type { CityMetrics } from "./metrics";
-import { processLoanPayments } from "./loans";
+import { calculateMonthlyLoanPaymentsDue, processLoanPayments } from "./loans";
 import { getDistrictPolicyCost, getTaxBreakShare } from "./districts";
 import { getCommercialLandValueMultiplier } from "./land-productivity";
 import { getSpecializationMultiplier } from "./specialization";
 import { getEventTaxMultiplier } from "./events";
+import { DAYS_PER_MONTH, isLastDayOfMonth } from "./time";
 
 export function runEconomy(state: CityState, metrics: CityMetrics): void {
   const income = calculateMonthlyIncome(state, metrics);
   const expenses = calculateMonthlyExpenses(state);
+  const loanPaymentsDue = calculateMonthlyLoanPaymentsDue(state);
   state.economy.monthlyIncome = income;
-  state.economy.monthlyExpenses = expenses;
-  state.economy.money += income - expenses;
-  state.economy.monthlyExpenses += processLoanPayments(state);
+  state.economy.monthlyExpenses = expenses + loanPaymentsDue;
+  state.economy.money += getDailyCashFlow(income, expenses);
+  if (isLastDayOfMonth(state.time)) processLoanPayments(state);
   if (state.progression.scenarioStatus === "lost") return;
-  updateBankruptcyState(state);
+  updateBankruptcyState(state, isLastDayOfMonth(state.time));
+}
+
+function getDailyCashFlow(monthlyIncome: number, monthlyExpenses: number): number {
+  return Math.round(((monthlyIncome - monthlyExpenses) / DAYS_PER_MONTH) * 100) / 100;
 }
 
 export function calculateMonthlyIncome(state: CityState, metrics: CityMetrics): number {
@@ -134,13 +140,14 @@ function calculateBuildingUpkeep(state: CityState): number {
   }, 0);
 }
 
-function updateBankruptcyState(state: CityState): void {
+function updateBankruptcyState(state: CityState, canIncrementMonth: boolean): void {
   if (state.economy.money >= 0) {
     state.economy.monthsBelowZero = 0;
     state.economy.isBankrupt = false;
     return;
   }
 
+  if (!canIncrementMonth) return;
   state.economy.monthsBelowZero += 1;
   state.economy.isBankrupt = state.economy.monthsBelowZero >= BANKRUPTCY_GRACE_MONTHS;
 }

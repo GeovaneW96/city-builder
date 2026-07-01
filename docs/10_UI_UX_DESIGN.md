@@ -2,7 +2,9 @@
 
 Removed unused `isDashboardVisible` and `isDashboardActive` exports (were dead code).
 
-TopBar overhauled: added water capacity/display, replaced emoji speed icons with inline SVGs, changed to grid layout with `topbar-shell`, added responsive breakpoints for 1100px and 820px, and removed city level hexagon. Dashboard tab switching now re-renders content immediately. RightPanel city overview section removed (stats moved to TopBar). Garbage stats in Dashboard use `formatQuantity` for whole-number display.
+TopBar overhauled: added water capacity/display and net flow rate, replaced emoji speed icons with inline SVGs, changed to flex layout with separate `topbar-stats` and `topbar-time` sections, added responsive breakpoints for 1100px and 820px, removed city level hexagon, added weather indicator, speed label, and relocated stats button. Dashboard tab switching now re-renders content immediately. RightPanel city overview section removed (stats moved to TopBar). Garbage stats in Dashboard use `formatQuantity` for whole-number display.
+
+BottomPanel overhauled: item cards now display inline stats (cost, upkeep, capacity, speed) in a grid layout with visual road card previews. Multiple road types added (dirt, paved, local, collector, arterial) with per-type costs, upkeep, capacity, and population unlocks. New notification design with styled cards, severity-based icons, meta timestamps, and "View all" footer. MiniMap renamed, enlarged, given dedicated padding and border-radius. Sidebar buttons enlarged with active state styling. All panels updated to consistent glass-surface theme with rounded corners. Added responsive breakpoints at 1100px and 820px hiding and reflowing UI elements.
 
 ## Purpose
 
