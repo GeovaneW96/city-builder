@@ -1188,6 +1188,7 @@ function getExplicitGeneratedBuildingSelection(
   definitionId: string,
 ): GeneratedBuildingSelection | null {
   if (definitionId === "water_tower") return { category: "industrial", seed: 8 };
+  if (definitionId === "power_plant") return { category: "industrial", seed: 9 };
   return null;
 }
 

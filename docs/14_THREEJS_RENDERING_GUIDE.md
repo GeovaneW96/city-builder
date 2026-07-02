@@ -132,8 +132,10 @@ materials are shared resources and must not be disposed when a render layer is r
 Utility buildings only use generated building assets when they have explicit authored
 handling. `water_tower` selects the `water_tower.glb` slot in the industrial registry so the
 placed water utility consistently renders as a cylindrical elevated tower instead of a generic
-factory variant. Other utility buildings, including landfills, fall back to the procedural
-utility renderer until they receive dedicated generated assets.
+factory variant. `power_plant` selects the authored `power_plant.glb` industrial slot and uses
+a cropped source-reference HUD image at `public/assets/generated/hud/power_plant.png`. Other
+utility buildings, including landfills, fall back to the procedural utility renderer until they
+receive dedicated generated assets.
 Constructing residential buildings use the authored `construction_house_frame.glb` prop asset,
 while other constructing buildings use `construction_highrise_shell.glb`. This keeps the
 simulation status unchanged while the renderer shows a readable in-progress site with concrete

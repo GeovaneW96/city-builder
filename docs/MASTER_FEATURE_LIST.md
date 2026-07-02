@@ -321,18 +321,20 @@ This document lists every feature across all four implementation phases. Under e
 | 1.20.9  | Terrain rendering places generated tree assets on grass tiles                    | done   |
 | 1.20.10 | Terrain rendering avoids tree placement on road tiles                            | done   |
 | 1.20.11 | Instanced asset batching creates InstancedMesh for repeated static nature assets | done   |
+| 1.20.12 | Power plant rendering uses authored generated GLB asset                          | done   |
 
 ### 1.21 HUD (Money, Population, Date, Demand Bars)
 
 **Docs:** `10_UI_UX_DESIGN.md`
 
-| #      | Testable Logic                                   | Status |
-| ------ | ------------------------------------------------ | ------ |
-| 1.21.1 | HUD displays current money from simulation state | done   |
-| 1.21.2 | HUD displays current population                  | done   |
-| 1.21.3 | HUD displays current in-game date/month/year     | done   |
-| 1.21.4 | HUD displays RCI demand bars                     | done   |
-| 1.21.5 | HUD updates when simulation state changes        | done   |
+| #      | Testable Logic                                                | Status |
+| ------ | ------------------------------------------------------------- | ------ |
+| 1.21.1 | HUD displays current money from simulation state              | done   |
+| 1.21.2 | HUD displays current population                               | done   |
+| 1.21.3 | HUD displays current in-game date/month/year                  | done   |
+| 1.21.4 | HUD displays RCI demand bars                                  | done   |
+| 1.21.5 | HUD updates when simulation state changes                     | done   |
+| 1.21.6 | Build catalog item can show authored building thumbnail image | done   |
 
 ### 1.22 Build Mode (Hover, Valid/Invalid Feedback, Cost Preview)
 

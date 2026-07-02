@@ -6,6 +6,10 @@ TopBar overhauled: added water capacity/display and net flow rate, replaced emoj
 
 BottomPanel overhauled: item cards now display inline stats (cost, upkeep, capacity, speed) in a grid layout with visual road card previews. Multiple road types added (dirt, paved, local, collector, arterial) with per-type costs, upkeep, capacity, and population unlocks. New notification design with styled cards, severity-based icons, meta timestamps, and "View all" footer. MiniMap renamed, enlarged, given dedicated padding and border-radius. Sidebar buttons enlarged with active state styling. All panels updated to consistent glass-surface theme with rounded corners. Added responsive breakpoints at 1100px and 820px hiding and reflowing UI elements.
 
+The Utilities catalog may use authored thumbnails for high-signal buildings. The power plant
+card uses a cropped source-reference image so the build option matches the generated in-scene
+asset more closely than a generic power icon.
+
 ## Purpose
 
 City builders are UI-heavy games.

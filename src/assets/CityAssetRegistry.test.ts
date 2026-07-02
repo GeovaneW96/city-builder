@@ -9,12 +9,12 @@ describe("generated city asset registry", () => {
   it("registers the required building library by render category", () => {
     expect(getBuildingAssets("residential")).toHaveLength(17);
     expect(getBuildingAssets("commercial")).toHaveLength(15);
-    expect(getBuildingAssets("industrial")).toHaveLength(9);
+    expect(getBuildingAssets("industrial")).toHaveLength(10);
     expect(getBuildingAssets("civic")).toHaveLength(8);
   });
 
   it("points every entry to the generated public asset directory", () => {
-    expect(CITY_ASSET_REGISTRY).toHaveLength(73);
+    expect(CITY_ASSET_REGISTRY).toHaveLength(74);
     expect(getAssetById("residential_stucco_cottage_reference")?.path).toBe(
       "/assets/generated/buildings/residential/residential_stucco_cottage_reference.glb",
     );
@@ -26,6 +26,9 @@ describe("generated city asset registry", () => {
     );
     expect(getAssetById("water_tower")?.path).toBe(
       "/assets/generated/buildings/industrial/water_tower.glb",
+    );
+    expect(getAssetById("power_plant")?.path).toBe(
+      "/assets/generated/buildings/industrial/power_plant.glb",
     );
     expect(getAssetById("construction_highrise_shell")?.path).toBe(
       "/assets/generated/props/construction_highrise_shell.glb",

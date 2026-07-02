@@ -164,8 +164,11 @@ function getBottomPanelStyles(): string {
       display: none;
     }
     .item-card.active .item-card-icon { color: var(--accent-teal); }
+    .item-card.active .item-card-thumbnail { border-color: rgba(78, 222, 180, 0.55); }
     .item-card-icon { grid-column: 1; grid-row: 1 / span 2; width: 40px; height: 40px; color: var(--text-secondary); justify-self: center; align-self: center; }
     .item-card-icon .ui-icon { width: 40px; height: 40px; }
+    .item-card-thumbnail { grid-column: 1; grid-row: 1 / span 2; width: 62px; height: 44px; border-radius: 6px; overflow: hidden; background: rgba(5, 11, 15, 0.76); border: 1px solid rgba(205, 236, 234, 0.1); display: flex; align-items: center; justify-content: center; justify-self: center; align-self: center; }
+    .item-card-thumbnail img { width: 100%; height: 100%; object-fit: contain; display: block; }
     .item-card-label { 
       grid-column: 2; grid-row: 1; min-width: 0;
       font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.45px; 

@@ -44,6 +44,7 @@ interface ItemDef {
   id: string;
   label: string;
   icon: IconName;
+  thumbnailSrc?: string;
   cost?: number;
   unlockPopulation?: number;
   action: string;
@@ -136,6 +137,10 @@ const SERVICE_ICONS: Record<string, IconName> = {
   library: "school",
   community_center: "services",
   courthouse: "office",
+};
+
+const BUILDING_THUMBNAILS: Record<string, string> = {
+  power_plant: "/assets/generated/hud/power_plant.png",
 };
 
 function findEl(root: HTMLElement, key: string): HTMLElement {
@@ -271,6 +276,13 @@ function renderContent(
 }
 
 function renderItemVisual(item: ItemDef): string {
+  if (item.thumbnailSrc) {
+    return `
+      <div class="item-card-thumbnail" aria-hidden="true">
+        <img src="${item.thumbnailSrc}" alt="" loading="lazy" decoding="async" />
+      </div>
+    `;
+  }
   if (item.action !== "road") {
     return `<div class="item-card-icon">${icon(item.icon, 32)}</div>`;
   }
@@ -294,6 +306,7 @@ function toBuildingItem(building: BuildingDefinition): ItemDef {
     id: building.id,
     label: building.name,
     icon: (SERVICE_ICONS[building.id] ?? "services") as IconName,
+    thumbnailSrc: BUILDING_THUMBNAILS[building.id],
     cost: building.cost,
     action: "building",
     data: { building: building.id },

@@ -89,6 +89,7 @@ export const CITY_ASSET_REGISTRY: readonly GeneratedCityAsset[] = [
     "industrial_factory_large",
     "industrial_storage_yard",
     "water_tower",
+    "power_plant",
   ]),
   ...createBuildingAssets("civic", [
     "civic_clinic",

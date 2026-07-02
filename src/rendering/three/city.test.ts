@@ -335,6 +335,53 @@ describe("building feedback markers", () => {
   });
 });
 
+describe("generated power plant asset", () => {
+  it("selects the authored generated model for power plants", () => {
+    const state = createInitialCityState();
+    state.buildings.push(createBuilding("power-plant:1", "power_plant", 4, 5));
+    const layers = createCityRenderLayers(new THREE.Scene());
+    const { source, createBuildingInstance } = createAssetSource();
+
+    syncCityRenderLayers(layers, state, null, getBuildingRenderInfo, {
+      assetSource: source,
+    });
+
+    expect(layers.buildings.children[0]?.name).toBe("building:power_plant:active");
+    expect(createBuildingInstance).toHaveBeenCalledWith("industrial", 9);
+  });
+
+  it("uses the authored generated model for power plant placement previews", () => {
+    const layers = createCityRenderLayers(new THREE.Scene());
+    const { source, createBuildingInstance } = createAssetSource();
+
+    syncPlacementPreview(
+      layers.preview,
+      {
+        positions: [
+          [4, 5],
+          [5, 5],
+          [6, 5],
+          [4, 6],
+          [5, 6],
+          [6, 6],
+          [4, 7],
+          [5, 7],
+          [6, 7],
+        ],
+        valid: true,
+        cost: 10000,
+        label: "Power Plant",
+        definitionId: "power_plant",
+      },
+      getBuildingRenderInfo,
+      source,
+    );
+
+    expect(layers.preview.children.at(-1)?.name).toBe("preview:power_plant");
+    expect(createBuildingInstance).toHaveBeenCalledWith("industrial", 9);
+  });
+});
+
 describe("generated landfill rendering", () => {
   it("does not select industrial generated models for landfill buildings", () => {
     const state = createInitialCityState();
@@ -408,6 +455,13 @@ const getBuildingRenderInfo: BuildingRenderInfoLookup = (definitionId) => {
       size: [1, 1],
       category: "utility",
       effects: {},
+    };
+  }
+  if (definitionId === "power_plant") {
+    return {
+      size: [3, 3],
+      category: "utility",
+      effects: { powerCapacity: 500 },
     };
   }
   if (definitionId === "landfill") {
