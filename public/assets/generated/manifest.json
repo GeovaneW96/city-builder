@@ -1,5 +1,5 @@
 {
-  "assetCount": 56,
+  "assetCount": 57,
   "assets": [
     {
       "id": "residential_rowhouse_brick",
@@ -294,6 +294,13 @@
       "path": "assets/generated/props/construction_highrise_shell.glb",
       "footprint": [1.9, 1.56],
       "height": 1.5
+    },
+    {
+      "id": "construction_house_frame",
+      "category": "props",
+      "path": "assets/generated/props/construction_house_frame.glb",
+      "footprint": [1.9, 1.52],
+      "height": 1.34
     },
     {
       "id": "car_compact",

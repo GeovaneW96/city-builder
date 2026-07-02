@@ -14,7 +14,7 @@ describe("generated city asset registry", () => {
   });
 
   it("points every entry to the generated public asset directory", () => {
-    expect(CITY_ASSET_REGISTRY).toHaveLength(72);
+    expect(CITY_ASSET_REGISTRY).toHaveLength(73);
     expect(getAssetById("residential_stucco_cottage_reference")?.path).toBe(
       "/assets/generated/buildings/residential/residential_stucco_cottage_reference.glb",
     );
@@ -29,6 +29,9 @@ describe("generated city asset registry", () => {
     );
     expect(getAssetById("construction_highrise_shell")?.path).toBe(
       "/assets/generated/props/construction_highrise_shell.glb",
+    );
+    expect(getAssetById("construction_house_frame")?.path).toBe(
+      "/assets/generated/props/construction_house_frame.glb",
     );
   });
 });

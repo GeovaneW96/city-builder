@@ -94,7 +94,7 @@ describe("generated city assets", () => {
     expect(createBuildingInstance).toHaveBeenCalledOnce();
   });
 
-  it("uses the authored construction site asset for constructing buildings", () => {
+  it("uses the authored construction house asset for constructing residential buildings", () => {
     const state = createInitialCityState();
     const building = createHouse("house:1", 4, 5);
     building.status = "constructing";
@@ -107,7 +107,26 @@ describe("generated city assets", () => {
     });
 
     expect(layers.buildings.children[0]?.name).toBe("building:small_house:constructing");
+    expect(createAssetInstance).toHaveBeenCalledWith("construction_house_frame");
+    expect(createAssetInstance).not.toHaveBeenCalledWith("construction_highrise_shell");
+    expect(createBuildingInstance).not.toHaveBeenCalled();
+  });
+
+  it("keeps the generic construction asset for non-residential buildings", () => {
+    const state = createInitialCityState();
+    const building = createBuilding("shop:1", "small_shop", 4, 5);
+    building.status = "constructing";
+    state.buildings.push(building);
+    const layers = createCityRenderLayers(new THREE.Scene());
+    const { source, createAssetInstance, createBuildingInstance } = createAssetSource();
+
+    syncCityRenderLayers(layers, state, null, getBuildingRenderInfo, {
+      assetSource: source,
+    });
+
+    expect(layers.buildings.children[0]?.name).toBe("building:small_shop:constructing");
     expect(createAssetInstance).toHaveBeenCalledWith("construction_highrise_shell");
+    expect(createAssetInstance).not.toHaveBeenCalledWith("construction_house_frame");
     expect(createBuildingInstance).not.toHaveBeenCalled();
   });
 

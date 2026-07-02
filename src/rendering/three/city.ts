@@ -27,7 +27,8 @@ import {
 
 const TILE_SIZE = 1;
 const RADIUS_OVERLAY_SEGMENTS = 96;
-const CONSTRUCTION_BUILDING_ASSET_ID = "construction_highrise_shell";
+const DEFAULT_CONSTRUCTION_BUILDING_ASSET_ID = "construction_highrise_shell";
+const RESIDENTIAL_CONSTRUCTION_BUILDING_ASSET_ID = "construction_house_frame";
 
 const COLORS = {
   road: 0x20282e,
@@ -1089,6 +1090,7 @@ function renderGeneratedBuildings(
         assetSource,
         building,
         renderInfo.size,
+        renderInfo.category,
       );
       if (!rendered)
         renderProceduralBuilding(group, building.definitionId, renderInfo, building);
@@ -1120,13 +1122,20 @@ function renderGeneratedConstructionBuilding(
   assetSource: CityAssetSource,
   building: CityState["buildings"][number],
   size: BuildingDefinition["size"],
+  category: BuildingCategory,
 ): boolean {
-  const asset = assetSource.createAssetInstance(CONSTRUCTION_BUILDING_ASSET_ID);
+  const assetId = getConstructionBuildingAssetId(category);
+  const asset = assetSource.createAssetInstance(assetId);
   if (!asset) return false;
   placeGeneratedConstructionBuilding(asset.object, building, size);
   asset.object.name = `building:${building.definitionId}:${building.status}`;
   group.add(asset.object);
   return true;
+}
+
+function getConstructionBuildingAssetId(category: BuildingCategory): string {
+  if (category === "residential") return RESIDENTIAL_CONSTRUCTION_BUILDING_ASSET_ID;
+  return DEFAULT_CONSTRUCTION_BUILDING_ASSET_ID;
 }
 
 function renderProceduralBuilding(
