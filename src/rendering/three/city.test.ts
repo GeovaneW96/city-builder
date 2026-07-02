@@ -94,6 +94,23 @@ describe("generated city assets", () => {
     expect(createBuildingInstance).toHaveBeenCalledOnce();
   });
 
+  it("uses the authored construction site asset for constructing buildings", () => {
+    const state = createInitialCityState();
+    const building = createHouse("house:1", 4, 5);
+    building.status = "constructing";
+    state.buildings.push(building);
+    const layers = createCityRenderLayers(new THREE.Scene());
+    const { source, createAssetInstance, createBuildingInstance } = createAssetSource();
+
+    syncCityRenderLayers(layers, state, null, getBuildingRenderInfo, {
+      assetSource: source,
+    });
+
+    expect(layers.buildings.children[0]?.name).toBe("building:small_house:constructing");
+    expect(createAssetInstance).toHaveBeenCalledWith("construction_highrise_shell");
+    expect(createBuildingInstance).not.toHaveBeenCalled();
+  });
+
   it("uses continuous road corridors when generated assets are ready", () => {
     const state = createInitialCityState();
     state.roads.push({

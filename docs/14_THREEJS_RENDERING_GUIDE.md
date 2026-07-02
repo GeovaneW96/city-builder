@@ -134,6 +134,11 @@ handling. `water_tower` selects the `water_tower.glb` slot in the industrial reg
 placed water utility consistently renders as a cylindrical elevated tower instead of a generic
 factory variant. Other utility buildings, including landfills, fall back to the procedural
 utility renderer until they receive dedicated generated assets.
+Constructing buildings use the authored `construction_highrise_shell.glb` prop asset instead of
+temporarily squashing the final building model. This keeps the simulation status unchanged while
+the renderer shows a readable in-progress site with concrete framing, blue safety netting,
+scaffolding, roof steel, perimeter fencing, and material stacks. If that asset is unavailable,
+the renderer falls back to the procedural construction mesh.
 Building placement previews carry the selected definition ID and may render the same generated
 asset once the generated library has loaded, with the tile preview plane retained for validity
 feedback.

@@ -117,6 +117,7 @@ export const CITY_ASSET_REGISTRY: readonly GeneratedCityAsset[] = [
     "road_sign",
     "plaza_planter",
     "rooftop_hvac",
+    "construction_highrise_shell",
   ]),
   ...createAssets("vehicles", ["car_compact", "car_sedan", "bus_city", "truck_delivery"]),
   ...createAssets("nature", [

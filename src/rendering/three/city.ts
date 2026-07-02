@@ -27,6 +27,7 @@ import {
 
 const TILE_SIZE = 1;
 const RADIUS_OVERLAY_SEGMENTS = 96;
+const CONSTRUCTION_BUILDING_ASSET_ID = "construction_highrise_shell";
 
 const COLORS = {
   road: 0x20282e,
@@ -1082,6 +1083,17 @@ function renderGeneratedBuildings(
       renderGeneratedPark(parkAssets, building, renderInfo.size);
       return;
     }
+    if (building.status === "constructing") {
+      const rendered = renderGeneratedConstructionBuilding(
+        group,
+        assetSource,
+        building,
+        renderInfo.size,
+      );
+      if (!rendered)
+        renderProceduralBuilding(group, building.definitionId, renderInfo, building);
+      return;
+    }
     const selection = getGeneratedBuildingSelection(
       renderInfo,
       building.definitionId,
@@ -1101,6 +1113,20 @@ function renderGeneratedBuildings(
     group.add(asset.object);
   });
   parkAssets.flush();
+}
+
+function renderGeneratedConstructionBuilding(
+  group: THREE.Group,
+  assetSource: CityAssetSource,
+  building: CityState["buildings"][number],
+  size: BuildingDefinition["size"],
+): boolean {
+  const asset = assetSource.createAssetInstance(CONSTRUCTION_BUILDING_ASSET_ID);
+  if (!asset) return false;
+  placeGeneratedConstructionBuilding(asset.object, building, size);
+  asset.object.name = `building:${building.definitionId}:${building.status}`;
+  group.add(asset.object);
+  return true;
 }
 
 function renderProceduralBuilding(
@@ -1198,6 +1224,21 @@ function placeGeneratedBuilding(
   const scale = getFootprintFitScale(object, size);
   object.scale.setScalar(scale);
   if (building.status === "constructing") object.scale.y *= 0.42;
+  object.position.set(
+    building.position[0] + size[0] / 2,
+    0,
+    building.position[1] + size[1] / 2,
+  );
+  object.rotation.y = (building.rotation * Math.PI) / 180;
+}
+
+function placeGeneratedConstructionBuilding(
+  object: THREE.Object3D,
+  building: CityState["buildings"][number],
+  size: BuildingDefinition["size"],
+): void {
+  const scale = getFootprintFitScale(object, size);
+  object.scale.setScalar(scale);
   object.position.set(
     building.position[0] + size[0] / 2,
     0,

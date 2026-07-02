@@ -1,5 +1,5 @@
 {
-  "assetCount": 55,
+  "assetCount": 56,
   "assets": [
     {
       "id": "residential_rowhouse_brick",
@@ -287,6 +287,13 @@
       "id": "rooftop_hvac",
       "category": "props",
       "path": "assets/generated/props/rooftop_hvac.glb"
+    },
+    {
+      "id": "construction_highrise_shell",
+      "category": "props",
+      "path": "assets/generated/props/construction_highrise_shell.glb",
+      "footprint": [1.9, 1.56],
+      "height": 1.5
     },
     {
       "id": "car_compact",
